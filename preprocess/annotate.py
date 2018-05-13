@@ -18,14 +18,18 @@ for i, entry in tqdm.tqdm(enumerate(data), total=len(data)):
         'id': i, 'artist': entry['artist'], 'album': entry['album'],
         'song': entry['song'], 'text': []
     }
-    for line in text.splitlines():
+    verses = []
+    json_repr = []
+    for line in text.split('\n'):
         line = line.strip()
         if line:
+            json_repr.append([{'token': word.orth_, 'pos': word.pos_} for word in TAGGER(line)])
+        else:
+            verses.append(json_repr)
             json_repr = []
-            tagged_line = TAGGER(line)
-            for word in tagged_line:
-                json_repr.append({'token': word.orth_, 'pos': word.pos_})
-            json['text'].append(json_repr)
+    if json_repr:
+        verses[-1].append(json_repr)
+    json['text'] = verses
     songs.append(json)
 
 with open('../data/ohhla.json', 'w') as outfile:

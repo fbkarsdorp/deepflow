@@ -1,6 +1,7 @@
 import csv
 import spacy
 import ujson
+import tqdm
 
 
 TAGGER = spacy.load('en', disable=['parser', 'ner'])
@@ -8,9 +9,10 @@ TAGGER = spacy.load('en', disable=['parser', 'ner'])
 with open("../data/ohhla.csv") as f:
     reader = csv.DictReader(f, ['artist', 'album', 'song', 'text'])
     next(reader) # skip header
+    data = list(reader)
 
 songs = []
-for i, entry in enumerate(data):
+for i, entry in tqdm.tqdm(enumerate(data)):    
     text = entry['text']
     json = {
         'id': i, 'artist': entry['artist'], 'album': entry['album'],

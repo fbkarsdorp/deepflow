@@ -28,7 +28,7 @@ for i, entry in tqdm.tqdm(enumerate(data), total=len(data)):
             verses.append(json_repr)
             json_repr = []
     if json_repr:
-        verses[-1].append(json_repr)
+        verses.append(json_repr)
     json['text'] = verses
     songs.append(json)
 

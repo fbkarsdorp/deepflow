@@ -12,7 +12,7 @@ with open("../data/ohhla.csv") as f:
     data = list(reader)
 
 songs = []
-for i, entry in tqdm.tqdm(enumerate(data)):    
+for i, entry in tqdm.tqdm(enumerate(data), total=len(data)):
     text = entry['text']
     json = {
         'id': i, 'artist': entry['artist'], 'album': entry['album'],

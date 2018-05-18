@@ -23,19 +23,21 @@ def load_data(fpath):
     lines = []
     for song in data:
         for verse in song['text']:
-            for line in song:
+            for line in verse:
                 words = []
-                for word in line:
+                n_words = len(line)
+                for i, word in enumerate(line):
                     token = word.get('token', word.get('word'))
                     if not is_punct(token):
                         words.extend([syllable.lower() for syllable in word['syllables']])
-                        words.append("<SPACE>")
+                        if i < (n_words - 1):
+                            words.append("<SPACE>")
                 lines.append(words)
     logging.info("Loading done!")
     return lines
 
 
-def train_model(data, output, min_count, dim, window, worker, model):
+def train_model(data, output, min_count, dim, window, workers, model):
     sg = 1 if model == 'skipgram' else 0
     model = gensim.models.Word2Vec(
         data, min_count=min_count, size=dim, window=window, workers=workers, sg=sg)

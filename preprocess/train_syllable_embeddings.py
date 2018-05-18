@@ -1,5 +1,6 @@
 import argparse
 import logging
+import re
 import string
 
 import gensim

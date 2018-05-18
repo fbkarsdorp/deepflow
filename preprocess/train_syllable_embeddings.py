@@ -1,5 +1,6 @@
 import argparse
 import logging
+import string
 
 import gensim
 import numpy as np
@@ -7,6 +8,11 @@ import ujson
 
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
+
+PUNCT_RE = re.compile(r'[^\w\s]+$')
+def is_punct(string):
+    return PUNCT_RE.match(string) is not None
 
 
 def load_data(fpath):
@@ -19,8 +25,9 @@ def load_data(fpath):
             for line in song:
                 words = []
                 for word in line:
-                    words.extend(word['syllables'])
-                    words.append("<SPACE>")
+                    if not is_punct(word['token']):
+                        words.extend(word['syllables'])
+                        words.append("<SPACE>")
                 lines.append(words)
     logging.info("Loading done!")
     return lines
@@ -30,15 +37,7 @@ def train_model(data, output, min_count, dim, window, worker, model):
     sg = 1 if model == 'skipgram' else 0
     model = gensim.models.Word2Vec(
         data, min_count=min_count, size=dim, window=window, workers=workers, sg=sg)
-    model.save(output)
-
-
-def load_embeddings(fpath):
-    model = gensim.models.Word2Vec.load(fpath)
-    model.init_sims(replace=True)
-    vocab = tuple(sorted(model.wv.vocab.keys()))
-    weights = np.array([model[w] for w in vocab], dtype=np.float32)
-    return vocab, weights
+    model.wv.save(output)
 
 
 if __name__ == '__main__':

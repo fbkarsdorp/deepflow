@@ -26,7 +26,7 @@ def load_data(fpath):
                 words = []
                 for word in line:
                     if not is_punct(word['token']):
-                        words.extend(word['syllables'])
+                        words.extend([syllable.lower() for syllable in word['syllables']])
                         words.append("<SPACE>")
                 lines.append(words)
     logging.info("Loading done!")

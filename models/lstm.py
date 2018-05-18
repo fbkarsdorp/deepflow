@@ -31,6 +31,7 @@ def load_gensim_embeddings(fpath: str):
     vectors = np.array([vectors[w] for w in vocab], dtype=np.float32)
     return vocab, vectors
 
+
 class LSTMTagger(torch.nn.Module):
     def __init__(self, embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
                  stress_size, pos_size, syllable_encoder, tagset_size, batch_size):

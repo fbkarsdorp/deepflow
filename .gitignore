@@ -99,3 +99,4 @@ ENV/
 
 # mypy
 .mypy_cache/
+data/lyrics-corpora/ohhla.com

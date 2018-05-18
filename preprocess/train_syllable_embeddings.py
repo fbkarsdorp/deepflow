@@ -26,7 +26,8 @@ def load_data(fpath):
             for line in song:
                 words = []
                 for word in line:
-                    if not is_punct(word['token']):
+                    token = word.get('token', word.get('word'))
+                    if not is_punct(token):
                         words.extend([syllable.lower() for syllable in word['syllables']])
                         words.append("<SPACE>")
                 lines.append(words)

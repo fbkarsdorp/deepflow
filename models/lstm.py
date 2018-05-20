@@ -173,16 +173,16 @@ class Sample2Tensor:
             syllable = self.index2syllable[syllable.item()]
             syllable = syllable + ' ' + (' ' * abs(len(syllable) - 3) if len(syllable) < 3 else '')
             syllable_str += syllable
-            tag_str += f'{true[i].item()}/{pred[i].item()}' + ' ' * abs(len(syllable) - 3)
-        print(f'Correct ({(true[:i] == pred[:i]).sum() / i:.3f}):')
-        print(f'{tag_str}\n{syllable_str}\n')
+            tag_str += '{}/{}'.format(true[i].item(), pred[i].item()) + ' ' * abs(len(syllable) - 3)
+        print('Correct ({}):'.format((true[:i] == pred[:i]).sum() / i:.3f))
+        print('{}\n{}\n'.format(tag_str, syllable_str))
 
 
 class Trainer:
     def __init__(self, model: BiLSTMTagger, train_data: DataLoader,
                  dev_data: DataLoader = None, test_data: DataLoader = None,
                  optimizer=None, loss_fn=None, device=None, decoder=None):
-        self.logger = logging.getLogger(f'Trainer({model.__class__.__name__})')
+        self.logger = logging.getLogger('Trainer({})'.format(model.__class__.__name__))
         self.model = model
         self.optimizer = optimizer
         self.device = device
@@ -196,9 +196,9 @@ class Trainer:
     def train(self, epochs=10):
         self.logger.info("Working on {}".format(self.device))
         for epoch in range(1, epochs + 1):
-            self.logger.info(f'Starting epoch {epoch}')
+            self.logger.info('Starting epoch {}'.format(epoch))
             self._train_batches(epoch, epochs)
-            self.logger.info(f'Finished epoch {epoch}')
+            self.logger.info('Finished epoch {}'.format(epoch))
             if self.dev_data is not None:
                 self.model.eval() # set all trainable attributes to False
                 self._validate(self.dev_data)
@@ -224,9 +224,10 @@ class Trainer:
             
             if i > 0 and i % 50 == 0:
                 logging.info(
-                    f'Epoch [{epoch + 1}/{epochs}], Step [{i}/{len(data) / batch_size:.0f}]')
+                    'Epoch [{}/{}], Step [{}/{:.0f}]'.format(
+                        epoch + 1, epochs, i, len(data) / batch_size))
                 logging.info(
-                    f'Loss: {epoch_loss.item() / i}')        
+                    'Loss: {}'.format(epoch_loss.item() / i))
     
     def _validate(self, data: DataLoader, test=False):
         self.logger.info('Validating model')
@@ -259,13 +260,14 @@ class Trainer:
                 for elt in np.random.randint(0, true.shape[0], size=2):
                     self.decoder.decode(syllables[elt], true[elt], pred[elt])
         if not test:
-            logging.info(f'Validation Loss: {run_loss.item() / len(data)}')
+            logging.info('Validation Loss: {}'.format(run_loss.item() / len(data)))
             self.save_checkpoint(run_loss.item() / len(data) < self.best_loss)
         p, r, f, _ = sklearn.metrics.precision_recall_fscore_support(
             np.hstack(y_true), np.hstack(y_pred))
         for i in (0, 1):
-            logging.info(f'Validation Scores: c={i} p={p[i]:.3f}, r={r[i]:.3f}, f={f[i]:.3f}')
-        logging.info(f'Accuracy score: {accuracy / len(data):.3f}')
+            logging.info('Validation Scores: c={} p={:.3f}, r={:.3f}, f={:.3f}'.format(
+                i, p[i], r[i], f[i]))
+        logging.info('Accuracy score: {:.3f}'.format(accuracy / len(data)))
 
     def save_checkpoint(self, is_best, filename='checkpoint.pth.tar'):
         checkpoint = {

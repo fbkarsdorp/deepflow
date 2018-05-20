@@ -234,7 +234,7 @@ class Trainer:
         y_true, y_pred, accuracy = [], [], 0
         run_loss, example_print = 0, 0
         for i, batch in enumerate(data):
-            stress = torch.autograd.Variable(batch['stress'])..to(self.device)
+            stress = torch.autograd.Variable(batch['stress']).to(self.device)
             pos = torch.autograd.Variable(batch['pos']).to(self.device)
             syllables = torch.autograd.Variable(batch['syllables']).to(self.device)
             targets = torch.autograd.Variable(batch['tags']).to(self.device)

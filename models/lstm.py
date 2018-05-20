@@ -174,7 +174,7 @@ class Sample2Tensor:
             syllable = syllable + ' ' + (' ' * abs(len(syllable) - 3) if len(syllable) < 3 else '')
             syllable_str += syllable
             tag_str += '{}/{}'.format(true[i].item(), pred[i].item()) + ' ' * abs(len(syllable) - 3)
-        print('Correct ({}):'.format((true[:i] == pred[:i]).sum() / i:.3f))
+        print('Correct ({:.3f}):'.format((true[:i] == pred[:i]).sum() / i))
         print('{}\n{}\n'.format(tag_str, syllable_str))
 
 

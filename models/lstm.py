@@ -249,8 +249,8 @@ class Trainer:
                 run_loss += loss
 
             # collect predictions
-            pred = tag_scores.view(-1, tag_scores.size(2)).data.numpy().argmax(1)
-            true = targets.view(-1).data.numpy()
+            pred = tag_scores.view(-1, tag_scores.size(2)).data.cpu().numpy().argmax(1)
+            true = targets.view(-1).data.cpu().numpy()
             y_true.append(true)
             y_pred.append(pred)
             true = true.reshape(tag_scores.shape[0], stress.size(1))

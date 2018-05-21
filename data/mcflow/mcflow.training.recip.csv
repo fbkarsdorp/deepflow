@@ -34,12 +34,12 @@
 1 1 0 1 1 1 1 1;B-PRON B-VERB I-VERB B-ADP B-DET B-NOUN B-CCONJ B-NOUN;i'm sha kin' like a quake and punks;0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 0 1 0 1 1 1 0 1 0 1 1 0 1;B-VERB B-VERB I-VERB I-VERB B-PRON B-VERB B-PART B-VERB I-VERB B-NOUN I-NOUN B-CCONJ B-NOUN I-NOUN;get de vou red i choose to a buse mis use and con fuse;1-8 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 0-16 1-8 0-16 1-8 1-8
 0 1 0 0 1 1;B-NOUN I-NOUN I-NOUN I-NOUN B-NOUN B-VERB;com pe ti tors who think;1-8 1-16 0-16 1-16 0-16 1-8
-1 1 0 1 1 1 1 1;B-DET B-NOUN I-NOUN B-ADP B-ADJ B-DET B-NOUN B-NOUN;they're ma kin' up all the rules fools;1-8 1-24 0-24 0-24 1-16 0-16 1-8 1-8
+1 1 0 1 1 1 1 1;B-DET B-NOUN I-NOUN B-ADP B-ADJ B-DET B-NOUN B-NOUN;they're ma kin' up all the rules fools;1-8 1-32 0-32 0-32 1-16 0-16 1-8 1-8
 1 1 1 1 1 0 1;B-ADP B-DET B-NOUN B-NOUN B-CCONJ B-ADJ I-ADJ;in the game lame and in sane;1-16 0-16 1-8 1-8 0-16 1-8 1-8
 1 1 1 1 1 0 1 1 1;B-ADJ B-DET B-NOUN B-PRON B-VERB I-VERB B-VERB B-DET B-CCONJ;it's a shame i go tta do this but;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16
 1 0 1 1 1 0 1;B-PRON B-VERB I-VERB B-DET B-ADJ B-ADJ I-ADJ;i re main the same un changed;1-16 0-16 1-16 0-16 1-8 1-8 1-8
 1 0 1 0 1 0 1;B-ADJ I-ADJ B-ADV I-ADV B-ADV I-ADV B-VERB;ge ttin' be tter ne ver known;1-16 0-16 1-16 0-16 1-16 0-16 1-16
-1 1 1 0 1 0 1 1 1;B-ADP B-DET B-NOUN I-NOUN B-VERB I-VERB B-PRON B-ADP B-DET;as a swea ter ki ckin' it at the;1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16
+1 1 1 0 1 0 1 1 1;B-ADP B-DET B-NOUN I-NOUN B-VERB I-VERB B-PRON B-ADP B-DET;as a swea ter ki ckin' it at the;1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16
 1 0 1 1 1 0 1 0 1 0;B-NOUN B-ADP I-ADP B-PRON B-VERB B-PRON I-PRON B-ADV I-ADV I-ADV;top be cause i got my self to ge ther;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 1 1;B-ADV B-VERB B-ADP B-DET B-NOUN B-PUNCT;so roll with a guy who's;0-16 1-8 1-16 0-16 1-8 0-16
 1 0 0 1 1 1 1 1;B-ADJ I-ADJ I-ADJ B-CCONJ B-ADJ B-VERB B-DET B-NOUN;phy si cal and fit knows the time;1-8 0-16 1-16 0-16 1-8 1-8 0-16 1-8
@@ -69,7 +69,7 @@
 1 1 1 1 1;B-VERB B-PART B-NOUN B-CCONJ B-VERB;lay yo work and play;1-8 1-8 1-16 0-8 1-8
 1 1 0 1 1 1 0;B-PRON B-VERB I-VERB B-ADP B-DET B-NOUN I-NOUN;we star ted at the bo ttom;0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 1 1 1;B-ADV B-VERB B-VERB B-DET B-NOUN B-CCONJ B-NOUN;now we're leadin' the way and yea;1-16 0-16 1-8 0-16 1-8 1-8 1-8
-1 1 0 1 1 1 0 1;B-PRON B-VERB I-VERB B-DET B-NOUN B-NOUN I-NOUN B-PRON;i'm ha vin' a fit ki ckin' it;1-8 1-16 0-16 0-16 1-8 1-24 0-24 0-24
+1 1 0 1 1 1 0 1;B-PRON B-VERB I-VERB B-DET B-NOUN B-NOUN I-NOUN B-PRON;i'm ha vin' a fit ki ckin' it;1-8 1-16 0-16 0-16 1-8 1-32 0-32 0-32
 1 1 1 0 1 1 1 1 0 1 1 1;B-ADP B-DET B-NOUN B-ADP I-ADP B-PRON B-ADV B-VERB I-VERB B-PART B-VERB B-VERB;at the top be cause i'm too le git to quit sang;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1;B-PRON B-ADV B-VERB;you don't stop;0-16 1-8 1-8
 1 1 1 1 0 1 1 1 1 0 1;B-DET B-NOUN B-DET B-NOUN I-NOUN B-ADJ B-VERB B-ADJ B-NOUN I-NOUN B-VERB;a rock the rhy thm that makes your fing er pop;0-16 1-16 0-16 1-16 0-16 1-8 1-8 0-16 1-8 0-16 1-8
@@ -131,7 +131,7 @@
 1 1 0 0 0 1 1 1 1 0 1 0 0 0;B-DET B-NOUN I-NOUN I-NOUN I-NOUN B-PRON B-DET B-ADJ B-NOUN I-NOUN B-NOUN I-NOUN I-NOUN I-NOUN;a mill i on aire i'm a young mo ney mill i on aire;0-16 1-16 0-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-8 1-8
 1 0 1 0 1 0 0 1;B-ADJ I-ADJ B-ADP B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN;tou gher than ni ger i an hair;1-16 0-16 1-16 1-8 1-16 0-16 1-8 1-16
 1 0 1 0 0 0 1 1 1 0 1 1 1 0 1;B-ADJ B-NOUN I-NOUN I-NOUN I-NOUN B-VERB I-VERB B-ADP B-ADJ B-NOUN I-NOUN B-DET B-ADJ I-ADJ B-ADJ;my cri ter i a com pared to your ca reer this is n't fair;0-32 1-8 1-16 0-16 0-16 0-16 1-16 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16
-1 1 0 1 0 0 0 1 1 1 1 0 1;B-PRON B-DET B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-NOUN;i'm a ve ner e al di sease like a men strul bleed;1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-8 1-8
+1 1 0 1 0 0 0 1 1 1 1 0 1;B-PRON B-DET B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-NOUN;i'm a ve ner e al di sease like a men strul bleed;1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-8 1-8
 1 1 1 0 1 1 1 1 1 1 1 1 0 1 1 1;B-ADP B-DET B-NOUN I-NOUN B-CCONJ B-NOUN B-ADP B-DET B-NOUN B-ADP B-DET B-NOUN I-NOUN B-ADP B-ADJ B-NOUN;through the pen cil and leak on the sheet of the tab let in my mind;1-16 0-16 1-8 0-16 0-16 1-16 1-16 0-16 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16
 1 1 1 1 1 1 1 1 1 1;B-ADP B-PRON B-ADV B-VERB B-NOUN B-ADP B-PRON B-VERB B-VERB B-NOUN;'cause i don't write shit 'cause i ain't got time;0-32 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 0 1 0 1 0 1 1 1 1 1 0 1 0;B-ADP B-ADJ B-NOUN I-NOUN B-VERB I-VERB B-NOUN I-NOUN B-VERB B-ADP B-DET B-DET B-ADJ I-ADJ B-NOUN I-NOUN;'cause my se conds mi nutes ho urs go to the all migh ty do llar;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-32 0-32 1-8 1-16 0-16 1-16 0-16
@@ -172,18 +172,18 @@
 1 1 1 1 1 1 0;B-PRON B-VERB B-ADV B-ADJ B-ADP B-ADJ I-ADJ;you knew that true that swa llow;0-16 1-16 0-16 1-16 0-16 1-8 0-8
 1 1 1 1 1 1 1 1 1 1 0;B-CCONJ B-PRON B-VERB B-DET B-NOUN B-ADV B-PRON B-VERB B-ADJ B-NOUN I-NOUN;and i be the shit now you got loose bo wels;1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-8 1-8 0-8
 1 1 1 1 1 1 1 0;B-PRON B-ADV B-VERB B-PRON B-ADP B-NUM B-NOUN I-NOUN;i don't owe you like two vo wels;0-32 1-8 0-16 1-8 1-16 1-16 1-8 0-8
-1 1 1 1 1 1 1 1 1 1 1 1 0;B-CCONJ B-PRON B-VERB B-VERB B-ADP B-PRON B-PART B-VERB B-PRON B-ADP B-DET B-NOUN I-NOUN;but i would like for you to pay me by the ho ur;0-24 1-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-8
-1 1 1 1 1 0 1 1 0 1 0;B-INTJ B-INTJ B-CCONJ B-NOUN B-ADV I-ADV B-VERB B-VERB I-VERB B-NOUN I-NOUN;ha ha and i'd ra ther be pu shing flow ers;1-16 0-8 0-32 0-32 1-24 0-24 0-24 1-16 0-16 1-8 0-8
+1 1 1 1 1 1 1 1 1 1 1 1 0;B-CCONJ B-PRON B-VERB B-VERB B-ADP B-PRON B-PART B-VERB B-PRON B-ADP B-DET B-NOUN I-NOUN;but i would like for you to pay me by the ho ur;0-32 1-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-8
+1 1 1 1 1 0 1 1 0 1 0;B-INTJ B-INTJ B-CCONJ B-NOUN B-ADV I-ADV B-VERB B-VERB I-VERB B-NOUN I-NOUN;ha ha and i'd ra ther be pu shing flow ers;1-16 0-8 0-32 0-32 1-32 0-32 0-32 1-16 0-16 1-8 0-8
 1 1 1 1 1 1 1 0 1 0;B-ADP B-PART B-VERB B-ADP B-DET B-NOUN B-NOUN I-NOUN B-NOUN I-NOUN;than to be in the pen shar ing show ers;1-16 0-16 1-16 1-16 0-16 1-8 1-16 0-16 1-8 0-8
 1 1 0 1 1 1 1 1 1 0;B-INTJ B-PROPN I-PROPN B-VERB B-PRON B-DET B-NOUN B-VERB B-ADJ I-ADJ;ha to ny told us this world was o urs;1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16
 1 1 1 0 1 1 1 0 1 1 1 0;B-CCONJ B-DET B-PROPN I-PROPN B-VERB B-PRON B-DET I-DET B-NOUN B-VERB B-ADJ I-ADJ;and the bi ble told us e very girl was so ur;1-32 0-32 1-16 0-16 1-16 0-16 1-32 0-32 1-8 0-16 1-8 0-8
-1 1 1 1 1 0 1 1 1 1 1 0;B-ADV B-VERB B-ADP B-DET B-NOUN I-NOUN B-CCONJ B-ADV B-VERB B-ADJ B-NOUN I-NOUN;don't play in the gar den and don't smell her flow er;1-8 1-24 0-24 0-24 1-8 0-16 0-16 1-8 1-16 0-16 1-8 0-8
+1 1 1 1 1 0 1 1 1 1 1 0;B-ADV B-VERB B-ADP B-DET B-NOUN I-NOUN B-CCONJ B-ADV B-VERB B-ADJ B-NOUN I-NOUN;don't play in the gar den and don't smell her flow er;1-8 1-32 0-32 0-32 1-8 0-16 0-16 1-8 1-16 0-16 1-8 0-8
 1 1 1 0 1 0 1 1 0 1 1 0;B-VERB B-PRON B-ADP I-ADP B-PROPN I-PROPN B-CCONJ B-NOUN I-NOUN B-NOUN B-NOUN I-NOUN;call me mis ter car ter or mis ter lawn mo wer;1-16 0-16 1-16 0-16 1-8 0-16 0-16 1-16 0-16 1-8 1-8 0-16
 1 1 1 1 1 0 1 0 1 1 1 1 0;B-INTJ B-PRON B-VERB B-ADV B-ADJ I-ADJ B-NOUN I-NOUN B-ADP B-NUM B-PROPN B-PROPN I-PROPN;boy i got so ma ny bi tches like i'm michael low ry;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 0-16
 1 0 1 1 0 0 1 1 1 0 1 1;B-ADV I-ADV B-PROPN B-PROPN I-PROPN I-PROPN B-VERB B-PRON B-ADV I-ADV B-VERB B-PRON;e ven gwen ste fa ni said she coul dn't doubt me;1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8 0-16
 1 0 0 0 1 1 1 1 1 0 1 1;B-PROPN I-PROPN I-PROPN I-PROPN B-PRON B-VERB B-NOUN B-ADP B-NOUN B-ADP I-ADP B-PRON;mo ther fu cker i say life ain't shit wi thout me;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 0-8
 1 1 1 0 1 1 1 1 1 1 1 0;B-ADJ B-NOUN B-VERB I-VERB B-PART B-DET B-NOUN B-NOUN B-ADP B-ADJ B-ADJ I-ADJ;chrome lips po kin' out the coup look like it's pou tin';1-8 0-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16
-1 1 1 1 1 1 1 1 1 1 1 1 0 1 1;B-PRON B-VERB B-NOUN B-PRON B-VERB B-CCONJ B-PRON B-VERB B-NOUN B-PRON B-VERB B-VERB B-ADP I-ADP B-PRON;i do what i do and you do what you can do a bout it;0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16
+1 1 1 1 1 1 1 1 1 1 1 1 0 1 1;B-PRON B-VERB B-NOUN B-PRON B-VERB B-CCONJ B-PRON B-VERB B-NOUN B-PRON B-VERB B-VERB B-ADP I-ADP B-PRON;i do what i do and you do what you can do a bout it;0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16
 1 1 1 1 1 1 1 0 1 1 1 0 1 1;B-PROPN B-PRON B-VERB B-VERB B-DET B-NOUN B-NOUN B-ADP I-ADP B-DET B-NOUN I-NOUN B-VERB B-PRON;bitch i could turn a crack rock in to a moun tain dare me;1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 0-16 1-8 0-8
 1 1 0 1 1 1 1 1 1 0 0 1 1;B-ADV B-PRON B-VERB I-VERB B-PRON B-ADP B-ADV B-ADJ B-NOUN I-NOUN I-NOUN B-ADP B-PRON;don't you com pare me 'cause there ain't no bo dy near me;1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 1 1 1 1;B-PRON B-ADV B-VERB B-PRON B-CCONJ B-PRON B-VERB B-PRON;they don't see me but they hear me;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
@@ -326,12 +326,12 @@
 1 1;B-VERB B-NOUN;won't cha;1-8 0-8
 1 1 0 1 1 0 1 1;B-VERB B-NOUN I-NOUN B-ADV B-NOUN I-NOUN B-VERB B-ADJ;give cre dit where cre dit is due;1-8 1-16 0-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 0 1;B-ADV B-PRON B-VERB B-ADP B-PRON B-ADV B-VERB B-DET B-NOUN I-NOUN B-NUM;don't cha know that i don't give a num ber two;1-8 0-8 1-16 0-16 1-16 0-16 1-8 0-8 1-8 0-8 1-4
-1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN B-INTJ B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;i got the globe yeah in the palm of my hand;0-16 1-16 0-16 1-4 1-12 0-12 0-12 1-12 0-12 0-12 1-6
-0 1 0 1 1 1 1 1 1 1;B-ADJ I-ADJ I-ADJ B-PRON B-VERB B-PRON B-INTJ B-ADV B-PRON B-VERB;where e ver i spin it that's where i land;0-12 1-12 0-12 0-12 1-16 0-8 1-8 0-16 0-16 1-4
+1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN B-INTJ B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;i got the globe yeah in the palm of my hand;0-16 1-16 0-16 1-4 1-16 0-16 0-16 1-16 0-16 0-16 1-8
+0 1 0 1 1 1 1 1 1 1;B-ADJ I-ADJ I-ADJ B-PRON B-VERB B-PRON B-INTJ B-ADV B-PRON B-VERB;where e ver i spin it that's where i land;0-16 1-16 0-16 0-16 1-16 0-8 1-8 0-16 0-16 1-4
 1 1 1 1;B-ADV B-VERB B-DET B-NOUN;let's save the world;0-8 1-8 0-16 1-4
 1 1 1 1 1 1 0 0 1;B-NOUN B-ADP B-ADJ B-PRON B-VERB B-PRON B-VERB I-VERB I-VERB;men in black i know you un der stand;1-16 0-8 1-8 0-16 1-16 0-16 1-16 0-16 1-4
-1 1 1 0 1 1 1 1 1 1 1;B-VERB B-DET B-NOUN I-NOUN B-PRON B-VERB B-VERB B-ADP B-PRON B-VERB B-PART;stop the move ment they can try if they want to;1-8 0-16 1-8 1-8 0-12 0-12 1-12 0-12 0-12 1-6 0-12
-1 0 0 1 0 1 0 1 1 1 1 1 1 1 1;B-NOUN I-NOUN I-NOUN B-ADP B-PROPN I-PROPN I-PROPN B-VERB B-PRON B-VERB B-VERB B-ADP B-PRON B-VERB B-PART;ig nor ar lo la ti no si they can try if they want to;0-12 0-12 1-12 0-12 0-12 1-6 0-12 1-4 0-12 0-12 1-12 0-12 0-12 1-6 0-12
+1 1 1 0 1 1 1 1 1 1 1;B-VERB B-DET B-NOUN I-NOUN B-PRON B-VERB B-VERB B-ADP B-PRON B-VERB B-PART;stop the move ment they can try if they want to;1-8 0-16 1-8 1-8 0-16 0-16 1-16 0-16 0-16 1-8 0-16
+1 0 0 1 0 1 0 1 1 1 1 1 1 1 1;B-NOUN I-NOUN I-NOUN B-ADP B-PROPN I-PROPN I-PROPN B-VERB B-PRON B-VERB B-VERB B-ADP B-PRON B-VERB B-PART;ig nor ar lo la ti no si they can try if they want to;0-16 0-16 1-16 0-16 0-16 1-8 0-16 1-4 0-16 0-16 1-16 0-16 0-16 1-8 0-16
 1 1 1 1 1 1;B-NOUN B-PROPN B-VERB B-DET B-NOUN B-ADJ;what pit saws a bit raw;0-8 1-8 1-8 0-16 1-8 1-8
 1 1 1 0 1 1 1 1;B-VERB B-INTJ B-NOUN I-NOUN B-CCONJ B-VERB B-PRON B-DET;took like jig saw and built it all;1-8 1-8 1-8 1-8 0-16 1-8 0-16 1-8
 0 1 1 1 1 1 1 1 1;B-ADP I-ADP B-DET B-ADJ B-NOUN B-NOUN B-VERB B-PRON B-DET;des pite a big loss i'd bet it all;1-8 1-16 0-32 1-8 1-8 0-16 1-16 0-8 1-8
@@ -718,10 +718,10 @@
 1 1 0 1 1 1 1 0 1 0;B-VERB B-VERB I-VERB B-PRON B-VERB B-ADJ B-NOUN I-NOUN B-NOUN I-NOUN;stop drea min' i leave your bo dy steam in';1-8 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 0 1 1 0 1 1 1 0;B-NOUN I-NOUN B-VERB B-VERB I-VERB B-NOUN B-DET B-NOUN I-NOUN;ni ggaz is fien din' what's the mea nin';1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 0 1 1 0 1 0 0 0 1 0;B-PRON B-VERB I-VERB B-ADP B-DET I-DET B-ADJ I-ADJ B-NOUN I-NOUN I-NOUN I-NOUN;i'm lea nin' on a ny ni gga in ter ven in';0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
-1 1 1 1 1 1 0 0 1 0;B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN I-NOUN B-NOUN I-NOUN I-NOUN;with the sound of my mo ney ma chi nin';1-16 0-16 1-16 0-16 0-16 1-24 0-24 0-24 1-16 0-16
+1 1 1 1 1 1 0 0 1 0;B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN I-NOUN B-NOUN I-NOUN I-NOUN;with the sound of my mo ney ma chi nin';1-16 0-16 1-16 0-16 0-16 1-32 0-32 0-32 1-16 0-16
 1 1 1 0 1 0 1 1 0;B-ADJ B-NOUN B-ADV I-ADV B-PART I-PART B-ADP B-NOUN I-NOUN;my cup runn eth o ver with hun dreds;0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-16 0-16
-1 1 1 1 1 1 0 1 1 1 1 1 0 1 1 0;B-PRON B-NUM B-ADP B-DET B-ADJ B-NOUN I-NOUN B-ADJ B-VERB B-PRON B-NUM B-NOUN I-NOUN B-CCONJ B-ADJ I-ADJ;i'm one of the best ni ggas that done it six di gits and ru nnin';0-16 1-24 0-24 0-24 1-8 1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 0-16 1-16 0-16
-1 1 0 1 1 1;B-DET B-NOUN I-NOUN B-ADV B-VERB B-PRON;y'all ni ggas don't want it;1-8 1-24 0-24 0-24 1-16 0-16
+1 1 1 1 1 1 0 1 1 1 1 1 0 1 1 0;B-PRON B-NUM B-ADP B-DET B-ADJ B-NOUN I-NOUN B-ADJ B-VERB B-PRON B-NUM B-NOUN I-NOUN B-CCONJ B-ADJ I-ADJ;i'm one of the best ni ggas that done it six di gits and ru nnin';0-16 1-32 0-32 0-32 1-8 1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 0-16 1-16 0-16
+1 1 0 1 1 1;B-DET B-NOUN I-NOUN B-ADV B-VERB B-PRON;y'all ni ggas don't want it;1-8 1-32 0-32 0-32 1-16 0-16
 1 1 1 1 0 0 1 1 1 1 0 1 0;B-PRON B-VERB B-DET B-PROPN I-PROPN I-PROPN B-NOUN B-DET B-PROPN B-PROPN B-PROPN I-PROPN I-PROPN;i got the god fa ther flow the don juan de mar co;0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8 1-8 0-16 1-8 1-8
 1 1 1 1 1 1 1 1;B-VERB B-ADP B-PROPN B-ADV B-VERB B-PRON B-VERB B-PART;swear to god don't get it fucked up;1-32 0-32 1-8 0-16 1-16 0-16 1-8 0-8
 1 1 1 1 1 1 1 1 1 1;B-ADV B-VERB B-ADP B-ADP B-NOUN B-ADV B-PRON B-VERB B-ADJ B-NOUN;last seen out of state where i drop my slang;0-8 1-8 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
@@ -756,13 +756,13 @@
 1 1 1 0 1 1 1 0 1 1 1 0;B-VERB B-ADP B-PROPN I-PROPN B-VERB B-ADJ B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN;serve like sam pras play fake ra ppers like a cam pus;1-8 0-8 1-8 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8 0-16
 1 1 0 1 1 1 1 0;B-PROPN B-PROPN I-PROPN B-NOUN B-PRON B-ADV B-ADJ I-ADJ;le ti gre son you're too ea ger;0-16 1-16 0-16 1-8 0-16 1-8 1-8 0-16
 1 1 1 0 1 1 1 1 0;B-PRON B-VERB B-VERB I-VERB B-PRON B-ADJ B-PRON B-ADV I-ADV;you ain't ha vin' it good me ei ther;1-16 0-16 1-16 0-16 1-16 1-8 0-16 1-16 0-16
-1 1 0 1 0 1 1 1 1 1 0 1 1 1;B-NOUN B-VERB B-ADV I-ADV I-ADV B-CCONJ B-VERB B-DET B-ADJ B-NOUN B-VERB I-VERB B-PRON B-ADV;let's get to ge ther and make this whole world be lieve us huh;1-8 1-8 0-16 1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8
+1 1 0 1 0 1 1 1 1 1 0 1 1 1;B-NOUN B-VERB B-ADV I-ADV I-ADV B-CCONJ B-VERB B-DET B-ADJ B-NOUN B-VERB I-VERB B-PRON B-ADV;let's get to ge ther and make this whole world be lieve us huh;1-8 1-8 0-16 1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 0 1 0;B-ADP B-ADJ B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN;at my a rraign ment scream in';0-16 1-16 0-16 1-8 0-8 1-8 0-16
 1 1 1 1 1 1 1 0 0 1 0 0 1 1 1 0;B-DET B-PRON B-NOUN B-VERB B-VERB B-NOUN B-CCONJ B-NOUN I-NOUN I-NOUN I-NOUN B-ADP I-ADP B-PRON B-ADV I-ADV;all us blacks got is sports and en ter tain ment un til we e ven;1-8 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8 0-16
 1 0 1 1 1 1 1 0;B-VERB I-VERB B-ADV B-ADV B-ADP B-PRON B-VERB I-VERB;thie vin' as long as i'm brea thin';1-8 0-16 0-32 1-16 0-16 1-8 1-8 0-16
 1 1 1 1 1 1 0 1 0 1 1 1 0;B-VERB B-VERB B-DET B-NOUN B-DET B-ADJ I-ADJ B-NOUN I-NOUN B-NOUN B-PRON B-ADV I-ADV;can't knock the way a ni gga ea tin' fuck you e ven;1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8 0-8 1-8 0-8
 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-VERB B-PRON B-ADJ B-NOUN B-ADV B-VERB B-PRON B-VERB B-PRON;you could have it your way how do you want it;1-16 0-16 1-16 0-16 1-8 0-8 1-16 0-16 0-16 1-16 0-16
-1 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-ADV B-ADV B-DET B-NOUN B-PART B-CCONJ B-VERB B-PRON B-VERB B-PART B-ADP B-PRON;you gon' back that thing up or should i push up on it;1-16 0-16 1-12 1-12 1-12 1-16 0-16 1-16 0-16 1-16 0-8 1-16 0-16
+1 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-ADV B-ADV B-DET B-NOUN B-PART B-CCONJ B-VERB B-PRON B-VERB B-PART B-ADP B-PRON;you gon' back that thing up or should i push up on it;1-16 0-16 1-16 1-16 1-16 1-16 0-16 1-16 0-16 1-16 0-8 1-16 0-16
 1 0 0 1 0 1 1 1 1 1 1 1 1 0;B-NOUN I-NOUN I-NOUN B-ADJ I-ADJ B-INTJ I-INTJ B-INTJ B-VERB B-ADP B-DET B-ADJ B-NOUN I-NOUN;tem per ature ri sin' o k let's go to the next le vel;1-16 0-16 0-16 1-8 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8 1-16 0-8
 1 1 1 1 1 1 1 1 1 0;B-NOUN B-NOUN B-NOUN B-VERB B-ADJ B-ADP B-DET B-NOUN B-NOUN I-NOUN;dance floor jam packed hot as a tea ke ttle;1-8 1-8 1-8 1-8 1-16 0-16 0-16 1-8 1-32 0-32
 1 1 1 1 1 1 1 1 0 1 1 0;B-PRON B-VERB B-PRON B-PART B-ADP B-PRON B-ADV B-VERB I-VERB B-ADJ B-ADJ I-ADJ;i break it down for you now ba by it's sim ple;0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 0-16 1-8 1-16
@@ -800,7 +800,7 @@
 1 1 1 1 1 1 1;B-VERB B-ADJ B-ADJ B-NOUN B-CCONJ B-VERB B-ADJ;grab your back street and get loud;1-8 0-16 1-8 1-8 0-16 1-8 1-4
 1 0 1 1 1 0;B-NOUN I-NOUN B-NOUN B-ADP B-NOUN I-NOUN;blow in' doors off hing es;1-16 0-16 1-8 0-8 1-8 0-8
 1 1 1 1 1 0;B-VERB B-PRON B-ADP B-DET B-NOUN I-NOUN;grab you with the pinch ers;1-16 0-16 1-16 0-16 1-8 0-8
-1 1 1 1 0 0 1 0;B-CCONJ B-INTJ B-PRON B-VERB I-VERB B-VERB I-VERB I-VERB;and no i di dn't re ti re;0-16 1-8 0-16 1-24 0-24 0-24 1-8 0-8
+1 1 1 1 0 0 1 0;B-CCONJ B-INTJ B-PRON B-VERB I-VERB B-VERB I-VERB I-VERB;and no i di dn't re ti re;0-16 1-8 0-16 1-32 0-32 0-32 1-8 0-8
 1 1 1 1 1 1 1 0 1 1 0;B-PROPN B-VERB B-PRON B-PART B-ADP B-DET B-ADJ I-ADJ B-NOUN B-NOUN I-NOUN;i'll snatch you up with the nee dle nose pli ers;0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8 0-8
 1 1 0 0 1 1 0 0;B-ADP B-NOUN I-NOUN I-NOUN B-ADP B-PROPN I-PROPN I-PROPN;like mu tu al of o ma ha;1-8 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 1 1;B-VERB B-DET B-ADJ B-NOUN;got the ill boat;0-16 1-16 0-16 1-16
@@ -1124,7 +1124,7 @@
 1 0 1 0 1 1 1 1 1 1 1 1 1;B-VERB B-NOUN I-NOUN I-NOUN B-NOUN B-PROPN B-VERB B-PRON B-ADV B-PART B-VERB B-DET B-NOUN;pay a tten tion boy i'll teach you how to do this shit;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16
 1 1 1 1 0 1 1 1 1 0 1 0 1 0;B-PRON B-VERB B-DET B-ADJ I-ADJ B-PROPN B-NOUN B-DET B-ADJ I-ADJ B-PROPN B-PROPN I-PROPN I-PROPN;you mix a li ttle goose wit a li ttle dom per ig non;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8
 1 1 1 0 1 0 0 1 1 1 1 1 1 0 1;B-CCONJ B-DET B-ADJ I-ADJ B-PROPN I-PROPN I-PROPN B-PRON B-VERB B-PRON B-VERB B-PART B-VERB I-VERB B-PART;and a li ttle he nne ssy you know we fin to ca rry on;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 0 1 1 1 0 1 1 1 1 0 1 1 1;B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-ADP B-DET B-NOUN B-VERB I-VERB B-PART B-VERB B-ADJ;ha llin' at these shor ties in the club try in' to get right;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-24 0-24 0-24 1-8 0-8
+1 0 1 1 1 0 1 1 1 1 0 1 1 1;B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-ADP B-DET B-NOUN B-VERB I-VERB B-PART B-VERB B-ADJ;ha llin' at these shor ties in the club try in' to get right;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-32 0-32 0-32 1-8 0-8
 1 1 1 1 1 1 1 1 1 1 1 0;B-PRON B-VERB B-VERB B-ADV B-ADP B-DET B-NOUN B-ADP B-PRON B-VERB B-NOUN I-NOUN;we gon be up in this bitch till we break day light;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 0-8
 1 1 1 1 0 1 1 1 1 0;B-PRON B-VERB B-PRON B-VERB I-VERB B-VERB B-PART B-NOUN B-NOUN I-NOUN;you see me shin in' lit up wit dia monds;0-8 1-8 0-8 1-8 0-16 0-16 1-8 0-8 1-8 0-16
 1 1 1 1 0;B-ADP B-PRON B-VERB B-ADJ I-ADJ;'cause i stay grind in';0-16 1-8 0-8 1-8 0-8
@@ -1234,12 +1234,12 @@
 1 0 1 0 1 1 1 0 1 0 1;B-ADV I-ADV B-VERB I-VERB B-CCONJ B-PRON B-ADV B-VERB I-VERB I-VERB B-PRON;ni gga's cree pin' and you still de fen din' him;1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 0 1 0;B-ADV B-PROPN I-PROPN B-VERB B-ADV I-ADV B-ADJ I-ADJ;now lau ryn is on ly hu man;1-4 1-8 1-8 0-16 1-8 0-16 1-8 1-8
 1 1 1 1 0 1 1 1 1 0 1 0 0;B-ADV B-VERB B-PRON B-VERB I-VERB B-VERB B-ADP B-DET B-ADJ B-NOUN I-NOUN I-NOUN I-NOUN;don't think i ha ven't been through the same pre di ca ment;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 1 1 0 1 1 1 1 1 1 0 1 0 1 1 0 1;B-VERB B-PRON B-VERB B-ADP I-ADP B-ADJ B-NOUN B-ADP B-DET B-NUM I-NUM B-NOUN I-NOUN B-ADP B-ADV I-ADV B-VERB;let it sit in side your head like a mill ion wo men in phi lly been;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-12 0-12 0-12 1-16 0-16 1-16 0-16 1-8
+1 1 1 0 1 1 1 1 1 1 0 1 0 1 1 0 1;B-VERB B-PRON B-VERB B-ADP I-ADP B-ADJ B-NOUN B-ADP B-DET B-NUM I-NUM B-NOUN I-NOUN B-ADP B-ADV I-ADV B-VERB;let it sit in side your head like a mill ion wo men in phi lly been;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 1 1 0 1 1 1;B-ADJ B-ADJ I-ADJ B-ADV B-NOUN B-VERB B-ADJ B-NOUN B-ADP I-ADP B-ADJ B-ADP;it's si lly when girls sell their souls be cause it's in;0-16 1-16 0-16 0-16 1-8 1-16 0-16 1-8 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 0 0 1 0;B-VERB B-ADP B-NOUN B-PRON B-VERB B-ADP B-NOUN B-NOUN B-ADP B-PROPN I-PROPN I-PROPN I-PROPN;look at what you be in hair weaves like eur o pe ans;1-16 0-16 1-16 0-16 1-16 0-8 0-16 1-8 0-16 1-16 0-16 1-16 0-8
-1 1 1 1 0 1 0;B-ADJ B-NOUN B-PART B-PART B-PROPN I-PROPN I-PROPN;fake nails up out ko re ans;1-12 1-12 0-12 1-16 0-16 1-16 0-16
+1 1 1 1 0 1 0;B-ADJ B-NOUN B-PART B-PART B-PROPN I-PROPN I-PROPN;fake nails up out ko re ans;1-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 0 1;B-VERB B-ADV I-ADV;come a gain;1-16 0-16 1-4
-1 1 0 1 1 1 0 0 0 1 1 1;B-DET B-ADJ I-ADJ B-NOUN B-VERB B-VERB I-VERB I-VERB I-VERB B-ADP B-DET B-NOUN;the se cond verse is de di ca ted to the men;0-16 1-16 0-16 1-8 0-24 1-24 0-24 1-16 0-8 1-32 0-32 1-16
+1 1 0 1 1 1 0 0 0 1 1 1;B-DET B-ADJ I-ADJ B-NOUN B-VERB B-VERB I-VERB I-VERB I-VERB B-ADP B-DET B-NOUN;the se cond verse is de di ca ted to the men;0-16 1-16 0-16 1-8 0-32 1-32 0-32 1-16 0-8 1-32 0-32 1-16
 1 0 1 1 1 1 1 1 1 1 1 1 0;B-ADV B-ADJ I-ADJ B-ADP B-ADJ B-NOUN B-CCONJ B-ADJ B-PROPN B-ADP B-ADJ B-NOUN I-NOUN;more con cerned with his rims and his tims than his wo men;1-16 0-16 1-8 1-32 0-32 1-8 1-16 0-16 1-8 1-16 0-16 1-16 1-8
 1 1 1 1 1 1 1 1 1 1 0 0;B-PRON B-CCONJ B-ADJ B-NOUN B-VERB B-ADP B-DET B-NOUN B-ADP B-NOUN I-NOUN I-NOUN;him and his men come in the club like hoo li gans;1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 0 1 1 0 1 1 1 1 1;B-ADV B-VERB B-NOUN B-PRON B-VERB I-VERB B-ADJ I-ADJ B-NOUN B-ADP B-PRON B-VERB B-NOUN;don't care who they o ffend po ppin' game like you got yen;0-16 1-8 0-16 1-16 0-16 1-8 1-16 0-16 1-16 1-8 1-8 0-16 1-16
@@ -1263,7 +1263,7 @@
 1 1 1 1 1 1 1 1 1 1 1 0;B-PRON B-VERB B-ADP B-PRON B-VERB B-PRON B-VERB B-ADP B-ADV B-PRON B-ADV I-ADV;you think that it is it is if not it is n't;0-16 1-8 1-16 0-16 1-8 0-16 1-8 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 0 1 1 0 1 1 1 1 0 1;B-NOUN B-ADP B-DET B-NOUN I-NOUN B-ADJ B-NOUN I-NOUN B-ADP B-VERB B-ADJ B-NOUN I-NOUN B-PART;race for the bor der my daugh ter 'cause beats you're bang in' out;1-8 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16
 1 1 0 1 1 1 1 1 1 1 1 1 0 1;B-NOUN B-VERB I-VERB B-NOUN B-ADP B-DET B-NOUN B-ADV B-NUM B-NOUN B-ADP B-ADJ I-ADJ B-PART;jeeps ro ckin' beats in the streets when there's time for hang in' out;1-8 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16
-1 0 1 1 0 1 1 1 0 0 1 1 1;B-VERB I-VERB B-CCONJ B-ADV I-ADV B-VERB B-DET B-NOUN I-NOUN B-ADP I-ADP B-DET B-ADJ;ga ther or ra ther form a cir cle a round a loud;1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-8
+1 0 1 1 0 1 1 1 0 0 1 1 1;B-VERB I-VERB B-CCONJ B-ADV I-ADV B-VERB B-DET B-NOUN I-NOUN B-ADP I-ADP B-DET B-ADJ;ga ther or ra ther form a cir cle a round a loud;1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-8
 1 1 1 0 1 1 0 1 1 0 1 0 1 1 1;B-ADP B-DET B-NOUN I-NOUN B-CCONJ B-NOUN I-NOUN B-VERB B-ADV I-ADV B-ADV I-ADV B-VERB B-DET B-NOUN;'cause the bro thers or o thers could ne ver e ver rock a crowd;1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 0 1 1 1 1;B-VERB B-PRON B-ADP I-ADP B-NOUN B-VERB I-VERB B-PART B-ADP B-DET B-NOUN;is it be cause he's ru nnin' off with the mouth;1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8
 1 1 1 1 0 1 0 1 0 1 1 1 0 1;B-CCONJ B-VERB B-PRON B-ADV I-ADV B-ADV I-ADV B-VERB I-VERB B-VERB B-DET B-ADJ I-ADJ B-NOUN;or was he rea lly clear ly try in' play a ni gga out;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
@@ -1346,7 +1346,7 @@
 1 1 1 0 0 1 1 0 1 1 1 1 1 0;B-VERB B-PRON B-VERB I-VERB I-VERB B-ADP B-VERB I-VERB B-ADJ B-DET B-NOUN B-VERB B-ADJ I-ADJ;see i spe cia lize in ma kin' all the girls get na ked;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16
 1 1 1 1 1 1 1 1 0 1;B-ADV B-VERB B-ADJ B-NOUN B-DET B-ADP B-PRON B-VERB B-ADV I-ADV;so bring your friends all of y'all come in side;0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 0 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN B-NOUN I-NOUN B-ADV B-ADV B-ADV B-VERB B-ADJ;we got a world pre miere right here now get live;0-16 1-16 0-16 1-8 0-16 1-8 1-8 1-8 0-16 1-8 1-8
-1 1 1 1 1 0 1 1 1 1 1 0;B-ADV B-ADV B-VERB B-DET B-NOUN I-NOUN B-VERB B-PRON B-PART B-DET B-ADJ I-ADJ;so don't change the di zzle turn it up a li ttle;1-12 1-12 1-12 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
+1 1 1 1 1 0 1 1 1 1 1 0;B-ADV B-ADV B-VERB B-DET B-NOUN I-NOUN B-VERB B-PRON B-PART B-DET B-ADJ I-ADJ;so don't change the di zzle turn it up a li ttle;1-16 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 0 1 1 1 1 1 1 0;B-PRON B-VERB B-DET B-NOUN I-NOUN B-NOUN B-ADJ B-ADP B-ADJ B-NOUN B-NOUN I-NOUN;i got a li vin' room full of fine dime bri zzles;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 1-16 0-16
 1 0 1 1 1 0 1 1 0 1 1 1 0;B-VERB I-VERB B-ADP B-DET B-NOUN I-NOUN B-DET B-NOUN I-NOUN B-CCONJ B-DET B-NOUN I-NOUN;wai ting on the pi zzle the di zzle and the shi zzle;1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8
 1 1 1 1 0 1 1 0 1 1 1 0;B-NOUN B-ADP B-DET B-NOUN I-NOUN B-ADV B-NOUN I-NOUN B-ADV B-PRON B-VERB I-VERB;g's to the bi zzack now la dies here we gi zzo;1-8 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
@@ -1538,7 +1538,7 @@
 1 1 1 1 1 1 0 1 1 1 0 1 1;B-ADP B-PRON B-VERB B-ADP B-DET B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-ADP B-NOUN;as i walk through the va lley of the sha dow of death;1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16
 1 1 1 1 1 1 1 1 1 0 0 1 1 0 1;B-PRON B-VERB B-DET B-NOUN B-ADP B-ADJ B-NOUN B-CCONJ B-VERB I-VERB I-VERB B-NOUN B-VERB I-VERB B-VERB;i take a look at my life and re a lize there's nu ttin' left;0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16 1-16
 1 1 1 1 0 1 1 0 1 1;B-ADP B-ADJ B-VERB B-VERB I-VERB B-CCONJ B-VERB I-VERB B-ADV B-ADV;'cause i've been blas tin' and laugh in' so long;0-16 1-8 1-8 1-16 0-16 0-16 1-8 0-16 0-16 1-8
-1 1 0 1 1 0 1 1 1 1 1 1;B-ADP B-ADV I-ADV B-ADJ B-NOUN I-NOUN B-VERB B-ADP B-ADJ B-NOUN B-VERB B-VERB;that e ven my ma ma thinks that my mind is gone;1-16 1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
+1 1 0 1 1 0 1 1 1 1 1 1;B-ADP B-ADV I-ADV B-ADJ B-NOUN I-NOUN B-VERB B-ADP B-ADJ B-NOUN B-VERB B-VERB;that e ven my ma ma thinks that my mind is gone;1-16 1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 0 1 1 1 1 1 0 0 1 1;B-CCONJ B-PRON B-VERB B-ADV I-ADV B-VERB B-DET B-NOUN B-ADJ B-INTJ I-INTJ B-VERB I-VERB B-PRON;but i ain't ne ver crossed a man that di dn't de serve it;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16 0-16 1-16 0-16
 1 1 1 0 1 1 1 1 1 1 0 1 1;B-PRON B-VERB B-VERB I-VERB B-ADP B-DET B-NOUN B-PRON B-VERB B-INTJ B-ADJ I-ADJ B-ADP;me be trea ted like a punk you know that's un heard of;1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8 1-16 0-16 1-8 1-16
 1 1 0 1 1 1 1 0 1 1 1 1 0;B-PRON B-ADV I-ADV B-VERB B-ADV B-PRON B-VERB I-VERB B-CCONJ B-ADV B-PRON B-VERB I-VERB;you be tter watch how you tal kin' and where you wal kin';0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16
@@ -1669,9 +1669,9 @@
 1 1 1 1 1 1 1 0 1 0;B-PRON B-VERB B-PRON B-VERB B-PART B-ADP B-PROPN I-PROPN B-PROPN I-PROPN;i got it locked up like lind say lo han;0-16 1-16 0-16 1-8 1-8 1-8 1-16 0-16 1-8 0-8
 1 1 1 1 1 1 1 1 1 1;B-VERB B-ADP B-DET B-NOUN B-CCONJ B-ADP B-PRON B-ADV B-VERB B-PRON;reach for the stars and if you don't grab them;1-8 1-16 0-16 1-4 0-16 1-16 0-16 1-8 1-8 0-16
 1 1 1 1 1 1 1 1 1;B-ADP B-ADJ B-PRON B-VERB B-ADP B-NOUN B-ADP B-DET B-NOUN;at least you fall on top of the world;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-4
-1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1;B-VERB B-ADP I-ADP B-PRON B-ADP B-ADP B-PRON B-VERB B-PRON B-PROPN B-VERB B-ADP B-NOUN B-ADP B-ADJ B-NOUN;think a bout it 'cause if you slip i'm gon' fall on top of yo girl;1-16 0-16 1-16 0-8 0-16 1-8 1-8 1-8 0-16 1-8 1-16 0-16 1-12 0-12 0-12 1-4
+1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1;B-VERB B-ADP I-ADP B-PRON B-ADP B-ADP B-PRON B-VERB B-PRON B-PROPN B-VERB B-ADP B-NOUN B-ADP B-ADJ B-NOUN;think a bout it 'cause if you slip i'm gon' fall on top of yo girl;1-16 0-16 1-16 0-8 0-16 1-8 1-8 1-8 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-4
 1 1 0 1 1 1 1 1 1 0 1 0 1 0 1 0 1 1 1 1 1 0;B-NOUN B-PRON B-VERB I-VERB B-ADP B-VERB B-ADJ B-CCONJ B-PRON B-VERB I-VERB I-VERB B-NOUN I-NOUN B-NOUN I-NOUN B-CCONJ B-PRON B-VERB B-DET B-ADJ I-ADJ;what i'm in volved with is deep and it a maz es ba by ba by and it ain't no se cret;0-16 1-16 0-16 1-8 0-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8 0-16 1-8 0-16 1-16 0-16 1-8 1-8 1-8 1-8
-1 1 0 1 1 0 1 1 1 0 1 0 0 1 0 1 0 1 0 1 1 0;B-ADJ B-NOUN I-NOUN B-ADP B-PROPN I-PROPN B-CCONJ B-PRON B-DET B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-ADJ I-ADJ B-NOUN I-NOUN B-ADP B-PROPN I-PROPN;my fam ily from cu ba but i'm an a mer i can i dol ge ttin' mo ney like sea crest;0-16 1-12 0-12 0-12 1-8 0-16 0-16 1-16 0-16 1-8 1-12 0-12 0-12 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16
+1 1 0 1 1 0 1 1 1 0 1 0 0 1 0 1 0 1 0 1 1 0;B-ADJ B-NOUN I-NOUN B-ADP B-PROPN I-PROPN B-CCONJ B-PRON B-DET B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-ADJ I-ADJ B-NOUN I-NOUN B-ADP B-PROPN I-PROPN;my fam ily from cu ba but i'm an a mer i can i dol ge ttin' mo ney like sea crest;0-16 1-16 0-16 0-16 1-8 0-16 0-16 1-16 0-16 1-8 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16
 1 1 1 0 1 1 1 1 0 1 1;B-NOUN B-VERB B-VERB I-VERB B-ADP B-DET B-NOUN B-VERB I-VERB B-ADJ B-NOUN;|i was wal king down the street ro cking my beat;1-4 1-4 1-16 0-16 1-16 0-16 1-16 1-8 0-16 1-8 1-16
 1 0 1 1 1 1 0 1 1;B-VERB I-VERB B-ADJ B-NOUN B-CCONJ B-VERB I-VERB B-ADJ B-NOUN;cla pping my hands and stom ping my feet;1-16 0-16 0-16 1-8 1-8 1-16 0-16 0-16 1-16
 1 1 1 1 0 1 0 1 1 1 0 1;B-PRON B-VERB B-DET B-ADJ I-ADJ B-NOUN I-NOUN B-ADV B-ADJ B-CCONJ B-ADJ I-ADJ;i saw a li ttle la dy so neat and pe tite;1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 0-16 1-16
@@ -1865,7 +1865,7 @@
 0 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1;B-ADP I-ADP B-PRON B-VERB B-PRON B-PRON B-VERB B-ADJ B-NOUN B-CCONJ B-VERB I-VERB I-VERB B-DET B-ADJ B-NOUN;be fore i had it i closed my eyes and i ma gined the good life;0-16 1-16 0-16 1-8 0-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16 0-16 1-8 1-8
 1 1 0 1 1 1;B-INTJ B-PRON B-ADP I-ADP B-DET B-NOUN;yo it's a bout that time;1-8 1-16 0-16 1-16 1-8 1-8
 1 1 1 1 1 0 1 1 1;B-PART B-VERB B-PART B-DET B-NOUN I-NOUN B-CCONJ B-DET B-NOUN;to bring forth the rhy thm and the rhyme;0-16 1-8 1-8 0-16 1-16 0-16 1-16 0-16 1-8
-1 1 1 1 1 1 1;B-PRON B-DET B-NOUN B-PRON B-ADV B-VERB B-ADJ;i'm a get mine so get yours;1-12 0-12 1-8 1-8 0-16 1-8 1-8
+1 1 1 1 1 1 1;B-PRON B-DET B-NOUN B-PRON B-ADV B-VERB B-ADJ;i'm a get mine so get yours;1-16 0-16 1-8 1-8 0-16 1-8 1-8
 1 1 0 1 1 1 0 1 1 1;B-PRON B-VERB I-VERB B-VERB B-NOUN B-NOUN I-NOUN B-PART B-ADJ B-NOUN;i wa nna see sweat co min' out your pores;0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 0 1;B-ADP B-DET B-NOUN B-NOUN B-VERB B-ADV B-PRON B-VERB I-VERB B-DET;on the house tip is how i'm swing in' this;1-8 0-16 1-8 1-8 0-16 1-8 0-16 1-16 0-16 0-8
 1 0 1 1 1 1 1 1 0 1;B-ADV I-ADV B-VERB B-NOUN B-NOUN B-PRON B-VERB B-VERB I-VERB B-DET;stric tly hip hop boy i ain't sing in' this;1-8 0-16 1-8 1-8 1-8 0-16 1-8 1-16 0-16 0-16
@@ -1889,17 +1889,17 @@
 1 0 1 1 0;B-NOUN I-NOUN B-VERB B-ADJ I-ADJ;bo dy is heal thy;1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 0;B-ADJ B-NOUN B-VERB B-PRON B-ADJ I-ADJ;my rhymes make me weal thy;0-16 1-8 1-8 0-16 1-8 1-8
 1 1 1 0 1 1 1;B-CCONJ B-DET B-NOUN I-NOUN B-NOUN B-VERB B-PRON;and the fun ky bunch helps me;1-16 0-16 1-16 0-16 1-8 1-8 1-8
-1 1 1 1 1 1 1 0 0 0 1 0;B-PART B-VERB B-PRON B-DET B-NOUN B-ADP B-DET B-NOUN I-NOUN I-NOUN I-NOUN I-NOUN;to bring you a show with no in tox i ca tion;0-32 1-8 1-8 0-16 1-8 0-16 1-8 1-12 1-12 0-12 1-8 0-8
+1 1 1 1 1 1 1 0 0 0 1 0;B-PART B-VERB B-PRON B-DET B-NOUN B-ADP B-DET B-NOUN I-NOUN I-NOUN I-NOUN I-NOUN;to bring you a show with no in tox i ca tion;0-32 1-8 1-8 0-16 1-8 0-16 1-8 1-16 1-16 0-16 1-8 0-8
 1 1 1 1 0 1 0;B-VERB B-ADP B-VERB B-DET B-NOUN I-NOUN I-NOUN;come on feel the vi bra tion;1-16 0-8 1-8 0-16 1-8 1-8 0-8
 1 1 1 1 1 1 1 1 1 1;B-ADV B-DET B-NOUN B-VERB B-VERB B-ADP B-PRON B-PART B-VERB B-PART;now the time has come for you to get up;1-8 0-16 1-8 0-16 1-8 0-16 1-16 0-16 1-16 0-16
-1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-NOUN B-VERB B-PRON B-VERB B-PART B-CCONJ B-INTJ B-PRON B-VERB B-VERB B-PART;the rest had you fed up but yo i won't let up;0-16 1-12 1-12 0-12 1-16 0-16 0-16 1-16 0-16 1-8 1-16 0-8
+1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-NOUN B-VERB B-PRON B-VERB B-PART B-CCONJ B-INTJ B-PRON B-VERB B-VERB B-PART;the rest had you fed up but yo i won't let up;0-16 1-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8 1-16 0-8
 1 1 1 0 1 1 1 0 1 1;B-ADP B-DET B-NOUN I-NOUN B-CCONJ B-NOUN B-NOUN B-VERB I-VERB B-ADP;on the rhy thm and rhyme that's de signed to;1-8 0-16 1-16 0-16 0-16 1-8 1-8 0-16 1-8 0-16
 1 1 0 1 1 1 1 1 0 1 1;B-VERB B-ADJ B-NOUN I-NOUN B-NOUN B-ADP B-NOUN B-PRON B-VERB I-VERB B-ADP;make your be hind move to what i'm in clined to;1-16 0-16 0-16 1-8 0-16 0-16 1-16 0-16 0-16 1-8 0-8
 1 1 1 1 1 1;B-ADJ B-NOUN B-VERB B-DET B-NOUN B-PART;pure hip hop no sell out;1-8 1-8 1-8 1-8 1-16 0-8
 1 1 1 1 1 1 1 1;B-ADP B-PRON B-VERB B-ADP B-PRON B-PART B-VERB B-PRON;if you ain't in it to win it;0-32 0-16 1-8 1-16 0-16 0-16 1-16 0-16
 1 1 1 1 1;B-ADV B-VERB B-DET B-NOUN B-PART;then get the hell out;0-16 1-16 0-16 1-16 0-8
 1 0 1 1 1 1;B-PRON B-VERB I-VERB B-PRON B-PART B-VERB;i co mmand you to dance;1-8 0-16 1-8 0-16 0-16 1-8
-1 1 0 1 0 0 1 0;B-PRON B-VERB I-VERB B-VERB B-NOUN I-NOUN I-NOUN I-NOUN;i wa nna see mo ti va tion;0-16 1-16 0-16 1-12 0-12 0-12 1-8 0-8
+1 1 0 1 0 0 1 0;B-PRON B-VERB I-VERB B-VERB B-NOUN I-NOUN I-NOUN I-NOUN;i wa nna see mo ti va tion;0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-8
 1 1 1 1 1 0 1 0;B-VERB B-PART B-ADV B-VERB B-DET B-NOUN I-NOUN I-NOUN;come on now feel the vi bra tion;1-16 0-8 1-8 1-8 0-16 1-8 1-8 0-8
 1 1 1 0 1 1 1;B-PRON B-VERB B-ADJ I-ADJ B-ADP B-DET B-NOUN;i was boun cin' through the club;1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 0 1;B-PRON B-VERB B-DET B-NOUN B-PRON B-VERB I-VERB B-NOUN;she love the way i di tty bop;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
@@ -1937,7 +1937,7 @@
 1 1 1 1 1 1 0 1 1 1 1;B-CCONJ B-PRON B-VERB B-PRON B-ADP B-VERB I-VERB B-ADP B-PRON B-VERB B-PRON;but you know it ain't tri ckin' if you got it;1-16 0-16 1-16 0-16 1-16 1-16 0-16 1-16 1-8 1-8 1-8
 1 1 1 1 1 0 1 1 1 1;B-PRON B-VERB B-PRON B-VERB B-ADJ I-ADJ B-ADP B-PRON B-ADV B-ADJ;you know we ain't fuck in' if you not thick;0-16 1-16 0-16 1-16 1-16 0-16 1-16 1-8 1-8 1-16
 1 1 1 1 1 1 1 1 1 1 1 1;B-CCONJ B-PROPN B-VERB B-ADJ B-NOUN B-PART B-ADP B-PRON B-VERB B-PRON B-ADJ B-NOUN;and i'll cool your ass down if you think you hot shit;0-16 1-8 1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8 1-8
-1 1 0 1 1 1 1 1 1 1 1;B-ADV B-PROPN I-PROPN B-VERB B-DET B-PRON B-VERB B-PRON B-NUM B-NUM B-NUM;so ro lex watch this i do it four five six;0-16 1-16 0-8 1-8 0-16 1-24 0-24 0-24 1-8 1-8 1-8
+1 1 0 1 1 1 1 1 1 1 1;B-ADV B-PROPN I-PROPN B-VERB B-DET B-PRON B-VERB B-PRON B-NUM B-NUM B-NUM;so ro lex watch this i do it four five six;0-16 1-16 0-8 1-8 0-16 1-32 0-32 0-32 1-8 1-8 1-8
 1 1 1 1 1 1 1 1;B-ADJ B-NOUN B-NOUN B-VERB B-PROPN B-ADJ B-NOUN B-NOUN;my click clack go da black po pip;1-8 1-8 1-8 1-16 0-16 1-8 1-8 1-8
 1 1 1 1 1 1 1 1;B-CCONJ B-ADV B-ADP B-PRON B-PRON B-VERB B-DET B-NOUN;and just like it i blow that shit;0-8 1-8 1-8 1-8 1-8 1-8 1-8 1-8
 1 1 1 1 1 1 1 1 1;B-ADP B-NOUN B-PRON B-DET B-NOUN B-ADP B-VERB B-NOUN B-PROPN;'cause bitch i'm the bomb like tick tick bi;0-8 1-8 1-16 0-16 1-8 0-8 1-8 1-8 0-8
@@ -1963,12 +1963,12 @@
 1 1 1 1 1 0 1 0 1 1 1 0 1;B-PRON B-VERB B-ADJ B-NOUN B-VERB I-VERB B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-NOUN;i got my mouth loo kin' some thin' like a dis co ball;0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 0 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN I-NOUN B-CCONJ B-DET B-NOUN B-DET B-NOUN B-NOUN;i got the dia monds and the ice all hand set;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-8 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-ADP B-DET B-ADJ B-NOUN B-ADP B-PRON B-VERB B-DET B-ADJ B-NOUN;i might 'cause a cold front if i take a deep breath;1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8 1-8
-1 1 1 0 1 1 1 0 1 0 1 0 0 1;B-ADJ B-NOUN B-VERB I-VERB B-ADP B-NOUN B-VERB I-VERB B-ADP B-NOUN I-NOUN I-NOUN I-NOUN B-NOUN;my teeth glea min' like i'm chew in' on a lu mi num foil;0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-8
+1 1 1 0 1 1 1 0 1 0 1 0 0 1;B-ADJ B-NOUN B-VERB I-VERB B-ADP B-NOUN B-VERB I-VERB B-ADP B-NOUN I-NOUN I-NOUN I-NOUN B-NOUN;my teeth glea min' like i'm chew in' on a lu mi num foil;0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-8
 1 0 1 0 1 1 1 0 1 0 1 1 1 1 1;B-VERB I-VERB B-NOUN I-NOUN B-ADP B-ADJ B-NOUN I-NOUN B-VERB I-VERB B-ADP B-DET B-NOUN B-NOUN B-NOUN;smi lin' show in' off my dia monds si ppin' on some poe tin oil;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-32 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 0 1 1 1 1 1 1 1 1;B-PRON B-VERB B-ADJ B-NOUN I-NOUN B-ADV B-ADJ B-NOUN B-VERB B-CCONJ B-VERB B-DET B-NOUN;i put my mo ney where my mouth is and bought a grill;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8 0-16 1-16 0-16 1-8
 1 0 1 0 1 0 1 1 1 1 1 1 1 1;B-NUM I-NUM B-NOUN I-NOUN B-NUM I-NUM B-NOUN B-VERB B-PRON B-VERB B-PRON B-ADV B-ADP B-ADJ;twen ty ka rats thir ty stacks let 'em know i'm so fo real;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-32 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 0 1 0 1 1 1 0 1 0 1 1 1;B-ADJ B-NOUN I-NOUN I-NOUN I-NOUN B-VERB B-PRON B-NUM I-NUM B-NOUN I-NOUN B-NOUN B-NOUN B-NOUN;my mo ti va tion is them thir ty poin ters v v s;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16
-1 1 0 0 1 1 1 1 1 0 1 0 0 0 1;B-DET B-NOUN I-NOUN I-NOUN B-ADP B-ADJ B-NOUN B-NOUN B-ADV I-ADV B-VERB I-VERB I-VERB B-NOUN I-NOUN;the fur ni ture in my mouth piece sim ply sym bo lize suc cess;0-16 1-24 0-24 0-24 1-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
+1 1 0 0 1 1 1 1 1 0 1 0 0 0 1;B-DET B-NOUN I-NOUN I-NOUN B-ADP B-ADJ B-NOUN B-NOUN B-ADV I-ADV B-VERB I-VERB I-VERB B-NOUN I-NOUN;the fur ni ture in my mouth piece sim ply sym bo lize suc cess;0-16 1-32 0-32 0-32 1-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1 0 0 1 0;B-PRON B-VERB B-DET B-NOUN B-NOUN B-CCONJ B-NOUN B-NOUN B-NOUN B-NOUN I-NOUN I-NOUN I-NOUN;i got the wrist wear and neck wear thats cap ti va tin';0-16 1-16 0-16 1-16 0-8 0-16 1-16 0-8 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 1 1 1 1 1 0 1 0 0;B-CCONJ B-ADJ B-NOUN B-VERB B-ADJ B-VERB B-DET B-NOUN B-NOUN I-NOUN B-VERB I-VERB I-VERB;but its what smiles that got these arms loo kers spec ta tin';0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16
 1 1 1 1 0 1 0 0 1 1 0 1 0;B-ADJ B-NOUN B-NOUN B-ADV I-ADV B-VERB I-VERB I-VERB B-DET B-ADJ I-ADJ B-NOUN I-NOUN;my mouth piece sim ply cer ti fied a to tal pa ckage;0-16 1-8 1-8 1-16 0-16 1-16 0-32 1-16 0-16 1-16 0-16 1-16 0-16
@@ -2043,7 +2043,7 @@
 1 1 1 1 1 1 1 1 1 1 0;B-ADJ B-CCONJ B-ADJ B-VERB B-VERB B-DET B-NOUN B-ADJ B-PRON B-VERB I-VERB;such and such will be the bass that i'm throw in';1-16 0-8 1-8 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-8
 1 0 1 1 1 1 0 1 1 1 1 0;B-VERB I-VERB B-ADP B-DET B-NOUN B-VERB I-VERB B-PRON B-PRON B-DET B-NOUN I-NOUN;tal kin' to a girl te llin' her i'm all know in';1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-8
 1 1 0 1 1 1 1 1 1;B-NOUN B-VERB I-VERB B-ADP B-DET B-NOUN B-ADP B-DET B-NOUN;she's tal kin' to the kid to the who;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16
-1 1 0 1 1 0 1 1 1 1 1 1 1 0 1;B-PRON B-VERB I-VERB B-ADV B-DET I-DET B-NOUN B-ADJ B-PRON B-VERB B-ADP B-PRON B-ADV I-ADV B-VERB;i'm te llin' here e very lie that you know that i ne ver did;0-16 1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-32 0-32 0-16 1-16 0-16 1-4
+1 1 0 1 1 0 1 1 1 1 1 1 1 0 1;B-PRON B-VERB I-VERB B-ADV B-DET I-DET B-NOUN B-ADJ B-PRON B-VERB B-ADP B-PRON B-ADV I-ADV B-VERB;i'm te llin' here e very lie that you know that i ne ver did;0-16 1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-32 0-32 0-16 1-16 0-16 1-4
 1 1 1 1 1 0 1 1 1 1 0 1 0;B-INTJ B-PRON B-ADP B-DET B-NOUN I-NOUN B-ADP B-DET B-ADJ B-ADJ I-ADJ B-NOUN I-NOUN;well me in the cor ner with a good loo kin' daugh ter;1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-8
 1 1 1 1 0 1 1 1 1 0 1 1 0;B-PRON B-VERB B-ADJ B-NOUN I-NOUN B-CCONJ B-PRON B-VERB B-ADJ I-ADJ B-PART B-PROPN I-PROPN;i dropped my dra wers and it was wel come back ko tter;0-16 1-8 1-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8 1-16 0-16
 1 1 1 0 1 1 1 1 1 0 1 0 1 1 1 0;B-PRON B-VERB B-VERB I-VERB B-PART B-DET B-NOUN B-PRON B-VERB I-VERB B-VERB I-VERB B-PART B-DET B-NOUN I-NOUN;we were cu ttin' up the rug she star ted cu ttin' up the car pet;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-8
@@ -2065,7 +2065,7 @@
 1 1 1 1 1 1 1 1 1;B-NOUN B-ADP B-NOUN B-PART B-ADP B-ADJ B-NOUN B-INTJ B-VERB;tune in turn on to my tune that's live;0-16 1-8 0-16 1-8 1-16 0-16 1-8 1-8 1-8
 1 0 1 1 1 1 1 1;B-NOUN I-NOUN B-VERB B-ADP B-NOUN B-ADP B-ADJ B-NOUN;la dies flock like fish to my line;1-16 0-16 1-8 0-8 1-8 1-16 0-16 1-4
 1 1 1 1 1 1 1 1 1 1;B-NOUN B-VERB B-DET B-ADJ B-NOUN B-PRON B-VERB B-NOUN B-ADV I-ADV;she's got a gold tooth you know she's hard core;0-16 1-16 0-16 1-8 1-8 0-16 1-16 0-16 1-8 1-8
-1 1 1 1 1 1 1 1 1 1 1 1;B-NOUN B-VERB B-PRON B-DET B-ADJ B-NOUN B-ADV B-VERB B-VERB B-PRON B-DET B-NOUN;she'll show you a good time then she'll show you the door;0-16 1-24 0-24 0-24 1-8 1-8 1-16 0-16 1-16 0-16 0-16 1-8
+1 1 1 1 1 1 1 1 1 1 1 1;B-NOUN B-VERB B-PRON B-DET B-ADJ B-NOUN B-ADV B-VERB B-VERB B-PRON B-DET B-NOUN;she'll show you a good time then she'll show you the door;0-16 1-32 0-32 0-32 1-8 1-8 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 0 1 1;B-VERB B-PART B-ADP B-ADJ B-NOUN B-PRON B-VERB I-VERB B-ADP B-NOUN;break up with your girl it en ded in tears;1-16 0-16 1-16 0-16 1-8 0-16 1-8 1-16 0-16 1-4
 1 0 1 1 1 1 1 1 1;B-PROPN I-PROPN B-PROPN B-PROPN B-VERB B-CCONJ B-VERB B-DET B-X;vin cent van gogh go and mail that ear;1-16 0-16 1-8 1-8 1-16 0-16 1-8 0-8 1-8
 1 1 1 1 1 1 0 1 1 1 1 1 1 0;B-PRON B-VERB B-PRON B-ADP B-DET B-NOUN I-NOUN B-ADP B-DET B-NOUN B-ADV B-PRON B-VERB I-VERB;i call her in the mi ddle of the night when i'm drink in';0-16 1-16 0-16 1-16 0-16 1-32 0-32 1-16 0-16 1-8 0-16 1-8 1-8 0-16
@@ -2330,7 +2330,7 @@
 1 1 1 1 0 1 1 1 1 0 1;B-ADV B-PRON B-VERB B-DET B-NOUN I-NOUN B-ADP B-ADV B-PRON B-VERB I-VERB;now i wrote this re cord for when i per form;1-16 0-16 1-8 0-8 1-16 0-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 0 1 0 0 1 0 0 1;B-ADP B-DET B-NOUN B-ADP I-ADP B-NOUN I-NOUN I-NOUN I-NOUN I-NOUN B-NOUN;from the nights in side u ni ver si ty dorm;1-16 0-16 1-8 0-8 1-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 0 1 1 1 0 1 1;B-PRON B-VERB B-NOUN B-ADP B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-PART B-VERB;i put pen to pa per with a pa per to pen;0-16 1-8 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
-1 1 1 1 1 0 1 1 1 1 1 1 0 1 1;B-ADP B-DET B-NOUN B-PRON B-VERB I-VERB B-DET B-NOUN B-ADP B-NOUN B-ADP B-NOUN I-NOUN B-CCONJ B-NOUN;for the times i'm ro ckin' the mic in front of wo men and men;1-16 0-16 1-16 0-16 1-24 0-24 1-24 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16
+1 1 1 1 1 0 1 1 1 1 1 1 0 1 1;B-ADP B-DET B-NOUN B-PRON B-VERB I-VERB B-DET B-NOUN B-ADP B-NOUN B-ADP B-NOUN I-NOUN B-CCONJ B-NOUN;for the times i'm ro ckin' the mic in front of wo men and men;1-16 0-16 1-16 0-16 1-32 0-32 1-32 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16
 1 1 1 1 1 0 1 1 1 0;B-PRON B-VERB B-ADJ B-INTJ B-PROPN I-PROPN B-ADJ B-ADP B-PROPN I-PROPN;i get raw like e ddie rough like fre ddy;0-16 1-8 1-8 1-8 1-16 0-16 1-8 1-8 1-16 0-16
 1 0 1 1 1 0 1 0 1 0 1 0 1 0;B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-VERB I-VERB B-NOUN B-ADP I-ADP B-NOUN I-NOUN I-NOUN;kreu ger with a lu ger tur nin' men in to spa ghe tti;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 0 0 1 1 1 0 0 1;B-PRON B-ADP B-PROPN B-PROPN I-PROPN I-PROPN B-PART B-ADP B-PROPN I-PROPN I-PROPN B-PROPN;i'm like fats do mi no up on blue berr y hill;1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-16
@@ -2563,7 +2563,7 @@
 1 1 1 1 1 1 1 1 1;B-ADP B-ADJ B-NOUN B-VERB B-ADV B-PROPN B-VERB B-PRON B-NOUN;in my heart is where i'll keep you friend;1-8 0-16 1-8 0-16 1-16 0-16 1-8 0-16 1-8
 1 0 0 1 1 1 1 1 1 1 0 1;B-NOUN I-NOUN I-NOUN B-VERB B-PRON B-DET B-NOUN B-PRON B-VERB B-PART B-VERB I-VERB;me mor ies give me the strength i need to pro ceed;1-16 0-16 1-8 1-16 0-16 0-16 1-8 1-8 1-8 0-16 1-8 1-8
 1 1 1 1 0 1;B-NOUN B-PRON B-VERB B-PART B-VERB I-VERB;strength i need to be lieve;1-8 0-16 1-8 1-16 0-16 1-8
-1 1 1 1 1 1 0 1;B-ADJ B-NOUN B-ADJ B-PRON B-ADV B-VERB B-VERB I-VERB;my thoughts big i just can't de fine;1-8 1-8 1-12 0-12 0-12 1-8 0-16 1-4
+1 1 1 1 1 1 0 1;B-ADJ B-NOUN B-ADJ B-PRON B-ADV B-VERB B-VERB I-VERB;my thoughts big i just can't de fine;1-8 1-8 1-16 0-16 0-16 1-8 0-16 1-4
 1 1 1 1 1 1 1 1 1;B-VERB B-PRON B-VERB B-VERB B-PART B-DET B-NOUN B-ADP B-NOUN;wish i could turn back the hands of time;1-8 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1 1;B-PRON B-ADP B-DET B-NUM B-NOUN B-ADP B-ADJ B-NOUN B-CCONJ B-NOUN;us in the six shop for new clothes and kicks;1-8 1-16 0-16 1-8 1-8 0-16 1-8 1-8 0-16 1-8
 1 1 1 1 0 1;B-PRON B-CCONJ B-PRON B-VERB I-VERB B-NOUN;you and me ta kin' flicks;1-16 0-16 1-8 1-8 0-16 1-8
@@ -2875,7 +2875,7 @@
 1 1 1 1 1 1 1 1 1;B-ADV B-ADJ B-ADV B-ADV B-ADP B-PRON B-ADV B-ADV B-VERB;how high real high 'cause i'm just so fly;1-8 1-8 1-8 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 0 0 1 0 0 1 1 1;B-DET B-ADJ B-ADJ I-ADJ I-ADJ B-NOUN I-NOUN I-NOUN B-NOUN B-ADP B-NOUN;a young love a ble hu ga ble type of guy;0-16 1-8 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8
 1 1 0 0 1 1 1 1 1 1 1 0 1;B-CCONJ B-NOUN I-NOUN I-NOUN B-VERB B-ADP B-DET B-NOUN B-ADP B-DET B-ADJ I-ADJ B-NOUN;and e very thing is to the back with a li ttle slack;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8
-1 0 1 1 1 0 1 0 0 1 0 0 1 0 1;B-ADP B-ADV I-ADV B-PART B-VERB B-ADJ I-ADJ I-ADJ B-ADJ I-ADJ I-ADJ B-ADJ I-ADJ I-ADJ B-NOUN;'cause in side out is wi ggi da wi ggi da wi ggi da wack;0-16 1-16 0-8 1-16 0-16 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-8
+1 0 1 1 1 0 1 0 0 1 0 0 1 0 1;B-ADP B-ADV I-ADV B-PART B-VERB B-ADJ I-ADJ I-ADJ B-ADJ I-ADJ I-ADJ B-ADJ I-ADJ I-ADJ B-NOUN;'cause in side out is wi ggi da wi ggi da wi ggi da wack;0-16 1-16 0-8 1-16 0-16 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-8
 1 1 1 0 1 1 0 1 0 1 1 1 1 0;B-PRON B-VERB B-NOUN I-NOUN B-ADP B-NOUN I-NOUN B-VERB I-VERB B-PART B-VERB B-PRON B-NOUN I-NOUN;i come stom pin' with some thin' hum pin' to keep you jum pin';0-16 1-8 1-16 0-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16
 1 0 1 1 1 1 0 1 1 1 1 0;B-NOUN I-NOUN I-NOUN B-NOUN B-VERB B-ADJ I-ADJ B-VERB B-NOUN B-PRON B-VERB I-VERB;r and b rap is bull crap is what i'm dum pin';1-16 0-16 1-8 1-16 0-16 1-8 1-8 0-16 1-16 0-16 1-16 0-16
 1 1 0 1 0 1 1 1 1 1 1;B-ADJ B-NOUN I-NOUN B-NOUN I-NOUN B-ADP B-PROPN B-PROPN B-PRON B-DET B-DET;ain't no thin' some thin' 'bout kris kross we all that;0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8
@@ -2897,14 +2897,14 @@
 1 1 1 1 1 1 0 1 1;B-VERB B-ADP B-NOUN B-NOUN B-ADP B-VERB I-VERB B-PART B-NOUN;is that kris kross ain't co min' off wack;0-16 1-8 1-16 1-8 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 0 1 1 1;B-CCONJ B-ADP B-DET B-PROPN B-NOUN I-NOUN B-ADJ B-ADV B-VERB;and for all ya'll su ckas that don't know;0-16 0-16 1-8 1-8 1-16 0-16 0-16 1-8 1-8
 1 1 1;B-VERB B-PRON B-PART;check it out;1-16 0-16 1-4
-1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB B-X B-ADP B-DET;some of them try to rhyme but they can't rhyme like this;1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-16 0-8 0-16 1-8
-1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB B-X B-ADP B-DET;some of them try to rhyme but they can't rhyme like this;1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-16 0-8 0-16 1-8
-1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB B-X B-ADP B-DET;some of them try to rhyme but they can't rhyme like this;1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-16 0-8 0-16 1-8
-1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB;some of them try to rhyme but they can't;1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-4
-1 1 1 0 1 0 0 1 0 0 1 0 0 1 0 1 1 0;B-ADP B-PRON B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-ADJ B-NOUN I-NOUN;'cause i'm the mi ggi da mi ggi da mi ggi da mi ggi da mac da ddy;0-16 1-16 0-16 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-8 1-16 0-16
-1 0 1 0 0 1 0 0 1 0 0 1 0 1;B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-ADJ;the mi ggi da mi ggi da mi ggi da mi ggi da mac;0-16 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-8
-1 1 1 0 1 0 0 1 0 0 1 0 0 1 0 1 1 0;B-ADP B-PRON B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-ADJ B-NOUN I-NOUN;'cause i'm the mi ggi da mi ggi da mi ggi da mi ggi da mac da ddy;0-16 1-16 0-16 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-8 1-16 0-16
-1 0 1 0 0 1 0 0 1 0 0 1 0 1;B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN;the mi ggi da mi ggi da mi gi da mi gi da mac;0-16 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-24 0-24 0-24 1-8
+1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB B-X B-ADP B-DET;some of them try to rhyme but they can't rhyme like this;1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-16 0-8 0-16 1-8
+1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB B-X B-ADP B-DET;some of them try to rhyme but they can't rhyme like this;1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-16 0-8 0-16 1-8
+1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB B-X B-ADP B-DET;some of them try to rhyme but they can't rhyme like this;1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-16 0-8 0-16 1-8
+1 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-VERB B-ADP B-NOUN B-CCONJ B-PRON B-VERB;some of them try to rhyme but they can't;1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-4
+1 1 1 0 1 0 0 1 0 0 1 0 0 1 0 1 1 0;B-ADP B-PRON B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-ADJ B-NOUN I-NOUN;'cause i'm the mi ggi da mi ggi da mi ggi da mi ggi da mac da ddy;0-16 1-16 0-16 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-8 1-16 0-16
+1 0 1 0 0 1 0 0 1 0 0 1 0 1;B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-ADJ;the mi ggi da mi ggi da mi ggi da mi ggi da mac;0-16 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-8
+1 1 1 0 1 0 0 1 0 0 1 0 0 1 0 1 1 0;B-ADP B-PRON B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-ADJ B-NOUN I-NOUN;'cause i'm the mi ggi da mi ggi da mi ggi da mi ggi da mac da ddy;0-16 1-16 0-16 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-8 1-16 0-16
+1 0 1 0 0 1 0 0 1 0 0 1 0 1;B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN;the mi ggi da mi ggi da mi gi da mi gi da mac;0-16 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-8
 1 1 1 1 0;B-PRON B-VERB B-PRON B-ADJ I-ADJ;i make you wa nna;0-16 1-16 0-16 1-16 0-16
 1 0 1 1 1 1 1;B-ADJ I-ADJ B-ADP B-DET B-NUM B-NUM B-NUM;wel come to the two one four;1-16 0-16 1-16 0-16 1-8 1-8 1-8
 1 1 1 1 0;B-ADJ B-NOUN B-PROPN B-PROPN I-PROPN;big b d tex as;1-8 1-8 1-8 1-8 0-8
@@ -2986,22 +2986,22 @@
 1 1 0 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PART I-PART B-ADP B-DET B-NOUN B-ADP B-DET B-ADJ B-NOUN;she come a round for a toast to the best time;0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-PROPN B-PROPN B-NOUN B-ADV B-CCONJ B-ADV B-ADP B-DET B-NOUN B-NOUN;we l o l back and forth on the text line;0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 0 1 1 1 1 0 1 1;B-PRON B-VERB B-PRON B-VERB I-VERB B-ADP B-ADJ B-NOUN B-PRON B-VERB I-VERB B-PRON;she got me fi shin' for her love i con fess i'm;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-4
-1 0 1 1 1 1 1 1 1;B-NOUN I-NOUN B-VERB B-ADJ B-NOUN B-CCONJ B-DET B-NOUN B-X;some thin' bout her smile and the con vo;1-24 0-24 1-16 0-16 1-8 1-16 0-16 1-8 1-8
+1 0 1 1 1 1 1 1 1;B-NOUN I-NOUN B-VERB B-ADJ B-NOUN B-CCONJ B-DET B-NOUN B-X;some thin' bout her smile and the con vo;1-32 0-32 1-16 0-16 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 0 1 1;B-VERB B-PRON B-ADJ B-CCONJ B-PRON B-VERB B-VERB I-VERB B-PART B-PRON;got me high and i ain't co min' down yo;1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-8 1-8
 1 1 1 0 1 1 0 1 0 1 0;B-ADJ B-NOUN B-NOUN I-NOUN B-PART B-ADV I-ADV B-ADP B-ADJ I-ADJ I-ADJ;my heart's pum pin' out lou der than e lec tro;0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 0 1 1 0 0 1 0;B-PRON B-VERB B-PRON B-ADJ I-ADJ B-ADP B-NOUN I-NOUN B-NOUN I-NOUN I-NOUN;she got me fee lin' like mis ter ro ba to;0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8
-1 1 1 1 1 1;B-VERB B-VERB B-ADP B-ADJ B-NOUN B-NOUN;locked sunk in your bed rock;1-8 1-12 0-12 0-12 1-4 1-8
-1 1 0 1 1 1;B-NOUN B-VERB I-VERB B-ADJ B-NOUN B-NOUN;heart pum pin' your love shot;1-8 1-12 0-12 0-12 1-4 1-8
-1 1 1 1 1 1;B-VERB B-PART B-ADP B-ADJ B-ADJ B-NOUN;knocked out by your cold shot;1-8 1-12 0-12 0-12 1-4 1-8
-1 1 1 1 1 1;B-PRON B-VERB B-ADP B-ADJ B-NOUN B-NOUN;i'm stuck in your head lock;1-8 1-12 0-12 0-12 1-4 1-8
+1 1 1 1 1 1;B-VERB B-VERB B-ADP B-ADJ B-NOUN B-NOUN;locked sunk in your bed rock;1-8 1-16 0-16 0-16 1-4 1-8
+1 1 0 1 1 1;B-NOUN B-VERB I-VERB B-ADJ B-NOUN B-NOUN;heart pum pin' your love shot;1-8 1-16 0-16 0-16 1-4 1-8
+1 1 1 1 1 1;B-VERB B-PART B-ADP B-ADJ B-ADJ B-NOUN;knocked out by your cold shot;1-8 1-16 0-16 0-16 1-4 1-8
+1 1 1 1 1 1;B-PRON B-VERB B-ADP B-ADJ B-NOUN B-NOUN;i'm stuck in your head lock;1-8 1-16 0-16 0-16 1-4 1-8
 1 1 1 1;B-VERB B-VERB B-NOUN B-NOUN;can't stop won't quit;1-4 1-4 1-4 1-4
-1 0 1 1 1 1 1 1;B-VERB I-VERB B-PRON B-VERB B-VERB B-PRON B-ADP B-PRON;ma kin' me fiend give it to me;1-12 0-12 0-12 1-4 1-12 0-12 0-12 1-4
-1 1 1 1 1 1 1 1;B-PRON B-VERB B-PRON B-DET B-VERB B-NOUN B-PRON B-VERB;i want it all know what i mean;1-12 0-12 0-12 1-4 1-12 0-12 0-12 1-6
-1 1 1 1 1 1 1 0 0;B-ADJ B-NOUN B-VERB B-DET B-NOUN B-ADP B-NOUN I-NOUN I-NOUN;your love is a dose of ec sta cy;0-12 1-12 0-12 0-12 1-6 0-12 1-6 0-12 1-4
-0 1 0 1 1 1 0 1 1 1;B-ADJ I-ADJ I-ADJ B-PRON B-VERB B-VERB B-ADV I-ADV B-ADP B-PRON;a ddic ted i can't get a way from you;0-12 1-6 0-12 0-12 1-6 0-12 0-12 1-6 0-12 1-4
-0 1 0 1 1 1 1 1 1;B-VERB I-VERB I-VERB B-PRON B-VERB B-PRON B-PRON B-VERB B-PRON;a fflic ted i need it i miss it;0-12 1-6 0-12 0-12 1-6 0-12 0-12 1-6 0-12
-1 1 1 1 0 1 1 1 1;B-PRON B-VERB B-ADJ B-ADJ I-ADJ B-ADV B-ADV B-ADP B-PRON;i want your lo vin' right next to me;0-12 1-6 0-12 1-6 0-12 1-4 1-4 0-6 1-4
-1 1 1 0 1 1 1 1 1 1 0 0;B-CCONJ B-PRON B-VERB B-VERB I-VERB B-PRON B-ADP B-ADP B-ADJ B-NOUN I-NOUN I-NOUN;and i can't e rase you out of my me mo ry;0-12 1-6 0-12 0-12 1-6 0-12 1-6 0-12 1-4 1-4 0-6 1-3
+1 0 1 1 1 1 1 1;B-VERB I-VERB B-PRON B-VERB B-VERB B-PRON B-ADP B-PRON;ma kin' me fiend give it to me;1-16 0-16 0-16 1-4 1-16 0-16 0-16 1-4
+1 1 1 1 1 1 1 1;B-PRON B-VERB B-PRON B-DET B-VERB B-NOUN B-PRON B-VERB;i want it all know what i mean;1-16 0-16 0-16 1-4 1-16 0-16 0-16 1-8
+1 1 1 1 1 1 1 0 0;B-ADJ B-NOUN B-VERB B-DET B-NOUN B-ADP B-NOUN I-NOUN I-NOUN;your love is a dose of ec sta cy;0-16 1-16 0-16 0-16 1-8 0-16 1-8 0-16 1-4
+0 1 0 1 1 1 0 1 1 1;B-ADJ I-ADJ I-ADJ B-PRON B-VERB B-VERB B-ADV I-ADV B-ADP B-PRON;a ddic ted i can't get a way from you;0-16 1-8 0-16 0-16 1-8 0-16 0-16 1-8 0-16 1-4
+0 1 0 1 1 1 1 1 1;B-VERB I-VERB I-VERB B-PRON B-VERB B-PRON B-PRON B-VERB B-PRON;a fflic ted i need it i miss it;0-16 1-8 0-16 0-16 1-8 0-16 0-16 1-8 0-16
+1 1 1 1 0 1 1 1 1;B-PRON B-VERB B-ADJ B-ADJ I-ADJ B-ADV B-ADV B-ADP B-PRON;i want your lo vin' right next to me;0-16 1-8 0-16 1-8 0-16 1-4 1-4 0-8 1-4
+1 1 1 0 1 1 1 1 1 1 0 0;B-CCONJ B-PRON B-VERB B-VERB I-VERB B-PRON B-ADP B-ADP B-ADJ B-NOUN I-NOUN I-NOUN;and i can't e rase you out of my me mo ry;0-16 1-8 0-16 0-16 1-8 0-16 1-8 0-16 1-4 1-4 0-8 1-4
 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PART B-ADP B-DET B-NOUN B-PRON B-ADP B-NOUN B-PRON B-VERB;i step up in the club i'm like who you wit;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-4
 1 1 0 1 1 1 1 1 1 1;B-PROPN B-NOUN I-NOUN B-ADP B-DET B-NOUN B-INTJ B-INTJ B-ADJ B-NOUN;g u nit in the house yeah that's my click;0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-8 0-16 1-16
 1 1 1 1 1 1 0 1 1 1 1;B-INTJ B-NUM B-ADJ B-CCONJ B-DET B-NOUN I-NOUN B-ADP B-DET B-ADJ B-NOUN;yeah i'm young but a ni gga from the old school;1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
@@ -3058,7 +3058,7 @@
 1 1 1 0 1 1 1 0 1 1 1 1 1;B-PRON B-ADV B-VERB B-PART I-PART B-DET B-ADV B-ADP I-ADP B-PRON B-VERB B-ADJ B-NOUN;he don't come a round no more be cause i fucked his bitch;0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 0 1 1;B-PRON B-VERB B-ADJ B-VERB B-ADJ B-NOUN B-ADP B-PRON B-VERB B-VERB I-VERB B-DET B-NOUN;i made her suck my dick while i was squee zin' the tits;0-16 1-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-ADV B-PRON B-VERB B-PRON B-ADP B-DET B-NOUN B-VERB B-ADV B-ADP B-PRON B-NOUN;then i hit it from the back gripped tight on them hips;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 0-16 1-8
-1 1 1 1 1 1 1 1 1 1 0 1 1 1 1;B-PRON B-VERB B-PART B-VERB B-PRON B-VERB B-CCONJ B-PRON B-VERB B-VERB I-VERB B-PART B-VERB B-ADJ B-NOUN;she tried to make me cum but i was try in' to take her home;0-16 1-16 0-16 1-16 0-16 1-8 1-24 0-24 0-24 1-24 0-24 0-24 1-16 0-16 1-8
+1 1 1 1 1 1 1 1 1 1 0 1 1 1 1;B-PRON B-VERB B-PART B-VERB B-PRON B-VERB B-CCONJ B-PRON B-VERB B-VERB I-VERB B-PART B-VERB B-ADJ B-NOUN;she tried to make me cum but i was try in' to take her home;0-16 1-16 0-16 1-16 0-16 1-8 1-32 0-32 0-32 1-32 0-32 0-32 1-16 0-16 1-8
 1 1 1 1 1 1 1 0 1 1 1 0 0 1;B-VERB B-PRON B-PART B-CCONJ B-VERB B-PRON B-VERB I-VERB B-ADP B-ADJ B-ADJ I-ADJ I-ADJ B-NOUN;dropped you off and seen you fi shin' on your ra gge dy brougham;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 0 1 1 1 1 1 1 1 0 1;B-NOUN I-NOUN B-VERB B-PRON B-CCONJ B-DET B-NOUN B-PRON B-ADJ I-ADJ B-NOUN;coul da thumped you and the dog you li ttle fag;0-32 0-32 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16 1-4
 1 1 1 1 1 1 1 1 0 0 0 1 1;B-CCONJ B-ADV B-ADV B-ADV B-ADV B-PRON B-VERB B-NOUN I-NOUN I-NOUN I-NOUN B-ADJ B-NOUN;and don't sag too hard you show e very bo dy your thong;0-16 1-8 1-8 0-16 1-8 0-16 1-16 1-16 0-16 1-16 0-16 0-16 1-4
@@ -3072,10 +3072,10 @@
 1 1 1 1 1 1 1 1 1 1;B-DET B-ADJ B-NOUN B-NOUN B-ADP B-ADV B-PRON B-VERB B-VERB B-ADP;the black car drive by then you get capped on;0-16 1-8 1-8 1-8 1-16 0-16 1-16 0-8 1-8 1-8
 1 0 1 0 1 1 1 1;B-ADJ I-ADJ B-VERB I-VERB B-ADJ B-NOUN B-CCONJ B-PROPN;wha ssup pimp in' it's p and snoop;0-16 1-8 1-16 0-16 1-8 1-16 0-8 1-16
 1 1 1 1 1 1 1 1 0 1 1;B-ADP B-PROPN B-ADP B-DET B-NOUN B-DET B-ADJ B-NOUN I-NOUN B-CCONJ B-NOUN;with dre on the beat this ain't nu ttin' but loot;0-16 1-16 1-8 0-16 1-16 1-16 0-16 1-16 0-16 0-16 1-16
-1 1 1 1 0 1 1 1 1 1 1 1;B-PRON B-VERB B-PRON B-PROPN B-PROPN I-PROPN B-ADP B-ADJ B-DET B-NOUN B-PRON B-VERB;they call me jed clam pett for all the bread i got;0-16 1-16 0-16 1-8 1-24 0-24 0-24 1-16 0-16 1-16 0-8 1-8
-1 1 1 1 1 1 0 1 1 1 1 1 1;B-CCONJ B-PRON B-VERB B-PRON B-PROPN B-PROPN I-PROPN B-ADP B-ADJ B-DET B-NOUN B-PRON B-VERB;but they call me bill clin ton for all the head i got;1-16 0-16 1-16 0-16 1-8 1-24 0-24 0-24 1-16 0-16 1-16 0-8 1-8
+1 1 1 1 0 1 1 1 1 1 1 1;B-PRON B-VERB B-PRON B-PROPN B-PROPN I-PROPN B-ADP B-ADJ B-DET B-NOUN B-PRON B-VERB;they call me jed clam pett for all the bread i got;0-16 1-16 0-16 1-8 1-32 0-32 0-32 1-16 0-16 1-16 0-8 1-8
+1 1 1 1 1 1 0 1 1 1 1 1 1;B-CCONJ B-PRON B-VERB B-PRON B-PROPN B-PROPN I-PROPN B-ADP B-ADJ B-DET B-NOUN B-PRON B-VERB;but they call me bill clin ton for all the head i got;1-16 0-16 1-16 0-16 1-8 1-32 0-32 0-32 1-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 1 1 1 0 1 1 1 0;B-PRON B-VERB B-PRON B-ADJ B-INTJ B-ADP B-PRON B-DET B-ADP I-ADP B-ADJ B-NOUN I-NOUN;i keeps it real ah 'cause i'm all a bout my scri lla;0-16 1-8 0-8 1-16 0-8 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-8
-1 1 0 1 1 1 1 1 1 0 1 0 1 0;B-DET B-NOUN I-NOUN B-VERB B-PRON B-ADP B-PRON B-DET B-NUM I-NUM B-NOUN I-NOUN B-NOUN I-NOUN;the la dies love me 'cause i'm a mill ion do lla hi tta;0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
+1 1 0 1 1 1 1 1 1 0 1 0 1 0;B-DET B-NOUN I-NOUN B-VERB B-PRON B-ADP B-PRON B-DET B-NUM I-NUM B-NOUN I-NOUN B-NOUN I-NOUN;the la dies love me 'cause i'm a mill ion do lla hi tta;0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 0 1 1 1 1 1;B-ADJ B-DET B-NOUN I-NOUN B-ADV B-PRON B-NOUN B-NOUN B-NOUN;it's no li mit til i d i e;1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-8 1-4
 1 1 1 1 1 0 1 0 1 1 1;B-PROPN B-NOUN B-NUM B-CCONJ B-PROPN I-PROPN B-PROPN I-PROPN B-ADV B-PRON B-VERB;c p three or rich mond ca li's where i be;1-16 1-8 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 0 1 1 1 1 0 1 0;B-PRON B-ADV B-VERB B-DET B-NOUN B-ADP I-ADP B-ADJ B-NOUN B-CCONJ B-NOUN I-NOUN I-NOUN;i don't give a fuck a bout your faults or mis ha ppens;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-8
@@ -3235,7 +3235,7 @@
 1 1 1 1 1 0 1 0 1 1;B-CCONJ B-VERB B-ADP B-DET B-NOUN I-NOUN B-VERB I-VERB B-ADJ B-PROPN;or flight in the lla ma char gin' white rolls;0-16 1-8 1-16 0-16 1-8 0-16 1-8 0-16 1-8 1-8
 1 1 0 1 0 1 0 0;B-PROPN B-INTJ B-DET I-DET I-DET B-NOUN I-NOUN I-NOUN;uhh oh a no ther e pi sode;1-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 1 1 0 1 1 1 1 1 0;B-NOUN I-NOUN B-ADV B-VERB I-VERB B-VERB B-DET B-NOUN B-NOUN B-ADJ I-ADJ;bitch es just wa nna hold a name that's ac tive;1-8 0-8 1-16 1-16 0-16 1-16 0-16 1-8 1-8 1-8 0-16
-1 1 1 1 1 1 1 1 0 1 1 0 0;B-X B-ADV B-PRON B-VERB B-NOUN B-ADP B-ADJ B-NOUN I-NOUN B-ADP B-ADJ I-ADJ I-ADJ;that's why they suck dick with mo' pa ssion than a ver age;0-16 1-12 0-12 0-12 1-16 0-16 1-8 1-8 0-16 0-16 1-8 0-16 0-16
+1 1 1 1 1 1 1 1 0 1 1 0 0;B-X B-ADV B-PRON B-VERB B-NOUN B-ADP B-ADJ B-NOUN I-NOUN B-ADP B-ADJ I-ADJ I-ADJ;that's why they suck dick with mo' pa ssion than a ver age;0-16 1-16 0-16 0-16 1-16 0-16 1-8 1-8 0-16 0-16 1-8 0-16 0-16
 1 1 1 1 1 1 0 1 1 0 1;B-PRON B-VERB B-ADJ B-ADP B-PRON B-ADV I-ADV B-VERB B-PRON B-ADJ I-ADJ;i ain't mad at ya ne ver leave you a lone;1-16 0-16 1-8 1-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1;B-ADP B-PRON B-VERB B-ADV B-PRON B-NOUN B-NOUN B-NOUN B-ADV B-PRON B-VERB;'cause we fucks when i'm home phone sex when i'm gone;0-16 0-16 1-8 1-16 0-16 1-8 1-8 1-8 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 1;B-PRON B-DET B-VERB B-DET B-VERB B-NOUN B-ADP B-ADJ B-ADJ;we both grown both got minds of our own;0-16 1-8 1-8 1-8 0-16 1-8 1-16 0-16 1-8
@@ -3464,7 +3464,7 @@
 1 1 1 1 1 1 1 1 1 0 1;B-PRON B-VERB B-PRON B-ADP B-DET B-NOUN B-ADP B-DET B-NOUN B-NOUN I-NOUN;i met her on the road in a fly ho tel;0-16 1-16 0-16 1-16 0-16 1-8 0-32 0-32 1-8 1-8 1-8
 1 1 1 1 1 1 0 1;B-ADJ B-ADP B-DET B-NOUN B-CCONJ B-ADV I-ADV B-VERB;high on the heels and ne ver failed;1-8 1-16 0-16 1-8 1-8 1-16 0-8 1-4
 1 1 1 1 1 1 1 1;B-NOUN B-CCONJ B-DET B-NOUN B-VERB B-ADV B-PRON B-VERB;clubs and the pubs is where she dwelled;1-8 0-16 0-16 1-8 0-16 1-8 1-8 1-4
-1 0 0 1 1 0 1 1 1 1;B-NOUN I-NOUN B-ADP I-ADP B-PROPN I-PROPN B-VERB B-ADJ B-PART B-VERB;stor y a bout mar y was well to tell;1-24 0-24 0-24 1-8 1-16 0-16 1-8 1-8 0-16 1-8
+1 0 0 1 1 0 1 1 1 1;B-NOUN I-NOUN B-ADP I-ADP B-PROPN I-PROPN B-VERB B-ADJ B-PART B-VERB;stor y a bout mar y was well to tell;1-32 0-32 0-32 1-8 1-16 0-16 1-8 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PART B-VERB B-ADP B-DET B-NOUN B-PART B-VERB;she seemed to scheme for a dream to sell;0-16 1-8 1-8 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN B-VERB B-ADP B-DET B-NOUN;she spent a night locked in a cell;0-16 1-8 1-8 1-8 1-8 1-16 0-8 1-8
 1 1 1 0 1 1 1 1 0 1;B-PRON B-VERB B-PROPN I-PROPN B-ADV B-ADP B-PRON B-VERB I-VERB B-NOUN;i knew mar y well cause she rai sing hell;0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-8 1-8
@@ -3475,7 +3475,7 @@
 1 1 1 1 1 1 1 0 0;B-ADJ B-CCONJ B-ADJ B-ADV B-ADP B-DET B-NOUN I-NOUN I-NOUN;true and blue just like a blue berr y;1-8 0-8 1-8 1-8 1-16 0-16 1-8 1-16 0-16
 1 1 1 1 0 1 1 1 1 0;B-VERB B-ADP B-NOUN B-ADJ I-ADJ B-CCONJ B-PROPN B-VERB B-ADV I-ADV;ask if she's cra zy and i'll say ver y;1-8 1-16 0-16 1-16 0-16 1-8 1-8 1-8 1-16 0-16
 1 0 1 1 1 1 1 1 1 1 0;B-VERB I-VERB B-ADP B-DET B-NOUN B-NOUN B-PART B-ADP B-DET B-NOUN I-NOUN;li vin' in a house that's out on the prai rie;1-16 0-16 1-16 0-16 1-8 1-8 1-8 1-16 0-16 1-16 0-16
-1 1 0 0 1 1 0 1 1 0 1 1 0;B-PRON B-VERB I-VERB B-ADP I-ADP B-PROPN I-PROPN B-ADP B-PROPN I-PROPN B-VERB B-ADJ I-ADJ;i worr y a bout mar y cause mar y is scar y;0-16 1-24 0-24 0-24 1-8 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16
+1 1 0 0 1 1 0 1 1 0 1 1 0;B-PRON B-VERB I-VERB B-ADP I-ADP B-PROPN I-PROPN B-ADP B-PROPN I-PROPN B-VERB B-ADJ I-ADJ;i worr y a bout mar y cause mar y is scar y;0-16 1-32 0-32 0-32 1-8 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16
 1 1 1 1 1 1 1 1 1 1 1;B-INTJ I-INTJ B-VERB B-PRON B-ADP B-DET B-NOUN B-VERB B-ADJ B-NOUN B-NOUN;o k drop it to the floor make that ass shake;0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 1 1;B-PROPN B-VERB B-DET B-NOUN B-VERB B-INTJ B-DET B-NOUN B-NOUN;woah make the ground move that's an ass quake;1-8 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 1 1 1 1;B-VERB B-DET B-NOUN B-PART B-ADP B-DET B-NOUN B-INTJ B-DET B-NOUN B-NOUN;built a house up on that ass that's an ass state;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8
@@ -3653,7 +3653,7 @@
 1 1 1 0 1 0 1 1 1 1 1;B-ADJ B-ADV B-DET B-NOUN I-NOUN I-NOUN B-PRON B-VERB B-ADP B-DET B-NOUN;it's not an i llu sion we run in the streets;1-8 0-16 1-16 0-16 1-8 0-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 0 1 1 1 0;B-INTJ B-ADV B-INTJ B-INTJ B-ADP B-DET B-PRON B-NOUN I-NOUN B-CCONJ B-NOUN B-NOUN I-NOUN;uh so bye bye to all you grou pies and gold di ggers;0-8 0-16 1-16 1-8 0-16 1-16 0-16 1-16 0-8 0-16 1-8 1-16 0-8
 1 1 1 1 0 1 1 1 1 1 0;B-VERB B-ADV B-DET B-NOUN I-NOUN B-ADP B-ADJ B-NOUN B-ADV B-ADV I-ADV;is there a bum per on your ass no ni gga;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-4 1-8 1-16 0-8
-1 1 0 1 1 0 1 1 1 0;B-PRON B-VERB I-VERB B-DET B-NUM I-NUM B-ADP B-DET B-NOUN I-NOUN;i'm do in' a hun dred on the high way;0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-8 1-8
+1 1 0 1 1 0 1 1 1 0;B-PRON B-VERB I-VERB B-DET B-NUM I-NUM B-ADP B-DET B-NOUN I-NOUN;i'm do in' a hun dred on the high way;0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 0 1 1 1 1 0 1 1;B-CCONJ B-ADP B-PRON B-VERB B-DET B-NOUN B-NOUN I-NOUN B-VERB B-DET B-NOUN B-ADP I-ADP B-ADJ B-NOUN;so if you do the speed li mit get the fuck ou tta my way;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 0 1 0 1 1 0;B-PUNCT B-NOUN B-NOUN B-PRON B-ADV I-ADV B-ADV I-ADV B-VERB B-ADJ I-ADJ;i'm d u i hard ly e ver caught so ber;0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8 0-16
 1 1 0 1 1 1 1 1 1 1 0;B-CCONJ B-PRON B-ADP I-ADP B-PART B-VERB B-VERB B-DET B-NOUN B-ADP I-ADP;and you a bout to get ran the fuck o ver;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 0-16
@@ -3668,7 +3668,7 @@
 1 1 1 1 1 0;B-VERB B-PART B-VERB B-PART B-NOUN I-NOUN;hold up wait up shor ty;1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 0 1 1 1 1 1 1 1 1 0;B-INTJ B-INTJ B-NOUN I-NOUN B-VERB B-ADJ B-NOUN B-VERB B-NOUN B-VERB B-PRON B-VERB I-VERB;oh aw wa zup get my dick sucked what are you do in';1-8 1-8 1-8 1-8 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-16 0-8
 1 1 0 1 1 0 1 0;B-VERB B-VERB I-VERB B-ADJ B-ADJ I-ADJ B-NOUN I-NOUN;side li nin' my fuck in' bus iness;1-8 1-16 0-8 0-16 1-16 0-16 1-16 0-16
-1 0 1 1 1 1 0 1 0 1 1 0;B-VERB I-VERB B-PART B-VERB B-ADJ B-NOUN I-NOUN B-NOUN B-NOUN I-NOUN B-NOUN I-NOUN;try in' to get my pa per child su pport su in';1-24 0-24 0-24 0-16 1-16 1-16 0-16 1-8 0-16 1-8 1-16 0-8
+1 0 1 1 1 1 0 1 0 1 1 0;B-VERB I-VERB B-PART B-VERB B-ADJ B-NOUN I-NOUN B-NOUN B-NOUN I-NOUN B-NOUN I-NOUN;try in' to get my pa per child su pport su in';1-32 0-32 0-32 0-16 1-16 1-16 0-16 1-8 0-16 1-8 1-16 0-8
 1 1 1 1 1 1 1 1 0 1;B-VERB B-PRON B-DET B-NOUN B-CCONJ B-VERB B-DET B-NOUN I-NOUN B-ADV;give me that truck and take that ren tal back;1-32 0-32 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 0 1 1 1 1 1 0 0 1 1 1 1;B-NOUN B-VERB B-DET B-ADJ I-ADJ B-NOUN I-NOUN B-CCONJ B-DET B-NOUN I-NOUN I-NOUN B-NOUN B-VERB B-PRON B-ADP;who bought these fuck in' t v's and the jew el ry bitch tell me that;0-16 1-16 0-16 1-16 0-16 1-16 1-8 0-32 0-32 1-32 0-32 0-16 1-8 1-16 0-16 1-8
 1 1 1 1 0 1 1 1 1 1;B-INTJ B-PRON B-VERB B-ADJ I-ADJ B-PRON B-ADV B-VERB B-DET B-NOUN;no i ain't bi tter i don't give a fuck;1-16 1-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8
@@ -3693,22 +3693,22 @@
 1 1 1 1 1 1 1 1;B-ADV B-NOUN B-NOUN B-VERB B-PART B-DET B-NOUN B-X;so move bitch get out the way ho;1-8 1-8 1-8 1-16 0-8 0-16 1-8 1-8
 1 1 1 0 1 0 1 0 1 1 1 1 1 1;B-DET B-PRON B-VERB I-VERB B-NOUN I-NOUN B-NOUN I-NOUN B-VERB B-NOUN B-ADP B-NUM B-INTJ B-ADV;all you fa ggot mo ther fu ckers make way for two o so;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 1-8 0-16 1-8 1-8 1-8
 1 1 0 1 0 1 0 1 1 1;B-ADJ B-NOUN I-NOUN B-NOUN I-NOUN B-NOUN I-NOUN B-ADV B-ADP B-PRON;my ba by's dra ma ma ma don't like me;0-32 1-16 0-8 1-8 0-16 1-16 0-8 0-16 1-16 0-16
-1 1 0 1 1 1 0 1 1 1 1 1 1 0 0 1 1 1 0 0 1 0 1;B-PRON B-VERB I-VERB B-NOUN B-ADP B-VERB I-VERB B-PRON B-NOUN B-VERB B-ADP B-ADJ B-NOUN I-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN I-NOUN B-VERB I-VERB B-ADP;she do in' things like ha vin' them boys come from her neigh bor hood to the stu di o try in' to;0-24 1-24 0-24 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-24 0-24 1-24 0-16 1-16 0-16 0-16 1-24 0-24 0-24 1-24 0-24 0-24
+1 1 0 1 1 1 0 1 1 1 1 1 1 0 0 1 1 1 0 0 1 0 1;B-PRON B-VERB I-VERB B-NOUN B-ADP B-VERB I-VERB B-PRON B-NOUN B-VERB B-ADP B-ADJ B-NOUN I-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN I-NOUN B-VERB I-VERB B-ADP;she do in' things like ha vin' them boys come from her neigh bor hood to the stu di o try in' to;0-32 1-32 0-32 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-32 0-32 1-32 0-16 1-16 0-16 0-16 1-32 0-32 0-32 1-32 0-32 0-32
 1 1;B-VERB B-PRON;fight me;1-16 0-32
-1 1 1 1 1 1 1 0 1 0 0 1 1 1 1 1 1;B-PRON B-VERB B-PART B-VERB B-DET B-NOUN B-ADP B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN B-CCONJ B-VERB B-ADJ B-NOUN B-PART;she need to get a piece of a mer i can pie and take her bite out;0-32 1-32 0-32 1-16 1-8 1-24 0-24 0-24 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-8
+1 1 1 1 1 1 1 0 1 0 0 1 1 1 1 1 1;B-PRON B-VERB B-PART B-VERB B-DET B-NOUN B-ADP B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN B-CCONJ B-VERB B-ADJ B-NOUN B-PART;she need to get a piece of a mer i can pie and take her bite out;0-32 1-32 0-32 1-16 1-8 1-32 0-32 0-32 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-8
 1 1 1 1 0 0 1 1 1 0 1 1 1 1 1;B-X B-ADJ B-NOUN B-PRON B-VERB I-VERB I-VERB B-DET B-NOUN I-NOUN B-CCONJ B-VERB B-DET B-NOUN B-PART;that's my house i dis co nnect the ca ble and turn the lights out;0-16 1-16 0-8 0-32 1-16 0-16 1-16 0-16 1-16 0-32 0-32 1-16 0-16 1-8 0-16
 1 1 1 1 1 1 0 1 1 1 0 1 1 1 1 0;B-CCONJ B-VERB B-PRON B-VERB B-ADJ B-NOUN I-NOUN B-VERB B-DET B-NOUN I-NOUN B-CCONJ B-ADV B-DET B-NOUN I-NOUN;and let her know her grand child is a ba by and not a pay check;0-32 1-16 0-16 1-16 0-16 1-16 0-8 1-32 0-32 1-16 0-16 0-32 1-32 0-32 1-16 1-8
-1 0 1 1 1 1 1 0 0 1 1 1 1;B-ADJ I-ADJ B-NOUN B-NOUN B-NOUN B-NOUN B-ADJ I-ADJ I-ADJ B-NOUN B-PRON B-VERB B-ADP;pri vate school day care shit me di cal bills i pay that;1-16 0-16 1-8 1-16 1-8 0-16 1-24 0-24 0-24 1-16 0-16 1-16 1-8
+1 0 1 1 1 1 1 0 0 1 1 1 1;B-ADJ I-ADJ B-NOUN B-NOUN B-NOUN B-NOUN B-ADJ I-ADJ I-ADJ B-NOUN B-PRON B-VERB B-ADP;pri vate school day care shit me di cal bills i pay that;1-16 0-16 1-8 1-16 1-8 0-16 1-32 0-32 0-32 1-16 0-16 1-16 1-8
 1 1 1 1 1 1 0 0;B-PRON B-VERB B-ADJ B-NOUN B-CCONJ B-NOUN I-NOUN I-NOUN;i love your mom and e very thing;0-32 1-16 0-16 1-16 0-16 1-32 0-32 1-8
-1 1 1 1 1 1 1 1;B-VERB B-PRON B-VERB B-DET B-NOUN B-NOUN B-VERB B-PART;see i ain't the one who laid down;0-16 1-24 0-24 0-24 1-16 0-16 1-16 1-8
-1 1 0 1 1 1 1 1 1 0 0 1;B-PRON B-VERB I-VERB B-VERB B-PRON B-PART B-VERB B-DET B-NOUN I-NOUN I-NOUN B-NOUN;she wa nna rib you up start a cus to dy war;0-32 1-16 0-16 1-16 0-32 1-16 1-32 0-16 1-24 0-24 0-24 1-16
+1 1 1 1 1 1 1 1;B-VERB B-PRON B-VERB B-DET B-NOUN B-NOUN B-VERB B-PART;see i ain't the one who laid down;0-16 1-32 0-32 0-32 1-16 0-16 1-16 1-8
+1 1 0 1 1 1 1 1 1 0 0 1;B-PRON B-VERB I-VERB B-VERB B-PRON B-PART B-VERB B-DET B-NOUN I-NOUN I-NOUN B-NOUN;she wa nna rib you up start a cus to dy war;0-32 1-16 0-16 1-16 0-32 1-16 1-32 0-16 1-32 0-32 0-32 1-16
 1 1 0 1 1;B-ADJ B-NOUN I-NOUN B-VERB B-ADV;my law yers stay down;0-16 1-16 0-16 1-16 1-8
 1 1 0 1 1 1 1 1 1 1 1 1 1 0;B-PRON B-ADV I-ADV B-VERB B-DET B-NOUN B-PART B-VERB B-ADJ B-NOUN B-ADP B-DET B-NOUN I-NOUN;you ne ver got a chance to hear my side of the stor y;0-32 1-16 0-16 1-16 0-16 1-16 0-32 1-32 0-16 1-32 0-32 0-16 1-32 0-32
-1 1 0 1 0;B-PRON B-VERB B-VERB I-VERB I-VERB;we was di vi ded;1-24 0-24 0-24 1-16 0-16
-1 1 1 1 1 1 0 1 1 1 1 0;B-PRON B-VERB B-NOUN B-NOUN B-CCONJ B-NOUN I-NOUN B-ADP B-ADJ B-NOUN B-NOUN I-NOUN;she had fish fries and cook outs for my child's birth day;1-32 0-32 1-16 1-8 0-16 1-16 1-8 0-32 0-32 1-24 1-24 0-24
-1 1 0 1 0 0 1 1;B-PRON B-VERB B-VERB I-VERB I-VERB B-ADP I-ADP B-PRON;i ain't in vi ted des pite it;0-24 1-24 0-24 1-16 0-8 0-16 1-16 0-8
-1 1 1 1 1 0 0 1 1 1 1 1;B-PRON B-VERB B-PRON B-DET B-ADJ I-ADJ B-NOUN I-NOUN B-ADV B-PRON B-VERB B-ADP;i show her the ut most re spect when i fall through;0-32 1-24 1-24 0-24 1-16 1-16 0-16 1-8 1-32 0-32 1-8 1-16
-1 1 1 1 0 1 1 1 0 1 1 1 1;B-DET B-PRON B-VERB B-VERB B-VERB I-VERB B-DET B-NOUN I-NOUN B-ADV B-PRON B-VERB B-PRON;all you do is de fend that la dy when i call you;1-8 1-8 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-32 0-32 1-8 1-8
+1 1 0 1 0;B-PRON B-VERB B-VERB I-VERB I-VERB;we was di vi ded;1-32 0-32 0-32 1-16 0-16
+1 1 1 1 1 1 0 1 1 1 1 0;B-PRON B-VERB B-NOUN B-NOUN B-CCONJ B-NOUN I-NOUN B-ADP B-ADJ B-NOUN B-NOUN I-NOUN;she had fish fries and cook outs for my child's birth day;1-32 0-32 1-16 1-8 0-16 1-16 1-8 0-32 0-32 1-32 1-32 0-32
+1 1 0 1 0 0 1 1;B-PRON B-VERB B-VERB I-VERB I-VERB B-ADP I-ADP B-PRON;i ain't in vi ted des pite it;0-32 1-32 0-32 1-16 0-8 0-16 1-16 0-8
+1 1 1 1 1 0 0 1 1 1 1 1;B-PRON B-VERB B-PRON B-DET B-ADJ I-ADJ B-NOUN I-NOUN B-ADV B-PRON B-VERB B-ADP;i show her the ut most re spect when i fall through;0-32 1-32 1-32 0-32 1-16 1-16 0-16 1-8 1-32 0-32 1-8 1-16
+1 1 1 1 0 1 1 1 0 1 1 1 1;B-DET B-PRON B-VERB B-VERB B-VERB I-VERB B-DET B-NOUN I-NOUN B-ADV B-PRON B-VERB B-PRON;all you do is de fend that la dy when i call you;1-8 1-8 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-32 0-32 1-8 1-8
 1 1 1 1 1 1 1 1 1 0 1;B-NUM B-NOUN B-ADP B-ADP B-NUM B-ADV B-ADP B-PRON B-VERB I-VERB B-VERB;ten times out of nine now if i'm ly in' find;1-16 1-8 1-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 0 1 1 1 1 1 1 1 0 1;B-DET B-ADJ I-ADJ B-NOUN I-NOUN B-VERB B-PRON B-ADP B-ADJ B-NOUN B-CCONJ B-PROPN B-VERB I-VERB;the qui ckest mu zzle throw it on my mouth and i'll de cline;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 0 1 1;B-NOUN B-VERB B-ADJ B-ADV B-DET B-ADJ I-ADJ B-NOUN B-NOUN;king meets queen then the pu ppy love thing;1-16 1-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8
@@ -3718,7 +3718,7 @@
 0 1 0 1 0 1 1 1 0 1 1 1;B-ADV I-ADV I-ADV B-ADV I-ADV B-VERB B-ADV B-ADJ B-ADP I-ADP B-PRON B-VERB;for e ver ne ver seems that long un til you're grown;0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 0 1 1 1 1;B-CCONJ B-VERB I-VERB B-ADP B-DET B-NOUN B-ADP B-NOUN B-NOUN I-NOUN B-VERB B-VERB B-ADV B-ADJ;and no tice that the day by day ru ler can't be too wrong;0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8
 1 1 0 1 0 1 0 1 1 1 1 1 1;B-PROPN B-PROPN I-PROPN B-ADJ B-NOUN I-NOUN I-NOUN B-VERB B-ADJ B-PRON B-VERB B-PRON B-VERB;ms jack son my in ten tions were good i wish i could;0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-8
-0 1 1 0 1 0 1 0 0 0 1 0 1 1 1 0;B-VERB I-VERB B-DET B-NOUN I-NOUN I-NOUN B-PART B-VERB I-VERB I-VERB I-VERB I-VERB B-ADJ B-DET B-NOUN I-NOUN;be come a ma gi cian to a bra ca da bra all the sa dder;0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-8
+0 1 1 0 1 0 1 0 0 0 1 0 1 1 1 0;B-VERB I-VERB B-DET B-NOUN I-NOUN I-NOUN B-PART B-VERB I-VERB I-VERB I-VERB I-VERB B-ADJ B-DET B-NOUN I-NOUN;be come a ma gi cian to a bra ca da bra all the sa dder;0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-8
 1 1 1 1 1 1 1 1 1;B-NOUN B-ADP B-PRON B-NOUN B-ADP B-PRON B-NOUN B-ADP B-PRON;thoughts of me thoughts of she thoughts of he;1-16 0-16 1-8 1-16 0-16 1-16 1-16 0-16 1-16
 1 0 1 1 0 1 1 1 0 1 1 1 1 1;B-VERB I-VERB B-NOUN B-VERB I-VERB B-ADP B-DET B-NOUN I-NOUN B-ADP B-PRON B-CCONJ B-PRON B-VERB;ask in' what ha ppen to the fee lin' that her and me had;1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 0 1 1 1 1 1 1;B-PRON B-VERB B-ADV B-ADV B-ADP I-ADP B-PRON B-VERB B-DET B-NOUN B-NOUN;i pray so much a bout it need some knee pads;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
@@ -3726,18 +3726,18 @@
 1 1 1 1 1 1 0 0 1;B-ADV B-VERB B-DET B-VERB B-ADP B-NOUN I-NOUN I-NOUN B-ADJ;so know this know that e very thing's cool;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 0 1 1 1 1 1 1;B-CCONJ B-INTJ B-PRON B-VERB B-VERB B-ADJ I-ADJ B-ADP B-DET B-ADJ B-NOUN B-ADP B-NOUN;and yes i will be pre sent on the first day of school;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 0 0 1 0;B-CCONJ B-NOUN I-NOUN I-NOUN I-NOUN;and gra du a tion;0-16 1-16 0-16 1-8 0-8
-1 1 1 1 1 1 1;B-VERB B-ADP B-DET B-NOUN B-PRON B-VERB B-PRON;look at the way he treats me;1-24 0-24 0-24 1-16 0-16 1-8 1-16
-1 1 1 1 1 1 1 1;B-INTJ B-VERB B-ADP B-DET B-NOUN B-PRON B-VERB B-PRON;shit look at the way you treat me;0-32 1-24 0-24 0-24 1-16 0-16 1-8 1-16
+1 1 1 1 1 1 1;B-VERB B-ADP B-DET B-NOUN B-PRON B-VERB B-PRON;look at the way he treats me;1-32 0-32 0-32 1-16 0-16 1-8 1-16
+1 1 1 1 1 1 1 1;B-INTJ B-VERB B-ADP B-DET B-NOUN B-PRON B-VERB B-PRON;shit look at the way you treat me;0-32 1-32 0-32 0-32 1-16 0-16 1-8 1-16
 1 1 1 1 0 1 0 1 1 0 0;B-PRON B-VERB B-ADJ B-ADJ I-ADJ B-ADJ I-ADJ B-NOUN B-NOUN I-NOUN I-NOUN;you see your li ttle no sy ass home gi rls;0-32 1-32 0-32 1-32 0-32 1-32 0-32 1-16 1-16 1-16 0-32
-1 1 1 1 1 1 1 1;B-VERB B-ADJ B-NOUN B-VERB B-PART B-DET B-NOUN B-NOUN;got your ass sent up the creek g;1-32 0-32 1-8 1-24 0-24 0-24 1-16 1-16
-0 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1;B-ADP I-ADP B-DET B-NOUN I-NOUN B-PRON B-VERB B-PART B-VERB I-VERB B-CCONJ B-VERB B-DET B-NOUN B-ADP B-PART;wi thout a pa ddle you left to stra ddle and ride this thing on out;0-32 1-16 0-16 1-16 0-32 0-32 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-8
-1 1 1 1 1 1 1 1 0 1 1;B-PRON B-VERB B-PRON B-CCONJ B-ADJ B-NOUN B-VERB B-VERB I-VERB B-ADV B-ADJ;i know you and your girl ain't spea kin' no more;0-32 0-32 1-24 0-24 0-24 1-16 0-16 1-24 0-24 0-24 1-16
+1 1 1 1 1 1 1 1;B-VERB B-ADJ B-NOUN B-VERB B-PART B-DET B-NOUN B-NOUN;got your ass sent up the creek g;1-32 0-32 1-8 1-32 0-32 0-32 1-16 1-16
+0 1 1 1 0 1 1 1 1 0 1 1 1 1 1 1;B-ADP I-ADP B-DET B-NOUN I-NOUN B-PRON B-VERB B-PART B-VERB I-VERB B-CCONJ B-VERB B-DET B-NOUN B-ADP B-PART;wi thout a pa ddle you left to stra ddle and ride this thing on out;0-32 1-16 0-16 1-16 0-32 0-32 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-8
+1 1 1 1 1 1 1 1 0 1 1;B-PRON B-VERB B-PRON B-CCONJ B-ADJ B-NOUN B-VERB B-VERB I-VERB B-ADV B-ADJ;i know you and your girl ain't spea kin' no more;0-32 0-32 1-32 0-32 0-32 1-16 0-16 1-32 0-32 0-32 1-16
 1 1 1 1 1 1 1;B-ADP B-ADJ B-NOUN B-DET B-ADP B-ADJ B-NOUN;'cause my dick all in her mouth;0-32 0-32 1-16 0-16 1-16 0-16 1-8
 1 1 0 1;B-NOUN B-VERB I-VERB B-ADP;nam tal kin' bout;0-16 1-32 0-32 1-8
 1 0 0 0 0 1 0 0 1 0 1 0 1 0;B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN I-NOUN I-NOUN I-NOUN B-NOUN I-NOUN B-VERB I-VERB B-NOUN I-NOUN;jea lou sy in fi del i ty en vy chea ting bea ting;1-16 0-16 1-16 0-32 0-32 1-16 0-16 1-8 1-16 1-16 1-16 1-16 1-16 0-16
-1 0 1 1 1 1 1 1 1 1 1;B-NOUN I-NOUN B-CCONJ B-ADP B-DET B-NOUN B-PRON B-VERB B-DET B-ADJ B-NOUN;en vy and to the g they be the same thing;1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-16 1-8
-1 1 1 0 1 1 1;B-NOUN B-PRON B-VERB I-VERB B-DET B-NOUN B-ADP;who you pla cin' the blame on;1-16 0-16 1-24 0-24 0-24 1-16 1-16
-1 1 1 1 0 1 1 1;B-PRON B-VERB B-ADP B-NOUN I-NOUN B-DET B-ADJ B-NOUN;you keep on sing in' the same song;0-16 1-16 0-16 1-24 0-24 0-24 1-16 1-8
+1 0 1 1 1 1 1 1 1 1 1;B-NOUN I-NOUN B-CCONJ B-ADP B-DET B-NOUN B-PRON B-VERB B-DET B-ADJ B-NOUN;en vy and to the g they be the same thing;1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 1-8
+1 1 1 0 1 1 1;B-NOUN B-PRON B-VERB I-VERB B-DET B-NOUN B-ADP;who you pla cin' the blame on;1-16 0-16 1-32 0-32 0-32 1-16 1-16
+1 1 1 1 0 1 1 1;B-PRON B-VERB B-ADP B-NOUN I-NOUN B-DET B-ADJ B-NOUN;you keep on sing in' the same song;0-16 1-16 0-16 1-32 0-32 0-32 1-16 1-8
 1 1 0 1 1 0 1 1 1 1 1 1 1 1 1;B-VERB B-NOUN I-NOUN B-VERB B-NOUN I-NOUN B-PRON B-VERB B-VERB B-ADV B-CCONJ B-VERB B-DET B-NOUN B-ADP;let by gones be by gones you can go on and get the hell on;0-16 1-16 1-8 0-16 1-16 1-8 1-16 0-16 1-32 0-32 0-16 1-32 0-32 1-16 1-8
 1 1 1 1 0;B-PRON B-CCONJ B-ADJ B-NOUN I-NOUN;you and your ma ma;0-16 1-16 0-16 1-16 0-16
 1 0 1 1 1 1 1 0 1;B-NOUN I-NOUN B-NOUN B-PRON B-VERB B-DET B-NOUN I-NOUN B-ADV;hus tler word i pull the tri gger long;1-8 1-8 1-8 0-16 1-16 0-16 1-16 0-16 1-8
@@ -3922,9 +3922,9 @@
 1 1 0 1 0 1 1 1 0 1;B-PRON B-VERB B-ADJ I-ADJ I-ADJ B-CCONJ B-PRON B-ADV B-ADJ I-ADJ;i feel a ma zing and i'm not a fraid;0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-8 0-16 1-16
 1 1 1 1 1 1 1;B-NUM B-NUM B-NUM B-CCONJ B-ADP B-DET B-NOUN;one two three and to the fo';1-8 1-8 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 0 1 1 1 1 1;B-PROPN B-PROPN I-PROPN B-PROPN B-CCONJ B-PROPN I-PROPN B-PROPN B-VERB B-ADP B-DET B-NOUN;snoop do ggy dogg and doc tor dre is at the do';1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 0 1 1 1 1 0 1 1 1 1;B-ADJ I-ADJ B-PART B-VERB B-DET B-NOUN I-NOUN B-ADV B-ADV B-ADP B-PART;rea dy to make an en trance so back on up;1-24 0-24 0-24 1-16 0-16 1-16 0-8 0-16 1-16 1-16 1-8
+1 0 1 1 1 1 0 1 1 1 1;B-ADJ I-ADJ B-PART B-VERB B-DET B-NOUN I-NOUN B-ADV B-ADV B-ADP B-PART;rea dy to make an en trance so back on up;1-32 0-32 0-32 1-16 0-16 1-16 0-8 0-16 1-16 1-16 1-8
 1 1 1 1 1 1 1 1 1;B-ADP B-PRON B-VERB B-VERB B-VERB B-PART B-VERB B-NOUN B-PART;'cause you know we're bout to rip shit up;1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
-1 0 1 1 0 0 1 1 1 1 1 1 1 1 0;B-PROPN I-PROPN B-DET B-NOUN I-NOUN I-NOUN B-ADV B-ADP B-PRON B-VERB B-VERB B-VERB B-DET B-NOUN I-NOUN;gi mme the mi cro phone first so i can bust like a bu bble;1-24 0-24 0-24 1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-8
+1 0 1 1 0 0 1 1 1 1 1 1 1 1 0;B-PROPN I-PROPN B-DET B-NOUN I-NOUN I-NOUN B-ADV B-ADP B-PRON B-VERB B-VERB B-VERB B-DET B-NOUN I-NOUN;gi mme the mi cro phone first so i can bust like a bu bble;1-32 0-32 0-32 1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-8
 1 0 1 1 1 0 1 0;B-PROPN I-PROPN B-CCONJ B-PROPN B-PROPN B-ADV I-ADV I-ADV;comp ton and long beach to ge ther;1-16 0-16 0-16 1-8 1-8 0-16 1-16 0-16
 1 1 1 1 1 1 0;B-ADV B-PRON B-VERB B-PRON B-ADP B-NOUN I-NOUN;now you know you in trou ble;1-16 0-16 1-16 0-16 0-16 1-16 0-16
 1 1 0 1 1 1 1 1 0;B-ADJ B-VERB I-VERB B-CCONJ B-DET B-NOUN B-NOUN B-NOUN I-NOUN;ain't nu ttin' but a g thang ba by;1-8 1-16 0-16 1-16 0-16 1-8 0-8 1-8 1-8
@@ -3934,7 +3934,7 @@
 1 1 1 1 1 1 0 1 1;B-CCONJ B-INTJ B-ADV B-ADP B-DET B-NOUN I-NOUN B-ADP B-NOUN;but uh back to the lec ture at hand;0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8 1-4
 0 1 0 1 0 1 0 1 0 1 1 0 0 1;B-NOUN I-NOUN I-NOUN B-VERB B-VERB I-VERB I-VERB B-NOUN I-NOUN B-VERB B-PRON B-VERB I-VERB I-VERB;per fec tion is per fec ted so'm a let em un der stand;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8
 1 1 1 1 0 1 0;B-ADP B-DET B-ADJ B-NOUN B-NOUN I-NOUN I-NOUN;from a young g's per spec tive;1-16 0-16 1-8 1-8 0-16 1-8 0-8
-1 0 1 1 1 1 1 1 1 1 1 1 1 0 0 1 0;B-CCONJ B-ADP I-ADP B-PRON B-VERB B-PART B-DET B-NOUN B-PRON B-VERB B-PART B-VERB B-DET B-NOUN I-NOUN I-NOUN I-NOUN;and be fore me dig out a bitch i have to find a con tra cep tive;1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8 0-16
+1 0 1 1 1 1 1 1 1 1 1 1 1 0 0 1 0;B-CCONJ B-ADP I-ADP B-PRON B-VERB B-PART B-DET B-NOUN B-PRON B-VERB B-PART B-VERB B-DET B-NOUN I-NOUN I-NOUN I-NOUN;and be fore me dig out a bitch i have to find a con tra cep tive;1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8 0-16
 1 1 0 1 1 1 1 1 0 1 1;B-PRON B-ADV I-ADV B-VERB B-PRON B-VERB B-VERB B-VERB I-VERB B-ADJ B-NOUN;you ne ver know she could be ear nin' her man;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1 0 1 1;B-CCONJ B-VERB I-VERB B-ADJ B-NOUN B-CCONJ B-ADP B-DET B-ADJ B-NOUN B-VERB I-VERB B-ADJ B-NOUN;and learn in' her man and at the same time burn in' her man;0-16 1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-8 1-8 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 0 1 0;B-ADV B-PRON B-VERB B-PRON B-VERB B-ADP B-DET B-NOUN B-PROPN I-PROPN I-PROPN;now you know i ain't with that shit lieu te nant;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16
@@ -3948,7 +3948,7 @@
 1 1 1 1 1 1 1 1 0 1 0 1;B-ADV B-ADJ B-NOUN B-ADP B-PRON B-PART B-VERB B-ADJ B-NOUN I-NOUN I-NOUN B-VERB;now it's time for me to make my im pre ssion felt;1-16 0-16 1-16 0-16 1-16 0-16 1-16 1-16 0-16 1-16 0-8 1-8
 1 1 1 0 1 1 1 1 1 1 0;B-ADV B-VERB B-ADV B-VERB I-VERB B-CCONJ B-VERB B-ADP B-ADJ B-NOUN I-NOUN;so sit back re lax and strap on your seat belt;0-16 1-16 1-8 0-16 1-8 0-16 1-8 1-8 0-16 1-8 1-16
 1 1 0 1 1 1 1 1 1 1 0;B-PRON B-ADV I-ADV B-VERB B-ADP B-DET B-NOUN B-ADP B-DET B-NOUN I-NOUN;you ne ver been on a ride like this be fo';0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-8 0-16 1-8
-1 1 0 1 0 1 1 1 1 0 1 1 1 0;B-ADP B-DET B-NOUN I-NOUN I-NOUN B-NOUN B-VERB B-VERB B-CCONJ B-VERB I-VERB B-DET B-NOUN I-NOUN;with a pro du cer who can rap and con trol the maes tro;1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-8 1-16
+1 1 0 1 0 1 1 1 1 0 1 1 1 0;B-ADP B-DET B-NOUN I-NOUN I-NOUN B-NOUN B-VERB B-VERB B-CCONJ B-VERB I-VERB B-DET B-NOUN I-NOUN;with a pro du cer who can rap and con trol the maes tro;1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-8 1-16
 1 1 1 1 1 1 1 1 1 1 1;B-ADP B-DET B-ADJ B-NOUN B-ADP B-DET B-NOUN B-NOUN B-ADJ B-PRON B-VERB;at the same time with the dope rhyme that i kick;1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 0 1;B-PRON B-VERB B-CCONJ B-PRON B-VERB B-PRON B-VERB B-DET B-ADJ B-NOUN I-NOUN B-NOUN;you know and i know i flow some ol' fun ky shit;1-16 1-8 0-16 1-16 1-8 0-16 1-16 0-16 1-8 1-8 0-16 1-8
 1 1 1 1 0 1 0 1 0 1 0 1 0 0 0 1;B-PART B-VERB B-ADP B-ADJ B-NOUN I-NOUN I-NOUN B-DET B-NOUN I-NOUN I-NOUN B-VERB I-VERB I-VERB I-VERB B-NOUN;to add to my co llec tion the se lec tion sym bo liz es dope;0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-8 1-8
@@ -3957,10 +3957,10 @@
 1 1 1 1 1 1 0 1 1 1 1 1;B-ADP B-NOUN B-PRON B-CCONJ B-ADJ B-ADJ I-ADJ B-PROPN B-PROPN B-VERB B-PART B-VERB;on what me and my ho mey snoop dogg came to do;0-16 1-8 1-16 0-16 0-16 1-16 0-16 1-8 1-8 1-8 0-16 1-8
 1 0 1 1 1 1 1 1 1 0 0 1 0 1;B-VERB I-VERB B-ADV B-ADP B-DET B-NOUN B-ADP B-DET B-VERB I-VERB I-VERB B-NOUN I-NOUN B-ADJ;fa llin' back on that ass with a hell a fied gang sta lean;1-16 0-16 1-16 0-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8 0-16 1-8
 1 0 1 0 1 1 1 1 1 1 1 1 1 0 1;B-ADJ I-ADJ B-NOUN I-NOUN B-ADP B-DET B-NOUN B-ADP B-DET B-ADJ B-NOUN B-ADP B-NOUN I-NOUN B-NOUN;ge ttin' fun ky on the mic like a old batch of co llard greens;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-8 1-8
-1 1 1 0 0 1 1 1 1 1 1 1 0 1 1;B-ADJ B-DET B-NOUN I-NOUN I-NOUN B-PROPN B-INTJ B-INTJ B-PRON B-VERB B-NOUN B-ADJ I-ADJ B-INTJ B-NOUN;it's the ca pi tal s oh yes i'm fresh n dou ble o p;1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16
+1 1 1 0 0 1 1 1 1 1 1 1 0 1 1;B-ADJ B-DET B-NOUN I-NOUN I-NOUN B-PROPN B-INTJ B-INTJ B-PRON B-VERB B-NOUN B-ADJ I-ADJ B-INTJ B-NOUN;it's the ca pi tal s oh yes i'm fresh n dou ble o p;1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16
 1 1 1 0 1 1 1 1 1 0 1 1 1;B-ADJ B-INTJ B-ADJ I-ADJ B-NOUN B-NOUN B-NOUN B-INTJ B-ADJ I-ADJ B-NOUN B-PRON B-VERB;d o dou ble g y d o dou ble g ya see;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 1 1 1 1 1 1 1 1 1;B-VERB I-VERB B-ADJ B-NOUN B-ADV B-ADJ B-NOUN B-PART B-VERB B-DET B-NOUN;sho win' much flex when it's time to wreck a mic;1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 0 1 1 1 0 1 1 1 1 1 1 1 0 0;B-VERB I-VERB B-NOUN B-CCONJ B-VERB I-VERB B-DET B-NOUN B-ADP B-ADJ B-NOUN B-VERB B-PROPN I-PROPN I-PROPN;pimp in' hoes and clock in' a grip like my name was do lo mite;1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
+1 0 1 1 1 0 1 1 1 1 1 1 1 0 0;B-VERB I-VERB B-NOUN B-CCONJ B-VERB I-VERB B-DET B-NOUN B-ADP B-ADJ B-NOUN B-VERB B-PROPN I-PROPN I-PROPN;pimp in' hoes and clock in' a grip like my name was do lo mite;1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1;B-INTJ B-CCONJ B-PRON B-ADV B-VERB;yeah and it don't quit;1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 1 1 0 0 0 1 1;B-PRON B-VERB B-PRON B-ADP B-DET B-NOUN B-ADP B-DET B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN B-NOUN;i think they in the mood for some mo ther fu ckin' g shit;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 0 1;B-CCONJ B-PROPN B-PROPN I-PROPN B-PROPN;so dre wha ttup dog;1-8 1-8 1-16 0-8 1-8
@@ -3969,14 +3969,14 @@
 1 1 1 0 1 1 0 1 0 1 1 0;B-CCONJ B-ADJ B-NOUN I-NOUN B-VERB B-VERB I-VERB B-PROPN I-PROPN B-ADP B-PROPN I-PROPN;and it's go tta be bump in' ci ty of comp ton;1-16 0-16 1-16 0-16 1-8 1-8 0-8 1-16 0-16 1-8 1-8 0-8
 1 1 1 1 1 1 1 1 1 0 1 0;B-PRON B-ADV B-PRON B-VERB B-NOUN B-ADP B-ADV B-VERB B-NUM B-NOUN I-NOUN I-NOUN;it's where it takes place so when asked yo' a tten tion;0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-16 0-16 1-8 0-8
 1 0 1 1 1 0 0 1 1 1 1 0;B-VERB I-VERB B-ADP B-DET B-NOUN I-NOUN I-NOUN B-CCONJ B-PRON B-VERB B-ADJ I-ADJ;mo bbin' like a muh 'fu cker but i ain't lynch in';1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8 0-8
-1 0 1 1 0 1;B-VERB I-VERB B-DET B-ADJ I-ADJ B-NOUN;dro ppin' the fun ky shit;1-24 0-24 0-24 1-16 0-16 1-16
-1 1 0 1 1 0 1 0 1 0;B-INTJ B-VERB I-VERB B-DET B-NOUN I-NOUN B-NOUN I-NOUN B-ADJ I-ADJ;that's ma kin' the su cka ni ggaz mum ble;0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-8
+1 0 1 1 0 1;B-VERB I-VERB B-DET B-ADJ I-ADJ B-NOUN;dro ppin' the fun ky shit;1-32 0-32 0-32 1-16 0-16 1-16
+1 1 0 1 1 0 1 0 1 0;B-INTJ B-VERB I-VERB B-DET B-NOUN I-NOUN B-NOUN I-NOUN B-ADJ I-ADJ;that's ma kin' the su cka ni ggaz mum ble;0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-8
 1 1 1 1 1 1 1 1 1 0 1 1 1 0;B-ADV B-PRON B-ADP B-DET B-ADJ B-PRON B-ADP B-DET B-NOUN I-NOUN B-PRON B-DET B-VERB I-VERB;when i'm on the mic it's like a coo kie they all crum ble;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16
 1 1 1 1 1 1 1 0 1 1;B-VERB B-PART B-VERB B-ADJ B-CCONJ B-ADJ B-ADJ I-ADJ B-VERB B-VERB;try to get close and your ass 'll get smacked;1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 0 0 0 1 0 1 0 1 1 1 1 1;B-ADJ B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-PROPN I-PROPN B-PROPN B-VERB B-VERB B-ADJ B-NOUN;my mo ther fu ckin' ho mie do ggy dogg has got my back;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8
 1 0 1 1 1 1 1 1 1 1 1 1 0;B-ADV I-ADV B-VERB B-PRON B-VERB B-ADP B-ADP B-PRON B-VERB B-ADV B-PRON B-VERB I-VERB;ne ver let me slip 'cause if i slip then i'm sli ppin';1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-8
 1 1 1 1 1 1 0 1 1 1 1 1 1 0;B-CCONJ B-ADP B-PRON B-VERB B-ADJ B-PROPN I-PROPN B-ADV B-PRON B-VERB B-NUM B-ADV B-NOUN I-NOUN;but if i got my ni na then you know i'm straight tri ppin';0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-8
-1 1 0 0 1 0 1 1 1 1 1 1 1 1 1;B-CCONJ B-NOUN I-NOUN B-VERB I-VERB I-VERB B-PART B-VERB B-DET B-NOUN B-PART B-VERB B-DET B-NOUN B-ADV;and i' ma con tin ue to put the rap down put the mack down;0-32 1-24 0-24 0-24 1-24 0-24 0-24 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8
+1 1 0 0 1 0 1 1 1 1 1 1 1 1 1;B-CCONJ B-NOUN I-NOUN B-VERB I-VERB I-VERB B-PART B-VERB B-DET B-NOUN B-PART B-VERB B-DET B-NOUN B-ADV;and i' ma con tin ue to put the rap down put the mack down;0-32 1-32 0-32 0-32 1-32 0-32 0-32 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 0 1 1 1 1 1 1 1 1 1;B-CCONJ B-ADP B-PRON B-VERB I-VERB B-VERB B-NOUN B-PROPN B-VERB B-PART B-VERB B-DET B-NOUN B-PART;and if you bi tches talk shit i'll have to put the smack down;0-16 1-16 0-16 1-16 0-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1;B-INTJ B-CCONJ B-PRON B-ADV B-VERB;yeah and you don't stop;1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PRON B-PRON B-ADV B-ADP B-DET B-NOUN B-ADV B-PRON B-VERB B-CCONJ B-PRON B-VERB;i told you i'm just like a clock when i tick and i tock;0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-8 1-8
@@ -4096,7 +4096,7 @@
 1 1 1 1 1 0 1 1 0 0;B-INTJ B-VERB B-PRON B-DET B-NOUN B-ADP I-ADP B-NOUN I-NOUN I-NOUN;please send me a pops be fore pu ber ty;0-16 1-16 0-16 0-16 1-8 0-16 1-8 1-16 0-16 1-16
 1 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1;B-DET B-NOUN B-PRON B-ADV I-ADV B-VERB B-PART B-VERB B-DET B-NOUN B-ADP B-NOUN I-NOUN B-CCONJ I-CCONJ B-NUM;the things i woul dn't do to see a piece of fam ily u ni ty;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 1 1 1 1 0 1 1;B-PROPN B-ADV I-ADV B-VERB B-PRON B-ADV I-ADV B-VERB B-PRON;moms al ways work i bare ly see her;1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16
-1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1;B-PRON B-VERB I-VERB B-PART B-VERB B-ADJ I-ADJ B-ADP I-ADP B-DET B-NOUN B-PROPN B-VERB B-PART B-VERB B-PRON;i'm star tin' to get worr ied wi thout a pops i'll grow to be her;0-16 1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8
+1 1 0 1 1 1 0 0 1 1 1 1 1 1 1 1;B-PRON B-VERB I-VERB B-PART B-VERB B-ADJ I-ADJ B-ADP I-ADP B-DET B-NOUN B-PROPN B-VERB B-PART B-VERB B-PRON;i'm star tin' to get worr ied wi thout a pops i'll grow to be her;0-16 1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8
 1 1 1 0 1 1 0 0 1 1 0 1;B-PRON B-DET B-NOUN I-NOUN B-PRON B-ADV B-VERB I-VERB I-VERB B-NOUN B-NOUN I-NOUN;it's a won der they don't un der stand kids to day;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16
 1 1 1 1 1 1 1 1 0 1 1 1 1 1;B-CCONJ B-ADV B-PRON B-VERB B-PRON B-VERB B-PROPN B-ADV I-ADV B-VERB B-PART B-VERB B-DET B-NOUN;so when i pray i pray i'll ne ver grow to be that way;1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-8 1-8
 1 1 1 1 1 1 0 1;B-CCONJ B-PRON B-VERB B-ADP B-PRON B-VERB I-VERB B-PRON;and i hope that he ans wers me;1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-16
@@ -4104,13 +4104,13 @@
 1 1 0 1 0 1 0 1 0;B-DET B-ADJ I-ADJ B-NOUN I-NOUN B-DET I-DET B-NOUN I-NOUN;a diff erent fa ther e very week end;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-8
 0 1 1 1 1 1 1 1 1 1 0 1 1 1 1;B-ADP I-ADP B-PRON B-VERB B-PART B-VERB B-PRON B-PRON B-VERB B-PART B-ADP I-ADP B-DET B-NOUN B-VERB;be fore we get to meet him they break up be fore the week ends;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 0 1 1 1 1 1 1;B-PRON B-VERB I-VERB B-ADJ B-ADP B-ADJ B-DET B-ADJ B-NOUN;i'm ge ttin' sick of all the freind ships;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1;B-ADV B-ADV B-ADP B-PRON B-VERB B-PRON B-PRON B-VERB B-NOUN B-CCONJ B-DET B-ADJ B-NOUN B-VERB B-ADJ;as soon as we kick it he done split and the whole shit ends quick;0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-8 1-8 1-8
-1 1 1 1 1 1 1 1 1 1 1 0;B-ADV B-VERB B-PRON B-VERB B-DET B-NOUN B-ADP B-NOUN B-DET B-NOUN B-NOUN I-NOUN;how can i be a man if there's no role mo del;1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16
-1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 0;B-VERB I-VERB B-PART B-VERB B-ADJ B-NOUN B-PRON B-VERB B-ADJ B-VERB I-VERB B-DET B-ADJ I-ADJ B-NOUN I-NOUN;stri vin' to save my soul i stay cold drink in' a for ty bo ttle;1-24 0-24 0-24 1-16 0-16 1-8 1-16 0-16 1-8 1-24 0-24 0-24 1-16 0-16 1-16 0-16
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1;B-ADV B-ADV B-ADP B-PRON B-VERB B-PRON B-PRON B-VERB B-NOUN B-CCONJ B-DET B-ADJ B-NOUN B-VERB B-ADJ;as soon as we kick it he done split and the whole shit ends quick;0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-8 1-8 1-8
+1 1 1 1 1 1 1 1 1 1 1 0;B-ADV B-VERB B-PRON B-VERB B-DET B-NOUN B-ADP B-NOUN B-DET B-NOUN B-NOUN I-NOUN;how can i be a man if there's no role mo del;1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16
+1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 0;B-VERB I-VERB B-PART B-VERB B-ADJ B-NOUN B-PRON B-VERB B-ADJ B-VERB I-VERB B-DET B-ADJ I-ADJ B-NOUN I-NOUN;stri vin' to save my soul i stay cold drink in' a for ty bo ttle;1-32 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-8 1-32 0-32 0-32 1-16 0-16 1-16 0-16
 1 1 0;B-ADV B-ADJ I-ADJ;so so rry;1-8 1-16 0-16
 1 1 1 0 0 1 1 0 1;B-NOUN B-VERB B-PART B-VERB I-VERB I-VERB B-ADJ I-ADJ B-NOUN;moms had to en ter tain ma ny men;1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8
 1 0 1 0 1 1 1 1 1 1 1 1 1 0 1;B-INTJ I-INTJ B-ADV I-ADV B-VERB B-PRON B-CCONJ B-ADJ B-NOUN B-PART B-VERB B-DET B-NOUN B-ADV I-ADV;di dn't wa nna do it but it's time to pay the rent a gain;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16
-1 1 0 1 1 1 0 1 1 1 0 1 1 1 1 0;B-PRON B-VERB I-VERB B-DET B-NOUN B-ADJ I-ADJ B-CCONJ B-NUM B-VERB I-VERB B-PART B-VERB B-DET B-NOUN I-NOUN;i'm ge ttin' a bit ol der and i'm star tin' to be a bo ther;0-32 1-24 0-24 0-24 1-16 1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-8
+1 1 0 1 1 1 0 1 1 1 0 1 1 1 1 0;B-PRON B-VERB I-VERB B-DET B-NOUN B-ADJ I-ADJ B-CCONJ B-NUM B-VERB I-VERB B-PART B-VERB B-DET B-NOUN I-NOUN;i'm ge ttin' a bit ol der and i'm star tin' to be a bo ther;0-32 1-32 0-32 0-32 1-16 1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-8
 1 1 1 1 1 1 1 0 1 1 1 0;B-NOUN B-VERB B-VERB B-PRON B-ADP B-NOUN B-VERB I-VERB B-ADP B-ADJ B-NOUN I-NOUN;moms can't stand me 'cause i'm loo kin' like my fa ther;1-8 0-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 1 0 1 1 1 1 1 0;B-VERB B-PRON B-VERB B-CCONJ B-VERB B-ADV I-ADV B-VERB B-PRON B-DET B-NOUN I-NOUN;should i stay or run a way tell me the ans wer;1-16 0-8 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-8
 1 0 1 1 1 0 1 1 1 1 0;B-PROPN B-VERB I-VERB B-PRON B-CCONJ B-VERB I-VERB B-PRON B-ADP B-NOUN I-NOUN;moms ig nores me and a voids me like can cer;1-8 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8 1-8 0-16
@@ -4138,7 +4138,7 @@
 1 1 1 1 1 1 1 1 1 1 1 0 1;B-PRON B-VERB B-ADJ B-NOUN B-VERB B-PRON B-VERB B-ADV B-VERB B-DET B-VERB I-VERB B-ADV;you grabbed your coat left us broke now ain't no ru nnin' back;0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16
 1 0 1 1 1 1 1 1 1 1 1 1;B-VERB I-VERB B-VERB B-ADJ B-NOUN B-ADP B-PRON B-VERB B-PRON B-ADP B-DET B-NOUN;ask in' bout my moms like you loved her from the start;1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 1 0 1 1 1 1 0 1;B-VERB B-PRON B-ADP B-DET B-NOUN B-PRON B-VERB B-ADV I-ADV B-ADP B-DET B-ADJ I-ADJ B-NOUN;left her in the dark she fell a part from a bro ken heart;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-16
-1 1 1 0 1 1 1 1 0 1 1 1 0 1;B-ADV B-ADV B-ADV I-ADV B-VERB B-ADP B-DET B-NOUN I-NOUN B-VERB B-ADJ B-NOUN I-NOUN B-NOUN;so don't e ven start with that wa nna be your fa ther shit;0-16 1-24 0-24 0-24 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
+1 1 1 0 1 1 1 1 0 1 1 1 0 1;B-ADV B-ADV B-ADV I-ADV B-VERB B-ADP B-DET B-NOUN I-NOUN B-VERB B-ADJ B-NOUN I-NOUN B-NOUN;so don't e ven start with that wa nna be your fa ther shit;0-16 1-32 0-32 0-32 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 0 1 1 1 0 1 1 1 1;B-ADV B-ADV I-ADV B-VERB I-VERB B-ADP B-ADJ B-NOUN I-NOUN B-PRON B-ADV B-VERB B-PRON;don't e ven bo ther with your do llars i don't need it;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16
 1 1 0 1 1 1 1 1 1 0 1 1;B-PROPN B-VERB I-VERB B-NOUN B-ADP B-PRON B-VERB B-PRON B-DET B-ADV I-ADV B-NOUN;i'll bur y moms like you left me all a lone g;0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16
 1 1 1 1 0 0 1 1 1 1 0 1 1 1;B-ADV B-ADP B-PRON B-ADV I-ADV I-ADV B-PRON B-VERB B-DET B-PROPN B-ADV I-ADV B-ADP B-PRON;now that i fi na lly you stay the fuck a way from me;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
@@ -4146,13 +4146,13 @@
 1 1 0 1 1 1 1 1 1 1 0;B-PRON B-ADV I-ADV B-VERB B-PART B-VERB B-CCONJ B-PRON B-VERB B-VERB I-VERB;i ne ver meant to leave but i was wan ted;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-8
 1 1 1 0 1 0 1 0 1 1 1 1 1 0;B-VERB B-ADV B-ADJ I-ADJ B-NOUN I-NOUN B-DET I-DET B-NOUN B-NOUN B-NOUN B-VERB B-VERB I-VERB;crossed too ma ny peo ple e very house i'd touch was haun ted;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16
 1 1 1 1 1 0 1 0 1 0 1 1 1 0;B-VERB B-PART B-VERB B-DET B-NOUN I-NOUN B-DET I-DET B-NOUN I-NOUN B-VERB B-DET B-NOUN I-NOUN;had to watch the strang ers e very bro ther was a dan ger;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
-1 1 1 1 1 1 1 0 1 1 1 1 1 1 1;B-ADP B-PRON B-VERB B-PART B-VERB B-PRON B-ADJ I-ADJ B-VERB B-PART B-VERB B-ADP B-ADP B-NOUN B-INTJ;if i was to keep you brea thin' had to be out of range uh;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-8 0-16
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1;B-ADP B-PRON B-VERB B-PART B-VERB B-PRON B-ADJ I-ADJ B-VERB B-PART B-VERB B-ADP B-ADP B-NOUN B-INTJ;if i was to keep you brea thin' had to be out of range uh;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-8 0-16
 1 1 1 1 1 1 1 1 1 1 1 1 0;B-VERB B-PART B-VERB B-PRON B-PART B-VERB B-ADJ B-NOUN B-CCONJ B-VERB B-DET B-NOUN I-NOUN;had to move one to lost my name and pick the num ber;1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16
 1 1 1 1 1 1 1 1 1 0 1 1 1 1;B-VERB B-PRON B-VERB B-ADJ B-NOUN B-PRON B-VERB B-DET B-ADJ I-ADJ B-NOUN B-PART B-VERB B-ADP;made me watch my back i had no ha ppy home to run to;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16
-1 0 1 1 1 1 1 0 1 1 0 1 0 1;B-ADV I-ADV B-ADJ B-ADJ B-NOUN B-ADP B-VERB I-VERB B-DET B-NOUN I-NOUN B-VERB I-VERB B-ADV;may be it's my fault for be in' a fa ther li vin' fast;1-16 0-16 1-16 0-16 1-16 0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-8
+1 0 1 1 1 1 1 0 1 1 0 1 0 1;B-ADV I-ADV B-ADJ B-ADJ B-NOUN B-ADP B-VERB I-VERB B-DET B-NOUN I-NOUN B-VERB I-VERB B-ADV;may be it's my fault for be in' a fa ther li vin' fast;1-16 0-16 1-16 0-16 1-16 0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1 1 0 1;B-CCONJ B-VERB I-VERB B-ADJ B-VERB B-ADJ B-DET B-NOUN B-CCONJ B-VERB B-PRON B-ADJ I-ADJ B-NOUN;but li vin' slow mean half the dough and won't you ki ssin' ass;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 1 1 1 1 1 1 0 1;B-NOUN I-NOUN B-VERB B-PRON B-PRON B-VERB B-ADJ B-ADV B-ADP I-ADP;hind sight shows me it was wrong all a long;1-8 0-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8
-1 1 0 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB I-VERB B-PART B-VERB B-DET B-NOUN B-ADP B-PRON B-VERB B-VERB B-PART B-VERB B-ADV B-ADJ;i wan ted to make some dough so you would grow to be so strong;0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-4
+1 1 0 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB I-VERB B-PART B-VERB B-DET B-NOUN B-ADP B-PRON B-VERB B-VERB B-PART B-VERB B-ADV B-ADJ;i wan ted to make some dough so you would grow to be so strong;0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-4
 1 1 1 1 0 1 0 1 1 1;B-PRON B-VERB B-DET B-ADJ I-ADJ B-ADJ I-ADJ B-ADP B-PRON B-VERB;it took a li ttle long er than i thought;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-VERB B-VERB B-CCONJ B-VERB B-ADP B-NOUN B-ADP B-DET B-NOUN;i slipped got caught and sent to jail by the courts;0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-4
 1 1 1 0 1 1 1 1 1 0 0 1;B-ADV B-PRON B-VERB I-VERB B-NOUN B-CCONJ B-PRON B-VERB B-NOUN B-VERB I-VERB I-VERB;now i'm do in' time and i wish you'd un der stand;1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
@@ -4186,7 +4186,7 @@
 0 1 0 0 0 1 1 1 1 1 1;B-ADV I-ADV I-ADV I-ADV I-ADV B-DET B-ADJ B-NOUN B-ADP B-NOUN B-VERB;in e vi ta bly the first day of school came;0-16 1-16 0-16 0-16 1-8 0-16 1-8 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 0 1 1 1 1 1;B-PRON B-VERB B-PRON B-VERB B-VERB B-ADP I-ADP B-PRON B-VERB B-PART B-VERB B-ADJ;i thought i could get o ver i tried to play sick;0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8 1-16
 1 1 1 1 1 1 1 1 0 1 1;B-CCONJ B-ADJ B-NOUN B-VERB B-INTJ B-DET B-NOUN B-INTJ B-VERB I-VERB B-PRON;but my mom said no no way uh for get it;1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 0-16 1-16 0-16
-1 1 1 0 1 1 1 1 1 1 0 1;B-ADV B-VERB B-NOUN I-NOUN B-PRON B-VERB B-VERB B-PRON B-VERB B-PART B-VERB I-VERB;there was no thin' i could do i tried to re lax;1-16 0-16 1-24 0-24 1-24 0-24 1-12 0-16 1-16 0-16 0-16 1-8
+1 1 1 0 1 1 1 1 1 1 0 1;B-ADV B-VERB B-NOUN I-NOUN B-PRON B-VERB B-VERB B-PRON B-VERB B-PART B-VERB I-VERB;there was no thin' i could do i tried to re lax;1-16 0-16 1-32 0-32 1-32 0-32 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 0 1 0 0;B-PRON B-VERB B-VERB B-PART B-ADP B-DET B-ADJ I-ADJ B-NOUN I-NOUN I-NOUN;i got dressed up in those an cient ar ti facts;0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-8 1-8
 1 1 1 1 0 1 1 1 1 1 1 1 1;B-CCONJ B-ADV B-PRON B-VERB B-ADP I-ADP B-NOUN B-PRON B-VERB B-ADV B-ADP B-PRON B-VERB;and when i walked in to school it was just as i thought;0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 0 1 1 0 1 1 1 1 1;B-DET B-NOUN B-VERB B-ADJ I-ADJ B-PART B-NOUN I-NOUN B-ADP B-DET B-NOUN B-NOUN B-VERB;the kids were cra ckin' up laugh in' at the clothes mom bought;0-16 1-16 0-16 1-16 0-16 1-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8
@@ -4197,7 +4197,7 @@
 1 1 1 1 1 1 0 1 1 1 1;B-PRON B-VERB B-ADP B-PRON B-VERB B-VERB I-VERB B-PRON B-ADV B-VERB B-PRON;she said if they were laugh ing you don't need them;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 1;B-ADP B-DET B-ADV B-ADJ B-NOUN;'cause they're not good friends;1-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 0 1 1 1 0 1 1 1 1;B-ADP B-DET B-ADJ B-NUM B-NOUN I-NOUN B-PRON B-VERB B-PART B-VERB I-VERB B-ADP B-ADJ B-NOUN;for the next six ho urs i tried to ex plain to my mom;1-16 0-16 1-16 0-8 1-16 0-16 0-16 1-32 0-32 0-16 1-16 0-16 0-16 1-16
-1 1 1 1 0 1 1 1 1 1 0 1 1 1 0 1 1;B-ADP B-PRON B-VERB B-DET I-DET B-NOUN B-PART B-VERB B-ADP B-DET B-ADV I-ADV B-NUM B-NUM I-NUM B-ADJ B-NOUN;that i was go nna have to go through this a bout two hun dred more times;0-16 1-16 0-16 1-24 0-24 1-24 0-16 1-16 0-24 1-24 0-24 1-16 1-24 1-24 0-24 0-16 1-8
+1 1 1 1 0 1 1 1 1 1 0 1 1 1 0 1 1;B-ADP B-PRON B-VERB B-DET I-DET B-NOUN B-PART B-VERB B-ADP B-DET B-ADV I-ADV B-NUM B-NUM I-NUM B-ADJ B-NOUN;that i was go nna have to go through this a bout two hun dred more times;0-16 1-16 0-16 1-32 0-32 1-32 0-16 1-16 0-32 1-32 0-32 1-16 1-32 1-32 0-32 0-16 1-8
 1 1 1 1 1 1 1 0 1 1 1;B-ADP B-ADP B-PRON B-ADJ B-DET B-NOUN B-ADV B-ADP I-ADP B-DET B-NOUN;so to you all the kids all a cross the land;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 0;B-NOUN B-DET B-NOUN B-PART B-VERB I-VERB;there's no need to ar gue;0-16 1-16 1-8 0-16 1-16 0-16
 1 0 1 1 0 0 1;B-NOUN I-NOUN B-ADV B-ADV B-VERB I-VERB I-VERB;par ents just don't un der stand;1-16 0-16 1-16 0-16 1-16 0-16 1-4
@@ -4210,7 +4210,7 @@
 1 1 0 1 1 1 1 1 1 0 1 1;B-CCONJ B-ADV I-ADV B-VERB B-PRON B-PART B-ADP B-DET B-NOUN I-NOUN B-ADP B-NOUN;and may be show it off to a cou ple of friends;0-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 0 1 1 1 0 0;B-PRON B-ADV B-VERB B-PRON B-ADP I-ADP B-DET B-NOUN I-NOUN I-NOUN;i'll just cruise it a round the neigh bor hood;1-16 0-8 1-16 0-16 0-16 1-16 0-16 1-16 0-8 1-8
 1 1 0 1 1 0;B-INTJ B-ADV I-ADV B-PRON B-ADV I-ADV;well may be i shoul dn't;1-8 1-16 0-16 0-16 1-16 0-16
-1 1 1 1 1;B-INTJ B-ADP B-NOUN B-PRON B-VERB;yeah of course i should;1-4 0-16 1-12 1-12 1-12
+1 1 1 1 1;B-INTJ B-ADP B-NOUN B-PRON B-VERB;yeah of course i should;1-4 0-16 1-16 1-16 1-16
 1 0 1 0 1 1 1 1 1 1;B-VERB B-NOUN I-NOUN I-NOUN B-NOUN B-DET B-NOUN B-ADP B-DET B-NOUN;pay a tten tion here's the thick of the plot;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 0 1 1 1 1 1 1;B-PRON B-VERB B-PART B-ADP B-DET B-NOUN I-NOUN B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;i pulled up to the cor ner at the end of my block;0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16
 1 1 1 1 1 1 0 0 1 0 1 1 0;B-INTJ B-ADV B-PRON B-VERB B-DET B-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-NOUN B-NOUN I-NOUN;that's when i saw this beau ti ful gir lie girl wal kin';0-16 1-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-8 1-16 0-16
@@ -4234,23 +4234,23 @@
 1 1 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-ADJ B-NOUN B-ADP B-ADJ B-NOUN B-PRON B-VERB B-ADJ B-NOUN B-ADP B-DET B-NOUN;she put her hand on my knee i put my foot on the gas;0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 0 1 1 0 1 1 1 1 1;B-PRON B-ADV I-ADV B-VERB B-NOUN I-NOUN B-PRON B-VERB B-PART B-ADV B-ADV;we al most got whip lash i took off so fast;0-16 1-16 0-16 1-16 0-8 1-8 1-16 0-16 1-8 0-8 1-16
 1 1 1 1 1 0 1 1 0 1 1;B-DET B-NOUN B-NOUN B-VERB B-ADJ I-ADJ B-DET B-NOUN I-NOUN B-VERB B-ADJ;the sun roof was o pen the mu sic was high;0-16 1-8 1-8 1-8 1-16 0-16 0-16 1-16 0-16 0-16 1-8
-1 1 1 1 1 1 0 0 1 0 1 1 1;B-CCONJ B-DET B-ADJ B-NOUN B-VERB B-ADV I-ADV I-ADV B-VERB I-VERB B-PART B-ADJ B-NOUN;and this girl's hand was stea di ly mo vin' up my thigh;1-16 0-16 1-8 1-8 0-16 1-24 0-24 0-24 1-16 0-16 1-8 0-8 1-8
+1 1 1 1 1 1 0 0 1 0 1 1 1;B-CCONJ B-DET B-ADJ B-NOUN B-VERB B-ADV I-ADV I-ADV B-VERB I-VERB B-PART B-ADJ B-NOUN;and this girl's hand was stea di ly mo vin' up my thigh;1-16 0-16 1-8 1-8 0-16 1-32 0-32 0-32 1-16 0-16 1-8 0-8 1-8
 1 1 1 0 1 1 1 0 1 1 1 1 1;B-PRON B-VERB B-VERB I-VERB B-PART B-NUM B-NOUN I-NOUN B-ADP B-ADJ B-NOUN B-ADV B-ADV;she had o pened up three bu ttons on her shirt so far;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 0 1 0 1 0 1 1;B-PRON B-VERB B-INTJ B-ADV B-PRON B-VERB I-VERB B-VERB I-VERB B-ADP B-NOUN I-NOUN B-NOUN;i guess that's why i di dn't no tice that po lice car;0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 0 1 0 1 1 1 1 1;B-VERB B-VERB I-VERB B-NUM I-NUM B-ADP B-ADJ B-ADJ B-ADJ B-NOUN;we're do in' nine ty in my mom's new porsche;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 0 1 1;B-CCONJ B-PART B-VERB B-DET B-ADJ B-NOUN I-NOUN B-ADJ B-NOUN;and to make this long stor y short short;1-16 0-16 1-8 1-8 1-8 1-16 0-16 1-16 1-16
 1 1 1 1 1 1 0 1 1 1 1 1;B-ADV B-DET B-NOUN B-VERB B-PRON B-ADP I-ADP B-PRON B-VERB B-VERB B-ADP B-NOUN;when the cop pulled me o ver i was scared as hell;1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8
-1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 0;B-PRON B-VERB B-PRON B-ADV B-VERB B-DET B-NOUN I-NOUN B-CCONJ B-PRON B-VERB B-ADV I-ADV B-ADV B-NOUN I-NOUN I-NOUN;i said i don't have a li cense but i drive ver y well o ffi cer;0-16 1-16 0-16 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-24 0-24 0-24
+1 1 1 1 1 1 1 0 1 1 1 1 0 1 1 0 0;B-PRON B-VERB B-PRON B-ADV B-VERB B-DET B-NOUN I-NOUN B-CCONJ B-PRON B-VERB B-ADV I-ADV B-ADV B-NOUN I-NOUN I-NOUN;i said i don't have a li cense but i drive ver y well o ffi cer;0-16 1-16 0-16 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-32 0-32 0-32
 1 0 1 1 1 0 1 1 1;B-ADV I-ADV B-VERB B-DET B-NOUN B-NOUN I-NOUN B-DET B-NOUN;al most had a heart a ttack that day;1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 1 1 1 1 1 1 1 0 0;B-VERB B-PART B-VERB B-PART B-DET B-NOUN B-VERB B-DET B-NUM B-NOUN B-ADJ B-ADJ I-ADJ I-ADJ;come to find out the girl was a twelve year old run a way;1-16 0-16 1-16 0-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8
 1 1 0 1 0 1 1 1 0 1 0;B-PRON B-VERB B-VERB I-VERB I-VERB B-DET B-NOUN B-VERB B-VERB I-VERB I-VERB;i was a rres ted the car was im poun ded;0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8 1-16 0-16
-1 1 1 1 1 1 1 0 1 1 0 1 0;B-ADV B-VERB B-DET B-NOUN B-ADP B-PRON B-PART B-VERB I-VERB B-NOUN I-NOUN B-VERB I-VERB;there was no way for me to a void be in' groun ded;1-16 0-16 1-8 1-16 0-16 1-24 0-24 0-24 1-8 0-16 0-16 1-16 0-16
+1 1 1 1 1 1 1 0 1 1 0 1 0;B-ADV B-VERB B-DET B-NOUN B-ADP B-PRON B-PART B-VERB I-VERB B-NOUN I-NOUN B-VERB I-VERB;there was no way for me to a void be in' groun ded;1-16 0-16 1-8 1-16 0-16 1-32 0-32 0-32 1-8 0-16 0-16 1-16 0-16
 1 1 0 1 1 1 1 1 0 1 0 1 1 1;B-ADJ B-NOUN I-NOUN B-VERB B-PART B-VERB B-PART B-ADP B-NOUN I-NOUN I-NOUN B-PART B-VERB B-PRON;my par ents had to come off from va ca tion to get me;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16
 1 1 0 1 1 1 1 1 1 1 1 0 1 1;B-NOUN B-ADV I-ADV B-VERB B-ADP B-NOUN B-ADP B-PART B-VERB B-ADJ B-NOUN I-NOUN B-VERB B-PRON;i'd ra ther be in jail than to have my fa ther hit me;0-16 1-16 0-16 1-16 0-16 1-16 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 0 1 1;B-ADJ B-NOUN I-NOUN B-VERB B-ADP;my par ents walked in;0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-ADJ B-NOUN B-PRON B-VERB B-INTJ B-NOUN B-NOUN B-ADV B-VERB B-ADJ B-NOUN;i got my grip i said ah mom dad how was your trip;0-16 1-8 0-8 1-8 0-16 1-8 1-8 1-8 1-8 1-16 0-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1 1;B-PRON B-VERB I-VERB B-VERB B-PRON B-VERB B-PRON B-VERB B-PART B-VERB B-ADJ B-NOUN;they di dn't speak i said i want to plead my case;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 1 1 0 1 1 1 1 1 1 1 1 1;B-CCONJ B-ADJ B-NOUN I-NOUN B-ADV B-VERB B-PRON B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;but my fa ther just shoved me in the car by my face;1-16 0-16 1-16 0-16 1-8 1-24 1-24 0-24 0-16 1-8 1-16 0-16 1-8
+1 1 1 0 1 1 1 1 1 1 1 1 1;B-CCONJ B-ADJ B-NOUN I-NOUN B-ADV B-VERB B-PRON B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;but my fa ther just shoved me in the car by my face;1-16 0-16 1-16 0-16 1-8 1-32 1-32 0-32 0-16 1-8 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1 0 1;B-DET B-VERB B-DET B-ADJ B-NOUN B-ADV B-PRON B-ADV B-VERB B-ADV B-PRON B-VERB I-VERB;that was a hard ride home i don't know how i sur vived;0-16 1-16 0-16 1-16 0-8 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 0 1 1 0;B-PRON B-VERB B-VERB B-PRON B-VERB B-VERB B-PRON B-ADP B-DET B-ADJ I-ADJ B-VERB B-ADJ I-ADJ;they took turns one would beat me while the o ther was dri vin';1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16
 1 1 0 1 1 1 1 1 1 0 1;B-PRON B-VERB B-VERB I-VERB B-PRON B-PRON B-ADV B-VERB B-DET B-NOUN I-NOUN;i can't be lieve it i just made a mis take;1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
@@ -4272,7 +4272,7 @@
 1 0 1 1 0 1 1 1;B-NOUN I-NOUN B-PRON B-VERB I-VERB B-NOUN B-ADP B-PRON;la dies i wa nna rock with you;1-8 0-8 0-16 1-16 0-16 1-8 0-8 1-8
 1 1 0 1 1 1 1 1 1 1 1 0 1;B-CCONJ B-ADV I-ADV B-ADP B-DET B-NOUN B-PRON B-VERB B-NOUN B-VERB B-PART B-VERB I-VERB;and la ter in the night you know i'd like to pur sue;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-8 1-8
 1 0 1 1 0 1 1;B-NOUN I-NOUN B-ADJ B-ADJ I-ADJ B-CCONJ B-ADJ;some thin' real sex y and nice;1-8 0-8 1-8 1-16 0-16 1-8 1-8
-1 1 1 0 1 0 0 1 0 1;B-VERB B-ADP B-ADJ I-ADJ B-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN;play that fun ky mu sic va ni lla ice;1-12 0-12 1-12 0-12 1-12 0-12 0-16 1-16 0-16 1-4
+1 1 1 0 1 0 0 1 0 1;B-VERB B-ADP B-ADJ I-ADJ B-NOUN I-NOUN B-NOUN I-NOUN I-NOUN B-NOUN;play that fun ky mu sic va ni lla ice;1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-4
 1 1 0 1 1 1 0 1;B-DET B-NOUN I-NOUN B-VERB B-PRON B-ADV I-ADV B-VERB;some peo ple thought i woul dn't break;0-8 1-8 0-8 1-8 1-8 1-16 0-16 1-8
 1 1 1 1 0 1 1 1 1;B-ADV B-PRON B-VERB B-NOUN I-NOUN B-NUM B-ADP B-ADJ B-NOUN;then i stuffed num ber one in their face;1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-4
 1 0 0 1 1 1 1 1;B-ADV I-ADV B-VERB I-VERB B-ADV B-PRON B-VERB B-ADP;ne ver for get where i came from;1-8 1-8 0-16 1-16 0-16 1-8 1-8 1-8
@@ -4285,7 +4285,7 @@
 1 1 0 1 1 1 1 1 1 1;B-VERB B-NOUN I-NOUN B-CCONJ B-ADV B-PRON B-VERB B-PART B-VERB B-ADJ;pick po ckets and then they try to play dumb;1-8 1-16 0-8 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1;B-INTJ B-VERB B-PRON B-ADP B-DET B-NOUN B-NOUN;yo take it from the ice man;1-8 1-16 0-16 1-16 0-16 1-8 1-8
 1 0 0 1 0 1 1 1 0 1;B-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-NOUN;lyr i cal po et with a mas ter plan;1-16 0-16 0-16 1-16 0-8 1-16 0-16 1-8 0-16 1-8
-1 0 1 1 1 1 1 1 1;B-VERB I-VERB B-PRON B-ADV B-PRON B-VERB B-ADP B-NOUN B-NOUN;te llin' you how it is in show biz;1-24 0-24 0-24 1-16 0-16 1-8 0-8 1-8 0-8
+1 0 1 1 1 1 1 1 1;B-VERB I-VERB B-PRON B-ADV B-PRON B-VERB B-ADP B-NOUN B-NOUN;te llin' you how it is in show biz;1-32 0-32 0-32 1-16 0-16 1-8 0-8 1-8 0-8
 1 1 1 0 1 1 1 1 0;B-DET B-ADJ B-NOUN I-NOUN B-ADP B-DET B-NOUN B-NOUN I-NOUN;a white ra pper with some street know ledge;0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-8
 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN B-ADP B-PRON;i write the rhyme for you;1-16 0-8 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1;B-VERB B-DET B-NOUN B-ADP B-DET B-NOUN B-NOUN B-NOUN B-NOUN;drop this one for the v i p crew;1-8 0-8 1-8 1-16 0-16 1-16 0-16 1-8 1-4
@@ -4418,13 +4418,13 @@
 1 1 0 1 1 1 1 1 1 1 1 0;B-PRON B-VERB I-VERB B-PART B-DET B-NOUN B-ADP B-ADJ B-ADJ B-NOUN B-VERB I-VERB;i'm ru nnin' up the stairs with my front tooth bro ken;1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 1-16 0-16
 1 1 1 1 1 1 1 1 1 1 0;B-DET B-NOUN B-ADV B-VERB B-CCONJ B-VERB B-PRON B-VERB B-VERB B-VERB I-VERB;the nurse just laughed and said you must be jo kin';0-16 1-8 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PART B-ADP B-PRON B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;i looked up at her with a smile on my face;0-16 1-16 0-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8
-1 1 1 1 1 1 1 1 1 1;B-DET B-NOUN B-ADP B-ADJ B-ADJ B-NOUN B-VERB B-ADP B-ADP B-NOUN;no joke 'cause my front tooth is out of place;1-8 1-12 0-12 0-12 1-12 0-12 0-12 1-16 0-8 1-8
+1 1 1 1 1 1 1 1 1 1;B-DET B-NOUN B-ADP B-ADJ B-ADJ B-NOUN B-VERB B-ADP B-ADP B-NOUN;no joke 'cause my front tooth is out of place;1-8 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 1 1 1 1 1;B-CCONJ B-PRON B-VERB B-PART B-VERB B-ADP B-NOUN B-ADP B-ADJ B-NOUN;so i walked to school with ice on my lip;1-16 0-16 1-8 0-16 1-8 0-16 1-8 1-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1;B-DET B-ADJ I-ADJ B-ADJ B-NOUN B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;a nur se's late pass like a gun on my hip;0-16 1-8 0-16 1-8 1-8 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 0 1 1 0 1 1 0 1;B-ADJ B-NOUN B-VERB B-ADV B-ADJ I-ADJ B-NUM B-VERB I-VERB B-PRON B-VERB I-VERB B-PRON;my books are real hea vy i'm wal kin' i'm dra ggin' it;0-16 1-8 0-16 1-8 1-16 0-16 0-16 1-8 0-16 1-8 1-16 0-16 0-16
 1 1 1 1 1 1 1 1 0 1;B-DET B-NOUN B-NOUN B-ADJ B-NOUN B-NUM B-ADJ B-NOUN I-NOUN B-PRON;no school lunch next week i'm brown ba ggin' it;1-8 1-8 1-16 1-8 1-8 0-16 1-8 1-16 0-16 0-8
 0 1 1 1 1 1 1 1;B-VERB I-VERB B-NOUN B-PRON B-DET B-NOUN B-DET B-NOUN;for get class i'm a shoot some ball;0-16 1-8 1-8 1-16 0-16 1-8 0-16 1-8
-1 1 1 1 1 1 1 1 0 1 1;B-ADP B-DET B-ADJ B-NOUN B-PRON B-VERB B-DET B-NOUN I-NOUN B-ADV B-ADV;with the late pass i got no trou ble at all;1-16 0-16 1-8 1-8 1-12 1-12 1-12 1-16 0-16 0-16 1-8
+1 1 1 1 1 1 1 1 0 1 1;B-ADP B-DET B-ADJ B-NOUN B-PRON B-VERB B-DET B-NOUN I-NOUN B-ADV B-ADV;with the late pass i got no trou ble at all;1-16 0-16 1-8 1-8 1-16 1-16 1-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-CCONJ B-ADV B-DET B-NOUN B-VERB B-ADV B-CCONJ B-VERB B-NOUN B-VERB B-PRON B-VERB;but then the nurse walks up and says what do you know;0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-16 0-16 0-16 1-8
 1 1 1 1 1 0 0 1 0 1 1;B-ADJ B-PART B-ADP B-DET B-NOUN I-NOUN I-NOUN B-NOUN I-NOUN B-PRON B-VERB;it's off to the prin ci pal's o ffice you go;1-8 1-8 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-8 1-4
 1 0 1 1 1 1 0 0 1;B-ADJ I-ADJ B-NOUN B-VERB B-ADJ B-ADJ I-ADJ I-ADJ B-NOUN;pa ssin' notes is my fa vor ite time;1-8 0-16 1-8 1-16 0-16 1-8 0-16 1-8 1-8
@@ -4438,7 +4438,7 @@
 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-DET B-ADJ B-NOUN B-VERB B-PRON B-PRON B-VERB B-ADJ;i wrote the first note told her she was fine;0-16 1-8 0-16 1-8 1-8 1-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-CCONJ B-PRON B-VERB B-ADP B-DET B-NUM B-ADP B-PRON B-VERB B-VERB B-DET B-NOUN;and i hoped that the two of us could spend some time;1-16 0-16 1-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PRON B-ADV B-CCONJ B-VERB B-PRON B-ADJ B-ADJ B-ADV B-ADJ B-VERB;she wrote me back and told me you're fine too i'd love;0-16 1-8 1-8 1-8 0-16 1-16 0-16 1-16 0-8 1-16 0-16 1-8
-1 1 1 1 1 1 1 1 1 1 1;B-PART B-VERB B-ADP B-DET B-NOUN B-CCONJ B-VERB B-DET B-NOUN B-ADP B-PRON;to go on a date and spend some time with you;0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-8 0-16 1-16
+1 1 1 1 1 1 1 1 1 1 1;B-PART B-VERB B-ADP B-DET B-NOUN B-CCONJ B-VERB B-DET B-NOUN B-ADP B-PRON;to go on a date and spend some time with you;0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-8 0-16 1-16
 1 1 1 1 1 1 0 1 1 0 1 1 1 0;B-ADV B-ADV B-PRON B-VERB B-ADV B-VERB I-VERB B-CCONJ B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN;so then i sat there ree lin' and loo kin' at the cei lin';0-16 1-16 0-16 1-8 1-8 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 1 0 1 1 1 1 1 1 1 0;B-NOUN B-VERB B-VERB I-VERB B-DET B-NOUN B-ADJ B-PRON B-VERB B-ADJ I-ADJ;words can't ex press the way that i was fee lin';1-8 1-8 0-16 1-8 0-16 1-8 0-16 1-16 0-16 1-16 0-16
 1 1 1 1 0 1 1 1 1 1 1 1;B-ADV B-PRON B-VERB B-ADP B-PRON I-PRON B-DET B-ADJ B-NOUN B-PART B-VERB B-PRON;then i thought to my self the sure way to get her;1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-8 1-8 0-16 1-16 0-16
@@ -4571,7 +4571,7 @@
 1 1 1 1 1 1 1 1 1;B-DET B-NOUN B-NOUN B-DET B-NOUN B-CCONJ B-PRON B-ADV B-VERB;the hip hip a hop and you don't stop;0-16 1-8 1-8 0-16 1-16 0-16 0-16 1-8 1-8
 1 0 1 1 1 1 1 1 0 1 1 1 1 1 0;B-VERB I-VERB B-ADP B-DET B-NOUN B-NOUN B-DET B-NOUN I-NOUN B-VERB B-PART B-VERB B-DET B-NOUN I-NOUN;ro ckin' to the bang bang the boo gie say up jump the boo gie;1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8 1-8 0-16 1-16 0-16
 1 1 1 0 1 1 1 0 1 1;B-ADP B-DET B-NOUN I-NOUN B-ADP B-DET B-NOUN I-NOUN B-DET B-NOUN;to the rhy thm of the boo gie the beat;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
-1 1 0 1 1 1 1 1 1 1 0 1;B-DET B-ADJ I-ADJ B-NOUN B-VERB B-NOUN B-PRON B-VERB B-INTJ B-PROPN I-PROPN B-PROPN;a ski ddle e be bop we rock uh scoo by doo;0-16 1-24 0-24 0-24 1-16 0-8 1-8 0-8 0-16 1-16 0-8 1-8
+1 1 0 1 1 1 1 1 1 1 0 1;B-DET B-ADJ I-ADJ B-NOUN B-VERB B-NOUN B-PRON B-VERB B-INTJ B-PROPN I-PROPN B-PROPN;a ski ddle e be bop we rock uh scoo by doo;0-16 1-32 0-32 0-32 1-16 0-8 1-8 0-8 0-16 1-16 0-8 1-8
 1 1 1 0 1 0 0 1 1 1;B-CCONJ B-VERB B-NOUN B-PROPN I-PROPN I-PROPN I-PROPN B-PRON B-VERB B-PRON;and guess what a mer i ca we love you;0-16 1-8 1-8 0-16 1-16 0-16 0-16 1-8 1-8 1-8
 0 1 1 1 1 1 1 1 1 1 1 1;B-ADP I-ADP B-PRON B-VERB B-CCONJ B-DET B-VERB B-ADP B-INTJ B-ADV B-ADJ B-NOUN;be cause you rocked and a rolled with uh so much soul;0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 1 0 1 1 1 1;B-PRON B-VERB B-VERB B-PART B-ADJ B-NUM I-NUM B-CCONJ B-NUM B-NOUN B-ADJ;you could rock 'til you're hun dred and one years old;1-8 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8 1-8 1-8
@@ -4604,7 +4604,7 @@
 1 1 1 1 0 1 0 1 1 1;B-CCONJ B-ADV B-PRON B-VERB B-ADV I-ADV B-ADP I-ADP B-DET B-NOUN;and when you come in side in to the front;0-16 1-16 0-16 1-16 0-8 1-8 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN B-ADJ B-CCONJ B-VERB B-DET B-NOUN;you do the freak spank and do the bump;0-16 1-8 0-16 1-8 1-8 0-16 1-8 0-16 1-8
 1 1 1 1 0 1 1 1 1 1 1 1;B-CCONJ B-ADV B-DET B-NOUN I-NOUN B-PROPN I-PROPN B-VERB B-PART B-VERB B-DET B-NOUN;and when the su cker m c try to prove a point;0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 0-16 1-8
-1 1 0 0 1 0 1 1 1 1 0 0 1;B-VERB B-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-INTJ B-VERB B-DET B-ADJ I-ADJ I-ADJ B-NOUN;we're trea cher ous tri o uh we're the ser i ous joint;0-16 1-24 0-24 0-24 1-16 0-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8
+1 1 0 0 1 0 1 1 1 1 0 0 1;B-VERB B-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-INTJ B-VERB B-DET B-ADJ I-ADJ I-ADJ B-NOUN;we're trea cher ous tri o uh we're the ser i ous joint;0-16 1-32 0-32 0-32 1-16 0-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1;B-DET B-ADP B-NOUN B-ADP B-NOUN B-CCONJ B-ADP B-NOUN B-ADP B-NOUN;a from sun to sun and from day to day;0-16 1-8 1-8 0-16 1-8 1-8 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PART B-CCONJ B-VERB B-DET B-NOUN B-ADJ B-NOUN;i sit down and write a brand new rhyme;0-16 1-8 1-16 0-16 1-8 0-16 1-8 1-8 1-8
 0 1 1 1 1 1 0 0 1 0 1;B-ADP I-ADP B-PRON B-VERB B-ADP B-NOUN I-NOUN I-NOUN B-ADV I-ADV B-VERB;be cause they say that mir a cles ne ver cease;0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-8 0-16 1-8
@@ -4784,8 +4784,8 @@
 1 1 1 0 1 1 1 1 0 1 0 1;B-ADP B-DET B-NOUN I-NOUN B-VERB B-PART B-VERB B-NOUN I-NOUN B-PROPN I-PROPN B-PROPN;on a mi ssion tryin' to find mis ter wa rren g;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1;B-VERB B-DET B-NOUN B-ADJ B-ADP B-NOUN B-VERB B-DET B-NOUN B-PART B-VERB;seen a car full of girls ain't no need to tweak;1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1;B-DET B-ADP B-PRON B-NOUN B-VERB B-NOUN B-PART B-ADP;all of you skirts know what's up with;1-32 0-32 0-16 1-8 1-16 0-16 1-8 0-8
-1 1 1 1 1 1 1 1 1 1 1 1 1 0;B-NUM B-NUM B-NUM B-ADV B-PRON B-VERB B-DET B-NOUN B-ADP B-NUM B-NUM B-CCONJ B-PROPN I-PROPN;2 1 3 so i hooks a left on 2 1 and le wis;1-16 1-8 1-8 1-16 0-16 1-8 0-16 1-8 1-8 1-12 0-12 0-12 1-12 0-12
-1 1 0 1 0 1 1 1 1 1 1 1;B-DET B-NOUN I-NOUN B-VERB I-VERB B-NOUN B-ADV B-PRON B-VERB B-INTJ B-VERB B-DET;some bro thers shoo tin' dice so i said let's do this;0-12 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 1-16 0-8
+1 1 1 1 1 1 1 1 1 1 1 1 1 0;B-NUM B-NUM B-NUM B-ADV B-PRON B-VERB B-DET B-NOUN B-ADP B-NUM B-NUM B-CCONJ B-PROPN I-PROPN;2 1 3 so i hooks a left on 2 1 and le wis;1-16 1-8 1-8 1-16 0-16 1-8 0-16 1-8 1-8 1-16 0-16 0-16 1-16 0-16
+1 1 0 1 0 1 1 1 1 1 1 1;B-DET B-NOUN I-NOUN B-VERB I-VERB B-NOUN B-ADV B-PRON B-VERB B-INTJ B-VERB B-DET;some bro thers shoo tin' dice so i said let's do this;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 1-16 0-8
 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-PART B-DET B-NOUN B-CCONJ B-VERB B-NOUN B-PART;i jumped out the ride and said what's up;0-16 1-16 1-8 0-16 1-8 0-16 1-8 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1;B-DET B-NOUN I-NOUN B-VERB B-DET B-NOUN B-ADV B-PRON B-VERB B-PRON B-VERB;some bro thers pulled some gats so i said i'm stuck;1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 1-8
 1 1 1 1 0 1 1 0 1 1 1;B-ADP B-DET B-NOUN B-VERB I-VERB B-PRON B-NOUN I-NOUN B-NOUN B-CCONJ B-NOUN;since these girls pee pin' me i' ma glide and swerve;1-16 0-16 0-8 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
@@ -4814,7 +4814,7 @@
 1 1 1 1 1 1 1 1 0 1 1 1 1;B-PRON B-ADV B-VERB B-DET B-NOUN B-ADP B-DET B-ADV I-ADV B-ADV B-ADP B-DET B-NOUN;i just left a gang of those o ver there on the curb;0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-4
 1 1 1 1 1 1 1 1 1 1;B-ADV B-ADV B-VERB B-DET B-NOUN B-CCONJ B-VERB B-DET B-VERB B-NOUN;now nate got the freaks and that's a known fact;1-8 1-16 1-8 0-16 1-8 0-8 1-16 0-16 1-8 1-8
 0 1 1 1 1 1 1 1 1 1 1;B-ADP I-ADP B-PRON B-VERB B-VERB B-PRON B-VERB B-ADP B-DET B-ADJ B-NOUN;be fore i got jacked i was on the same track;0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8 1-8
-1 1 1 1 1 1 1;B-ADV B-PART B-ADV B-PART B-VERB B-PRON B-ADP;back up back up cause it's on;1-12 0-12 1-12 0-8 1-16 0-16 1-8
+1 1 1 1 1 1 1;B-ADV B-PART B-ADV B-PART B-VERB B-PRON B-ADP;back up back up cause it's on;1-16 0-16 1-16 0-8 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 0 1 1 1;B-PROPN B-DET B-NOUN B-NOUN B-CCONJ B-PRON B-DET B-PROPN I-PROPN B-ADP B-DET B-NOUN;n a t e and me the wa rren to the g;1-16 0-16 1-8 1-8 0-8 1-8 0-16 1-16 0-16 1-16 0-8 1-8
 1 1 1 1 1 1 1 1 1 1;B-ADV B-INTJ B-PRON B-VERB B-PRON B-VERB B-ADP B-DET B-ADJ B-NOUN;just like i thought they were in the same spot;1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 0 1;B-ADP B-NOUN B-ADP B-DET B-ADJ I-ADJ B-NOUN;in need of some des perate help;0-8 1-8 1-16 0-16 1-8 0-8 1-16
@@ -4830,7 +4830,7 @@
 1 1 1 1 1 1 0;B-NOUN B-ADP B-DET B-ADJ B-ADJ B-NOUN I-NOUN;funk on a whole new le vel;1-8 1-16 0-16 1-8 1-8 1-16 0-8
 1 1 0 1 1 1 1 1 1 1 1 1 0;B-DET B-NOUN I-NOUN B-VERB B-DET B-NOUN B-CCONJ B-DET B-NOUN B-VERB B-DET B-ADJ I-ADJ;the rhy thm is the bass and the bass is the tre ble;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-8
 1 1 1 1 1 0 0;B-NOUN B-NOUN B-PRON B-VERB B-NOUN I-NOUN I-NOUN;chords strings we brings mel o dy;1-4 1-4 0-16 1-4 1-16 0-16 1-4
-1 1 1 1 0 1 1 1 1 1 1 0;B-NOUN B-NOUN B-ADV B-NOUN I-NOUN B-VERB B-NOUN B-CCONJ B-NOUN B-VERB B-NOUN I-NOUN;g funk where rhy thm is life and life is rhy thm;1-8 1-8 1-8 1-24 0-24 0-24 1-8 0-8 1-8 0-8 1-16 0-8
+1 1 1 1 0 1 1 1 1 1 1 0;B-NOUN B-NOUN B-ADV B-NOUN I-NOUN B-VERB B-NOUN B-CCONJ B-NOUN B-VERB B-NOUN I-NOUN;g funk where rhy thm is life and life is rhy thm;1-8 1-8 1-8 1-32 0-32 0-32 1-8 0-8 1-8 0-8 1-16 0-8
 1 1 1 1 1 1;B-ADP B-PRON B-VERB B-INTJ B-PRON B-VERB;if you know like i know;1-16 0-16 1-8 1-16 0-8 1-4
 1 1 1 0 1 1 1;B-PRON B-VERB B-ADJ I-ADJ B-VERB B-ADP B-DET;you don't wa nna step to this;1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 0 1 1 1 1 1 0 1;B-ADJ B-DET B-NOUN B-NOUN B-NOUN I-NOUN B-VERB B-PART B-ADP B-DET B-NOUN I-NOUN B-NOUN;it's the g funk e ra funked out with a gang sta twist;1-16 0-16 1-8 0-8 1-4 0-8 1-8 1-8 1-16 0-16 1-8 0-8 1-8
@@ -4871,13 +4871,13 @@
 1 1 1 1 0 1 1 1 1 1 0 1 1 1 1;B-PRON B-ADP B-DET B-NOUN I-NOUN B-NOUN B-PRON B-VERB B-DET B-NOUN I-NOUN B-ADV B-PRON B-VERB B-PRON;i'm on the pa per trail it ain't no te llin' where it took me;0-16 1-16 0-16 1-16 0-16 1-16 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 0 1 1 1 1;B-INTJ B-CCONJ B-PRON B-VERB B-DET B-NOUN I-NOUN B-CCONJ B-ADV B-VERB B-PRON;yeah and i ain't a ki ller but don't push me;1-8 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 1 1 1 1 1 1 0 1;B-INTJ B-ADV B-VERB B-PRON B-VERB B-PRON B-ADV I-ADV B-VERB;uh how do he say what's ne ver said;1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 0 0 1 1 0 1 1 1 1 1 1 0 1;B-ADJ I-ADJ I-ADJ B-ADJ B-NOUN I-NOUN B-PRON B-VERB B-DET B-NOUN B-VERB B-ADJ I-ADJ B-ADJ;beau ti ful black wo men i bet that bitch look be tter red;1-16 0-16 1-8 1-8 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-16 0-16 1-8
+1 0 0 1 1 0 1 1 1 1 1 1 0 1;B-ADJ I-ADJ I-ADJ B-ADJ B-NOUN I-NOUN B-PRON B-VERB B-DET B-NOUN B-VERB B-ADJ I-ADJ B-ADJ;beau ti ful black wo men i bet that bitch look be tter red;1-16 0-16 1-8 1-8 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 1 1 1 1 1 1 1 1 1 0 1;B-VERB I-VERB B-PART B-NOUN B-ADP B-PRON B-VERB B-ADV B-ADP B-ADJ B-ADJ I-ADJ B-NOUN;lim pin' off tour cuz i made more off my se cond leg;1-16 0-16 1-8 1-16 0-32 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16
 1 0 0 0 1 1 1 0 0 1 0 1;B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN B-NOUN B-ADJ I-ADJ B-ADJ I-ADJ I-ADJ B-NOUN;mo ther fu ckin' bird man ju nior e lev enth grade;1-16 0-16 1-16 0-16 1-8 1-8 1-8 0-16 0-16 1-16 0-8 1-8
 1 1 0 0 1 0 1;B-NOUN B-ADP B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN;ball on au to ma tic start;1-8 1-8 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 0 0 1;B-PRON B-VERB B-VERB B-PRON B-PART B-VERB B-CCONJ B-VERB B-DET B-NOUN I-NOUN I-NOUN B-VERB;i can hand it to drake or do a quar ter back draw;1-16 0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8
 1 0 0 1 1 1 1 1;B-ADJ I-ADJ B-NOUN I-NOUN B-VERB B-DET B-NOUN B-NOUN;wild cat o ffense check the paw prints;1-8 1-8 1-8 0-8 1-16 0-16 1-8 0-8
-1 1 1 1 0 1 1 0 1 0 1 0;B-PRON B-ADP B-PROPN B-VERB I-VERB B-PRON B-VERB I-VERB B-ADP B-NOUN I-NOUN I-NOUN;we in da buil din' you ni ggas in a part ments;0-24 1-24 0-24 1-8 0-16 0-32 1-16 0-16 1-16 0-16 1-8 0-8
+1 1 1 1 0 1 1 0 1 0 1 0;B-PRON B-ADP B-PROPN B-VERB I-VERB B-PRON B-VERB I-VERB B-ADP B-NOUN I-NOUN I-NOUN;we in da buil din' you ni ggas in a part ments;0-32 1-32 0-32 1-8 0-16 0-32 1-16 0-16 1-16 0-16 1-8 0-8
 1 1 1 0 1 1 1 1 1 0;B-INTJ B-PROPN B-INTJ B-NOUN I-NOUN B-VERB B-ADJ B-NOUN B-NOUN I-NOUN;uh nah nah c' mon be my blood do ner;1-8 1-16 1-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16
 1 1 1 1 1 1 0 1 1 1 1 1;B-VERB B-ADV B-ADJ B-PRON B-VERB B-NOUN I-NOUN B-VERB B-DET B-NOUN B-ADP B-PRON;flow so nice you ain't go tta put a rug on her;1-8 1-8 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16
 1 1 1 1 1 1 1 1 1 0 1;B-VERB B-PRON B-ADJ B-CCONJ B-VERB B-DET B-ADJ B-NOUN B-ADP I-ADP B-DET;do it big and let the small fall un der that;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8
@@ -4887,11 +4887,11 @@
 1 1 1 1 1 1 1;B-ADV B-NOUN B-PRON B-DET B-NOUN B-ADP B-DET;hip hop i'm the heart of that;1-16 0-16 1-16 0-16 1-16 0-16 1-16
 1 0 1 0 1 1 1;B-PROPN I-PROPN B-NOUN I-NOUN B-ADJ B-ADP B-DET;ni gga no thin' short of that;1-16 0-16 1-16 0-16 1-16 0-16 1-16
 1 0 0 1 0 1 1 0 1 0 0;B-PROPN I-PROPN I-PROPN B-PROPN I-PROPN B-ADJ B-NOUN I-NOUN B-VERB I-VERB I-VERB;pre si dent car ter young mo ney de mo crat;1-16 0-16 1-8 1-8 0-8 1-8 1-16 0-16 1-16 0-16 1-8
-1 1 1 1 1 0 1 1 1 0 1 1 1 0 1;B-PRON B-VERB B-ADP B-PRON B-VERB I-VERB B-DET B-ADJ B-NOUN B-ADP I-ADP B-DET B-NOUN I-NOUN B-NOUN;i feel like i'm wal kin' a tight rope wi thout a cir cus net;0-16 1-24 0-24 0-24 1-24 0-24 0-24 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
+1 1 1 1 1 0 1 1 1 0 1 1 1 0 1;B-PRON B-VERB B-ADP B-PRON B-VERB I-VERB B-DET B-ADJ B-NOUN B-ADP I-ADP B-DET B-NOUN I-NOUN B-NOUN;i feel like i'm wal kin' a tight rope wi thout a cir cus net;0-16 1-32 0-32 0-32 1-32 0-32 0-32 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 0 1 0 1 1 1 0 1;B-VERB I-VERB B-NOUN I-NOUN I-NOUN B-PRON B-DET B-ADJ I-ADJ B-NOUN;po ppin' per co cet i'm a ner vous wreck;1-16 0-16 1-16 0-16 1-8 1-32 0-32 1-16 0-16 1-8
 1 0 1 0 1 1 1 1 1 1 1 1 1 0 1;B-PRON B-VERB I-VERB B-NOUN I-NOUN B-CCONJ B-PRON B-VERB B-CCONJ B-VERB B-ADP B-DET B-ADJ I-ADJ B-NOUN;i de serve re spect but i work and sweat for this worth less check;0-32 0-32 1-8 0-16 1-8 0-32 0-32 1-16 0-16 1-16 0-32 0-32 1-16 0-16 1-8
 1 1 1 1 1 1 1 0 0 1 0 1 1 1;B-VERB B-PART B-VERB B-DET B-NOUN B-ADP B-NOUN I-NOUN I-NOUN B-PART B-VERB I-VERB B-DET B-NOUN;bout to burst this tech at some bo dy to re verse this debt;1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 0 0 1 1 1 0 1 0 0 1;B-ADJ I-ADJ I-ADJ B-NOUN B-VERB B-ADJ B-NOUN I-NOUN I-NOUN I-NOUN B-VERB;mi ni mum wage got my a dren a line caged;1-24 0-24 0-24 1-8 1-8 1-32 0-32 1-32 0-32 0-16 1-8
+1 0 0 1 1 1 0 1 0 0 1;B-ADJ I-ADJ I-ADJ B-NOUN B-VERB B-ADJ B-NOUN I-NOUN I-NOUN I-NOUN B-VERB;mi ni mum wage got my a dren a line caged;1-32 0-32 0-32 1-8 1-8 1-32 0-32 1-32 0-32 0-16 1-8
 1 1 1 1 1 1 0 1 0 0 1 1 0 1;B-ADJ B-NOUN B-VERB B-ADJ B-ADP B-ADJ I-ADJ B-NOUN I-NOUN I-NOUN B-CCONJ B-ADJ I-ADJ B-NOUN;my life is full of emp ty pro mi ses and bro ken dreams;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1 1 0 0;B-PRON B-VERB I-VERB B-NOUN B-VERB B-ADV B-CCONJ B-ADV B-VERB B-DET B-NOUN B-NOUN I-NOUN I-NOUN;i'm ho pin' things look up but there ain't no job o pen ings;0-16 1-16 0-16 1-8 0-16 1-16 0-32 0-32 1-16 0-16 1-8 1-16 0-16 1-8
 1 1 0 1 0 1 0 1 0 1 0;B-PRON B-VERB B-VERB I-VERB I-VERB B-ADJ I-ADJ B-CCONJ B-ADJ I-ADJ I-ADJ;i feel dis cour aged hun gry and mal nour ished;0-16 1-16 0-16 1-16 0-8 1-16 0-16 0-16 1-8 1-16 0-16
@@ -4907,10 +4907,10 @@
 1 1 0 1 0 1 1 1 1 1 1 1 1 1;B-NOUN B-VERB B-ADV I-ADV B-ADJ I-ADJ B-CCONJ B-VERB B-DET B-NOUN B-ADP B-NOUN B-DET B-NOUN;who walk a round de pressed and smoke a pound of sess a day;0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 0 1 1 1 1 1 1 1 1 1 1 0 1;B-CCONJ B-NOUN I-NOUN I-NOUN B-VERB B-PART B-ADV B-ADJ B-PRON B-VERB B-ADP B-PRON B-VERB B-ADV B-NOUN I-NOUN;and yes ter day went by so quick it seems like it was just to day;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1 1 1 1;B-ADJ B-NOUN I-NOUN B-VERB B-PART B-VERB B-DET B-NOUN B-CCONJ B-PRON B-ADV B-VERB B-PART B-VERB;my daugh ter wants to throw the ball but i'm too stressed to play;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
-1 1 0 1 1 1 1 1 0 1 1 1;B-NOUN B-NOUN I-NOUN B-ADJ B-VERB B-PRON B-CCONJ B-NOUN I-NOUN B-ADJ B-VERB B-PRON;there's peo ple that love me and peo ple that hate me;0-16 1-24 0-24 0-24 1-16 0-16 0-24 1-24 0-24 0-16 1-8 0-16
-1 1 1 1 0 1 1 1;B-CCONJ B-ADJ B-DET B-NOUN I-NOUN B-ADJ B-VERB B-PRON;but it's the e vil that made me;1-24 0-24 0-24 1-16 0-16 0-16 1-16 0-16
+1 1 0 1 1 1 1 1 0 1 1 1;B-NOUN B-NOUN I-NOUN B-ADJ B-VERB B-PRON B-CCONJ B-NOUN I-NOUN B-ADJ B-VERB B-PRON;there's peo ple that love me and peo ple that hate me;0-16 1-32 0-32 0-32 1-16 0-16 0-32 1-32 0-32 0-16 1-8 0-16
+1 1 1 1 0 1 1 1;B-CCONJ B-ADJ B-DET B-NOUN I-NOUN B-ADJ B-VERB B-PRON;but it's the e vil that made me;1-32 0-32 0-32 1-16 0-16 0-16 1-16 0-16
 1 0 1 0 0 1 0 1 1 0;B-DET B-VERB I-VERB I-VERB B-ADJ I-ADJ I-ADJ B-CCONJ B-ADJ I-ADJ;this back stabb in' de ceit ful and sha dy;0-16 1-8 1-16 0-16 0-16 1-16 0-16 0-16 1-8 0-16
-1 1 1 1 0 1 1 0 1 1 0 1 1;B-PRON B-VERB B-DET B-NOUN I-NOUN B-DET B-NOUN I-NOUN B-DET B-NOUN I-NOUN B-CCONJ B-NOUN;i want the mo ney the wo men the for tune and fame;0-32 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-24 0-24 0-24 1-8
+1 1 1 1 0 1 1 0 1 1 0 1 1;B-PRON B-VERB B-DET B-NOUN I-NOUN B-DET B-NOUN I-NOUN B-DET B-NOUN I-NOUN B-CCONJ B-NOUN;i want the mo ney the wo men the for tune and fame;0-32 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-32 0-32 0-32 1-8
 1 1 1 1 1 1 1 0 1 1 1 0 1 1;B-ADP B-PRON B-VERB B-PRON B-VERB B-PART B-NOUN I-NOUN B-ADP B-NOUN B-NOUN I-NOUN B-ADP B-NOUN;if it means i end up burn in' in hell scor chin' in flames;0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-16 0-16 0-16 1-8
 1 1 1 1 1 0 1 1 0 1 1 0 1 1;B-ADP B-PRON B-VERB B-PRON B-VERB I-VERB B-ADJ B-NOUN I-NOUN B-CCONJ B-VERB I-VERB B-ADJ B-NOUN;if it means i'm stea lin' your check book and for gin' your name;0-32 0-32 1-16 0-16 1-16 0-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 0 1 1 0 1 0 1 0 1 1;B-DET B-NOUN I-NOUN B-VERB B-ADP B-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-CCONJ B-NOUN;this life time bliss for e ter nal tor ture and pain;0-16 1-8 1-8 1-16 0-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
@@ -4986,14 +4986,14 @@
 1 1 1 1 1 1 1 1 1 1 1 0;B-PRON B-VERB B-PRON B-VERB B-DET B-NOUN B-PRON B-VERB B-PRON B-VERB B-ADJ I-ADJ;you thought you had a rose you thought you was cu pid;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-8 0-16 1-16 0-16
 1 1 1 1 1 1 1 1 1 0;B-CCONJ B-PROPN I-PROPN I-PROPN B-ADJ B-NOUN B-VERB B-ADV B-ADJ I-ADJ;but e m d your rap was plain stu pid;0-16 1-16 0-8 1-8 1-8 1-8 0-16 1-8 1-16 0-16
 1 1 1 1 0 0 0 1 1 1 1 1;B-PRON B-VERB B-PRON B-ADJ I-ADJ I-ADJ I-ADJ B-CCONJ B-ADV B-VERB B-PRON B-VERB;i know you're e du ca ted but when will you learn;0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-8
-1 1 1 1 1 1 0 1 1 1 0;B-ADV B-DET B-NOUN B-VERB B-PART B-VERB B-VERB I-VERB B-ADP B-NOUN I-NOUN;not all girls want to be in volved with book worms;0-16 1-12 0-12 0-12 1-12 0-12 0-12 1-12 0-12 0-12 1-8
+1 1 1 1 1 1 0 1 1 1 0;B-ADV B-DET B-NOUN B-VERB B-PART B-VERB B-VERB I-VERB B-ADP B-NOUN I-NOUN;not all girls want to be in volved with book worms;0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 0 1;B-PRON B-NOUN I-NOUN B-VERB B-ADJ B-ADP B-NOUN B-PRON B-VERB B-VERB I-VERB;you go tta be strong in way she can't re sist;0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8 0-16 1-4
 1 1 0 0 0 1 0 1 1 1;B-ADV B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-ADJ B-NOUN B-DET;so e du ca ted ra pper huh bust this;0-16 1-16 0-16 1-16 0-16 1-16 0-8 1-8 1-8 1-8
 1 1 1 1 1 0 1 1 1;B-ADP B-NOUN B-DET B-ADJ B-NOUN B-ADP I-ADP B-DET B-NOUN;since she's a new girl a round the block;1-8 1-16 0-16 1-8 1-8 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 0 0 1;B-PRON B-VERB B-PART B-VERB B-PRON B-VERB B-ADP B-PRON B-DET B-NOUN I-NOUN I-NOUN B-NOUN;i had to let her know that i'm the de bo noir doc;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16
 1 1 1 1 1 1 1 1 1 1 1;B-PRON B-VERB B-NOUN B-ADP B-PART B-VERB B-ADP B-PRON B-ADP B-PRON B-VERB;i said i'd like to speak to you if i can;0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-8 1-8
-1 1 1 0 1 1 1 1 1 0 1;B-CCONJ B-ADP B-PRON B-VERB I-VERB B-ADV B-ADJ B-NOUN B-VERB B-PROPN I-PROPN;and if i'm co rrect here your name is ro xanne;0-16 1-12 0-12 0-12 1-12 0-12 0-12 1-12 0-12 0-12 1-12
-1 1 1 1 1 1 1 1 1 1 1 0 0 1;B-PRON B-VERB B-INTJ B-PRON B-VERB B-ADJ B-NOUN B-PRON B-VERB B-ADJ B-VERB I-VERB B-PART I-PART;she said how'd you know my name i said it's ge tting a round;0-12 0-12 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
+1 1 1 0 1 1 1 1 1 0 1;B-CCONJ B-ADP B-PRON B-VERB I-VERB B-ADV B-ADJ B-NOUN B-VERB B-PROPN I-PROPN;and if i'm co rrect here your name is ro xanne;0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16
+1 1 1 1 1 1 1 1 1 1 1 0 0 1;B-PRON B-VERB B-INTJ B-PRON B-VERB B-ADJ B-NOUN B-PRON B-VERB B-ADJ B-VERB I-VERB B-PART I-PART;she said how'd you know my name i said it's ge tting a round;0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 0 1 1 1 1 1 1;B-ADV B-ADV B-VERB I-VERB B-PRON B-DET B-NOUN B-ADP B-DET B-NOUN;right now ba by you're the talk of the town;1-8 0-8 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 0 1 1 1 1 1;B-INTJ B-VERB B-PRON B-VERB B-PRON B-ADP B-DET B-NOUN I-NOUN B-ADJ B-NOUN B-VERB B-VERB B-ADJ;please let me walk you to the cor ner my rap will be brief;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 0 1 1 1 1 1 1;B-PRON B-VERB B-VERB B-VERB B-PRON B-ADP I-ADP B-PRON B-VERB B-ADP B-DET B-NOUN;she said i've seen you be fore you look like a thief;0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-16 0-16 0-16 1-8
@@ -5004,7 +5004,7 @@
 1 1 1 1 1 1 1 1 1 1 1;B-ADV B-PRON B-VERB B-PRON B-VERB B-ADJ B-ADP B-PRON B-VERB B-DET B-NOUN;then it seemed i got busy 'cause she cracked a smile;1-16 0-16 1-16 0-16 1-8 1-8 1-16 0-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1 1 1;B-ADJ B-VERB B-PRON B-VERB B-ADJ B-NOUN B-VERB B-ADJ B-PRON B-ADP;that let me know my rap was worth her while;0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8 1-8 1-8
 1 1 1 1 0 1 1 1 0 1 1 1 1 1;B-PRON B-VERB B-PRON B-VERB B-PRON I-PRON B-DET B-NOUN I-NOUN B-PRON B-VERB B-DET B-VERB B-ADJ;she said you call your self a doc tor i said this is true;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-8 0-16 1-16
-1 1 0 1 1 1 1 0 1 1 0 1 1;B-PRON B-VERB B-VERB I-VERB B-ADP B-PRON B-ADV I-ADV B-NOUN B-NOUN I-NOUN B-VERB B-VERB;she said ex plain to me rea lly what doc tors must do;0-16 1-16 0-16 1-12 0-12 0-12 1-12 0-12 0-12 1-12 0-12 0-12 1-16
+1 1 0 1 1 1 1 0 1 1 0 1 1;B-PRON B-VERB B-VERB I-VERB B-ADP B-PRON B-ADV I-ADV B-NOUN B-NOUN I-NOUN B-VERB B-VERB;she said ex plain to me rea lly what doc tors must do;0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16
 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1;B-PRON B-VERB B-DET B-VERB B-ADV I-ADV B-ADJ B-ADP B-PRON B-ADV B-VERB B-DET B-DET I-DET B-NOUN;i said this is ver y rare 'cause i don't say this e very day;1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 0 1 0 0 1 1 1 0 0 1;B-NOUN B-DET B-NUM I-NUM B-ADJ I-ADJ I-ADJ B-NOUN B-DET B-NOUN I-NOUN B-NOUN I-NOUN;there's a mill ion me di cal skills a doc tor dis plays;1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-16 0-16 0-16 1-8
 0 0 1 0 0 1 1 0 1 1 1;B-NOUN I-NOUN I-NOUN I-NOUN I-NOUN B-VERB B-NOUN I-NOUN B-ADP B-DET B-NOUN;der ma to lo gy is treat ment of the skin;1-16 0-16 1-16 0-16 1-8 0-16 1-8 0-16 1-16 0-16 1-8
@@ -5024,8 +5024,8 @@
 1 1 0 1 0 1 1 1 0 1 0 1 1 0;B-PRON B-VERB I-VERB B-ADV I-ADV B-CCONJ B-ADJ B-NOUN I-NOUN B-VERB I-VERB B-ADP B-ADJ I-ADJ;i'm fee lin' man ly and your sha ker's co min' in han dy;0-16 1-16 0-16 1-8 1-16 0-16 0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16
 1 1 0 1 1 1 1 1 1 1 0 1 0;B-VERB B-PRON B-ADP I-ADP B-ADP B-ADJ B-NOUN B-ADV B-ADP B-ADJ B-PROPN I-PROPN I-PROPN;slide 'em a cross from new york down by your vir gin ia;1-16 0-16 0-16 1-8 1-16 0-16 1-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 0 0 1 0 1 1 0 0 0 1 1 1 0;B-VERB I-VERB I-VERB B-PRON B-ADP I-ADP B-PROPN I-PROPN I-PROPN B-ADP I-ADP B-PRON B-VERB I-VERB;tick l in' you a round del a ware be fore i en ter;1-16 0-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
-1 1 0 1 0 1 1 1 1 1;B-VERB B-ADP B-NOUN I-NOUN I-NOUN B-ADP B-NOUN B-NOUN B-ADP B-NOUN;turn to se duc tion from face hips to feet;1-8 1-8 0-16 1-8 0-16 0-16 1-12 0-12 0-12 1-8
-1 1 0 1 1 1 0 1 1 1 1 0 1;B-DET B-NOUN I-NOUN B-CCONJ B-DET B-NOUN I-NOUN B-VERB B-VERB B-DET B-NOUN B-ADJ I-ADJ;a wi ggle and a ji ggle can make the night com plete;0-16 1-24 0-24 0-24 0-16 1-16 0-16 0-16 1-16 0-16 1-8 0-8 1-8
+1 1 0 1 0 1 1 1 1 1;B-VERB B-ADP B-NOUN I-NOUN I-NOUN B-ADP B-NOUN B-NOUN B-ADP B-NOUN;turn to se duc tion from face hips to feet;1-8 1-8 0-16 1-8 0-16 0-16 1-16 0-16 0-16 1-8
+1 1 0 1 1 1 0 1 1 1 1 0 1;B-DET B-NOUN I-NOUN B-CCONJ B-DET B-NOUN I-NOUN B-VERB B-VERB B-DET B-NOUN B-ADJ I-ADJ;a wi ggle and a ji ggle can make the night com plete;0-16 1-32 0-32 0-32 0-16 1-16 0-16 0-16 1-16 0-16 1-8 0-8 1-8
 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1;B-ADV B-ADP B-PRON B-VERB B-DET B-NOUN I-NOUN B-ADP B-DET B-NOUN B-VERB B-CCONJ B-VERB B-DET B-NOUN I-NOUN;now since you got the bo dy of the year come and get the a ward;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 0-16 1-16
 1 1 1 1 1 1 1 1 1;B-PUNCT B-DET B-NOUN B-ADJ B-ADP B-DET B-ADJ B-ADJ B-NOUN;here's a hint it's like a long sharp sword;1-16 0-16 1-8 0-16 1-16 0-16 1-8 1-8 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-ADJ B-NOUN B-ADV B-VERB B-PRON B-VERB B-PRON B-VERB B-PRON B-PART B-ADP B-NOUN;flip tail so let me see you shake it up like dice;1-8 1-8 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 1-8 1-8
@@ -5177,7 +5177,7 @@
 1 1 1 1 1 1 1 1 1 0 1 1;B-PRON B-VERB B-PRON B-ADV B-VERB B-ADP B-NOUN B-ADJ B-NOUN I-NOUN B-ADP B-PRON;i tell her now go on pop that pu ssy for me;0-16 1-16 0-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16
 1 0 1 1 1 1 1 1 0 1 1 0 1 1;B-NOUN I-NOUN B-VERB B-VERB B-PRON B-CCONJ B-PRON B-NOUN I-NOUN B-ADV B-ADJ I-ADJ B-ADP B-PRON;ha ters can't see me but them bi tches still loo kin' for me;1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16
 1 1 1 1 1 1 1 1 1 0 1 0 1;B-CCONJ B-PRON B-VERB B-VERB B-DET B-ADP B-DET B-NOUN B-CCONJ B-NOUN I-NOUN I-NOUN B-ADJ;and you could take that to the bank and de po sit that;0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8
-1 1 1 1 1 1 1 1 1 0 1;B-VERB B-ADJ B-NUM B-NOUN B-ADV B-CCONJ B-VERB B-DET B-NOUN I-NOUN B-ADV;put your two cents in and get a do llar back;1-24 0-24 1-16 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
+1 1 1 1 1 1 1 1 1 0 1;B-VERB B-ADJ B-NUM B-NOUN B-ADV B-CCONJ B-VERB B-DET B-NOUN I-NOUN B-ADV;put your two cents in and get a do llar back;1-32 0-32 1-16 1-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 0 1 1 1 1 1 1 1 1 0 1;B-DET B-NOUN I-NOUN B-VERB B-PRON B-PART B-PART B-VERB B-ADP B-DET B-NOUN I-NOUN B-VERB;some peo ple hang you out to dry like a tow el rack;0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16
 1 1 0 1 1 1 1 1 1 1 1 0 1;B-PRON B-DET B-ADP I-ADP B-PRON B-VERB B-DET B-NOUN B-ADP B-DET B-NOUN I-NOUN B-ADV;i'm all a bout i give the rest of the vo wels back;0-32 1-16 0-16 1-8 1-8 1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-8
 1 1 1 1 1 1 1 1 0 1;B-PRON B-VERB B-ADJ B-NOUN B-ADJ B-ADV B-ADV B-ADV I-ADV B-ADJ;i like my girl thick not just kin da fine;0-32 1-16 0-16 1-8 1-8 1-16 0-16 1-16 0-16 1-8
@@ -5208,7 +5208,7 @@
 1 1 1 1 0 1 1 0 1 0 0;B-DET B-NOUN B-VERB B-VERB I-VERB B-DET B-NOUN I-NOUN B-NOUN I-NOUN I-NOUN;the milks was cho colate the coo kies bu tter crunch;0-16 1-8 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 1 1 0 1 1 1 1 1 1 1 1;B-ADP B-NOUN B-NOUN I-NOUN B-ADP B-ADJ B-CCONJ B-ADJ B-NOUN B-VERB B-DET B-ADJ;in gear osh kosh with blue and white ducks pass the blunt;0-8 1-16 1-8 1-8 0-16 1-16 0-16 1-8 1-16 1-8 0-16 1-8
 1 1 1 1 1 1 1 1;B-PRON B-VERB B-DET B-NOUN B-ADJ B-NOUN B-VERB B-ADJ;i was a shame my crew was lame;0-16 1-16 0-16 1-8 0-16 1-16 0-16 1-8
-1 1 0 1 1 1 1 1 1;B-PRON B-VERB B-ADJ I-ADJ B-NOUN B-ADP B-ADJ B-ADP B-PRON;i have e nough heart for most of 'em;0-24 1-24 0-24 1-16 1-8 0-16 1-8 1-16 0-16
+1 1 0 1 1 1 1 1 1;B-PRON B-VERB B-ADJ I-ADJ B-NOUN B-ADP B-ADJ B-ADP B-PRON;i have e nough heart for most of 'em;0-32 1-32 0-32 1-16 1-8 0-16 1-8 1-16 0-16
 1 1 1 1 1 1 1 1 1;B-ADV B-ADP B-PRON B-VERB B-NOUN B-ADP B-ADJ B-ADP B-PRON;long as i got stuff from most of 'em;1-16 0-16 0-16 1-8 1-8 0-16 1-8 1-16 0-32
 1 1 1 0 1 1 1 1 1 1 1 1 0 1;B-PRON B-ADP B-ADV I-ADV B-ADV B-PRON B-VERB B-ADJ B-PRON B-VERB B-ADJ B-NOUN B-ADP I-ADP;it's on e ven when i was wrong i got my point a cross;0-32 1-16 1-16 0-32 0-32 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8
 1 0 1 0 1 1 1 1 1;B-PRON B-VERB I-VERB I-VERB B-PRON B-DET B-NOUN B-ADP B-NOUN;they de pic ted me the boss of course;1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-8
@@ -5487,7 +5487,7 @@
 1 1 1 1 1 1;B-X B-DET B-NOUN B-VERB B-DET B-NOUN;that's the breaks that's the breaks;1-8 0-16 1-8 1-8 0-16 1-8
 1 1 0 1 1 1 0 1 1 1;B-CCONJ B-PRON B-VERB I-VERB B-DET B-NOUN B-ADP I-ADP B-ADJ B-NOUN;but he for got the part a bout his wife;0-16 1-16 0-16 1-8 0-16 1-8 0-16 1-8 1-8 1-4
 1 1 1 1 1 1 1;B-X B-DET B-NOUN B-VERB B-DET B-NOUN B-PROPN;that's the breaks that's the breaks huh;1-8 0-16 1-8 1-8 0-16 1-8 0-8
-1 1 0 1 1 1 1 1 1 0 1 1 0;B-PRON B-VERB I-VERB B-DET B-NOUN B-CCONJ B-ADV B-DET B-NOUN I-NOUN B-ADP B-PROPN I-PROPN;i wan ted the fame but not the co ver of news week;0-16 1-24 0-24 1-24 0-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-8
+1 1 0 1 1 1 1 1 1 0 1 1 0;B-PRON B-VERB I-VERB B-DET B-NOUN B-CCONJ B-ADV B-DET B-NOUN I-NOUN B-ADP B-PROPN I-PROPN;i wan ted the fame but not the co ver of news week;0-16 1-32 0-32 1-32 0-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-8
 1 1 1 1 0 1 1 1 0;B-INTJ B-INTJ B-VERB B-NOUN I-NOUN B-VERB B-VERB B-ADJ I-ADJ;oh well guess be ggars can't be choo sy;1-8 1-8 1-8 1-16 0-16 1-8 0-16 1-8 1-8
 1 0 1 0 1 0 1 0 1 1 1 0;B-VERB I-VERB B-PART B-VERB I-VERB B-NOUN I-NOUN I-NOUN B-ADP B-ADJ B-NOUN I-NOUN;wan ted to re ceive a tten tion for my mu sic;1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16 1-8 1-16
 1 0 1 1 1 0 1 1 1 0 0 1 1;B-VERB I-VERB B-PART B-VERB B-VERB B-ADV I-ADV B-ADP B-ADJ I-ADJ B-PROPN I-PROPN B-PRON;wan ted to be left a lone in pu blic ex cuse me;1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-32 1-16 0-16 0-16 1-8 1-16
@@ -5543,8 +5543,8 @@
 1 1 0 1 1 1 1 1;B-ADJ B-NOUN I-NOUN B-NOUN B-ADV B-VERB B-ADP B-DET;it's no thin' i'm still friends with the;0-16 1-16 0-16 0-16 1-8 1-8 0-8 0-8
 1 1 1 1 1 0 1 1 1 1 0 0 1;B-DET B-NOUN B-ADP B-PRON B-ADV I-ADV B-VERB B-DET B-ADJ B-NOUN I-NOUN B-ADP I-ADP;y'all act like you ne ver seen a white per son be fore;0-16 1-8 1-32 0-32 1-16 0-16 1-16 0-16 1-8 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1;B-PROPN B-DET B-ADP B-DET B-NOUN B-ADP B-PROPN B-ADP B-PROPN I-PROPN B-ADV B-VERB B-ADP B-DET B-NOUN;jaws all on the floor like pam like to mmy just burst in the door;1-8 1-16 0-16 0-16 1-8 0-16 1-8 0-16 1-16 0-16 0-16 1-8 0-32 0-32 1-8
-1 1 0 1 0 1 1 1 1 0 1;B-CCONJ B-VERB I-VERB B-VERB I-VERB B-ADJ B-NOUN B-ADJ B-ADP B-ADP I-ADP;and star ted whoo pin' her ass worse than be fore;0-16 1-16 0-16 1-24 0-24 0-24 1-8 1-16 0-16 0-16 1-8
-1 1 1 0 1 1 0 1 1 0 1 0 0;B-PRON B-ADV B-VERB B-NOUN I-NOUN B-VERB I-VERB B-PRON B-ADP I-ADP B-NOUN I-NOUN I-NOUN;they first were di vorce throw in' her o ver fur ni ture;0-16 1-16 0-16 0-16 1-8 1-24 0-24 0-24 1-16 0-16 1-16 0-16 0-16
+1 1 0 1 0 1 1 1 1 0 1;B-CCONJ B-VERB I-VERB B-VERB I-VERB B-ADJ B-NOUN B-ADJ B-ADP B-ADP I-ADP;and star ted whoo pin' her ass worse than be fore;0-16 1-16 0-16 1-32 0-32 0-32 1-8 1-16 0-16 0-16 1-8
+1 1 1 0 1 1 0 1 1 0 1 0 0;B-PRON B-ADV B-VERB B-NOUN I-NOUN B-VERB I-VERB B-PRON B-ADP I-ADP B-NOUN I-NOUN I-NOUN;they first were di vorce throw in' her o ver fur ni ture;0-16 1-16 0-16 0-16 1-8 1-32 0-32 0-32 1-16 0-16 1-16 0-16 0-16
 1 1 0 1 1 1 1 1 1 1 1 1 0;B-VERB B-DET B-NOUN I-NOUN B-ADP B-DET B-PROPN B-VERB B-DET B-NOUN B-PRON B-NOUN I-NOUN;it's the re turn of the ah wait no way you're ki dding;0-16 1-16 0-16 1-16 0-16 0-16 1-8 1-8 1-16 0-8 1-16 1-16 0-16
 1 1 0 1 1 1 1 1 1 1 0 1;B-PRON B-INTJ I-INTJ B-ADV B-VERB B-NOUN B-PRON B-VERB B-PRON B-VERB I-VERB B-PRON;he di dn't just say what i think he did c he;0-16 1-16 0-16 0-16 1-8 1-32 0-32 1-16 0-16 1-16 1-16 0-16
 1 1 0 1 1 1 0 1 1 0 0;B-CCONJ B-PROPN I-PROPN B-PROPN B-VERB B-NOUN I-NOUN B-PRON B-NOUN I-NOUN I-NOUN;and doc tor dre said no thing you i di ots;0-16 1-16 0-16 1-8 1-8 1-16 0-16 0-16 1-32 0-32 0-8
@@ -5552,7 +5552,7 @@
 1 0 0 1 0 1 1 0 0;B-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-VERB B-NOUN I-NOUN I-NOUN;fe mi nist wo men love e mi nem;1-16 0-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8
 1 0 1 0 1 0 1 1 0 1 1 1 1;B-NOUN I-NOUN B-NOUN I-NOUN B-NOUN I-NOUN B-ADJ B-NOUN I-NOUN B-NUM B-ADJ B-ADP B-PRON;chi gga chi gga chi gga slim sha dy i'm sick of him;1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-8
 1 1 1 1 0 0 1 1 0 1 1 1 1;B-VERB B-ADP B-PRON B-VERB I-VERB B-ADP I-ADP B-VERB I-VERB B-ADJ B-PRON B-VERB B-NOUN;look at him wal kin' a round gra bbin' his you know what;1-16 0-16 1-8 1-16 0-16 0-16 1-8 1-16 0-16 0-16 1-16 1-16 1-16
-1 0 1 1 1 1 1 1 1 1 1 1;B-VERB I-VERB B-DET B-PRON B-VERB B-NOUN B-INTJ B-CCONJ B-INTJ B-ADV B-ADJ B-ADP;fli ppin' the you know who yeah but he's so cute though;1-24 0-24 0-24 1-16 1-16 1-8 1-8 1-32 0-32 1-16 1-16 1-8
+1 0 1 1 1 1 1 1 1 1 1 1;B-VERB I-VERB B-DET B-PRON B-VERB B-NOUN B-INTJ B-CCONJ B-INTJ B-ADV B-ADJ B-ADP;fli ppin' the you know who yeah but he's so cute though;1-32 0-32 0-32 1-16 1-16 1-8 1-8 1-32 0-32 1-16 1-16 1-8
 1 1 1 0 1 1 1 0 1 1 1 1 1 1 1;B-INTJ B-PRON B-ADV I-ADV B-VERB B-DET B-NOUN I-NOUN B-ADP B-NOUN B-PART B-ADP B-ADJ B-NOUN B-ADJ;yeah i pro 'bly got a cou ple of screws up in my head loose;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-16 1-8
 1 1 1 1 1 1 0 1 1 1 1 0 1 0;B-CCONJ B-DET B-ADJ B-ADP B-NOUN B-VERB I-VERB B-PART B-ADP B-ADJ B-NOUN I-NOUN B-NOUN I-NOUN;but no worse than what's go in' on in your par ents' bed rooms;0-16 0-16 1-8 0-16 1-16 0-16 0-16 1-8 1-32 0-32 1-16 0-16 1-16 1-8
 0 1 1 1 0 1 1 1 1 1 1 1 1;B-ADV I-ADV B-PRON B-VERB I-VERB B-VERB B-ADP B-NOUN I-NOUN B-CCONJ B-ADV B-VERB B-ADJ;some times i wa nna get on t v and just let loose;1-16 1-8 0-16 1-16 0-16 1-16 0-16 1-16 1-8 0-32 0-32 1-16 1-8
@@ -5584,7 +5584,7 @@
 1 1 1 1 1 1 1 1 0 1 1 1 1;B-INTJ B-INTJ B-ADJ B-CCONJ B-PRON B-VERB B-NOUN B-VERB I-VERB B-ADP B-PROPN B-NOUN B-NOUN;yeah he's cute but i think he's marr ied to kim hee hee;1-16 0-16 1-8 1-32 0-32 1-16 0-16 1-16 0-16 0-16 1-8 1-16 1-16
 1 1 1 0 1 1 0 0 1 1 1 1;B-PRON B-VERB B-VERB I-VERB B-ADJ B-NOUN I-NOUN I-NOUN B-ADP B-PROPN B-PROPN B-NUM;i should down load her au di o on m p three;1-16 0-16 1-8 1-16 0-16 1-16 0-16 1-16 0-16 1-16 1-8 1-8
 1 1 1 1 1 1 1 1 1 0 0 1 1;B-CCONJ B-VERB B-DET B-ADJ B-NOUN B-ADV B-PRON B-VERB B-PROPN I-PROPN I-PROPN B-PROPN I-PROPN;and show the whole world how you gave e mi nem v d;0-16 1-16 0-16 1-16 1-8 0-16 1-16 0-16 1-16 0-16 1-8 1-16 1-16
-1 1 1 1 1 0 1 1 1 1;B-NUM B-ADJ B-ADP B-PRON B-ADJ I-ADJ B-NOUN B-CCONJ B-NOUN B-NOUN;i'm sick of you li ttle girl and boy groups;0-16 1-24 0-24 0-24 1-16 0-16 1-16 0-16 1-8 0-16
+1 1 1 1 1 0 1 1 1 1;B-NUM B-ADJ B-ADP B-PRON B-ADJ I-ADJ B-NOUN B-CCONJ B-NOUN B-NOUN;i'm sick of you li ttle girl and boy groups;0-16 1-32 0-32 0-32 1-16 0-16 1-16 0-16 1-8 0-16
 1 1 1 1 0 1 1 1 1 1 1 1 1 1 0 1 1;B-DET B-PRON B-VERB B-VERB B-VERB I-VERB B-PRON B-ADV B-PRON B-VERB B-VERB B-VERB B-ADV B-PART B-VERB I-VERB B-PRON;all you do is a nnoy me so i have been sent here to de stroy you;1-16 0-16 1-16 0-16 0-16 1-8 0-16 0-16 1-16 0-16 0-16 1-8 1-16 0-16 0-16 1-8 1-8
 1 1 1 1 0 1 1 1 1 1;B-CCONJ B-NOUN B-DET B-NUM I-NUM B-ADP B-PRON B-ADV B-ADP B-PRON;and there's a mill ion of us just like me;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 1-16 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-NOUN B-VERB B-ADP B-PRON B-NOUN B-ADV B-ADV B-VERB B-DET B-NOUN B-ADP B-PRON;who cuss like me who just don't give a fuck like me;0-16 1-16 1-16 1-8 0-16 1-16 1-16 0-16 0-16 1-16 1-16 1-8
@@ -5594,7 +5594,7 @@
 1 1 1 0 1 1 1 1 0 1 1 1 0 1;B-NOUN B-PRON B-VERB B-ADP I-ADP B-ADP B-ADJ B-NOUN B-ADP I-ADP B-ADJ B-NOUN I-NOUN B-NOUN;things you joke a bout with your friends in side your li vin' room;1-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 1-16
 1 1 0 1 0 0 1 1 1 1 1 1 1 1 1 1 1;B-DET B-ADJ I-ADJ B-NOUN I-NOUN I-NOUN B-PRON B-VERB B-DET B-NOUN B-PART B-VERB B-PRON B-ADP B-NOUN B-ADP B-PRON;the on ly di ffer ence i got the balls to say it in front of y'all;0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 0-16 1-16 0-16 0-16 1-16 0-16 1-8
 1 1 1 1 0 1 1 1 1 0 0 1 1 1;B-CCONJ B-PRON B-VERB B-NOUN I-NOUN B-VERB B-ADJ B-CCONJ B-VERB I-VERB I-VERB B-PRON B-ADV B-ADV;and i don't go tta be false or su gar coat it at all;0-16 1-16 0-16 1-16 0-16 0-16 1-8 0-16 1-16 0-16 1-16 0-16 0-16 1-8
-1 1 1 1 1 1 1 1 1;B-PRON B-ADV B-VERB B-ADP B-DET B-NOUN B-CCONJ B-VERB B-PRON;i just get on the mic and spit it;1-16 0-16 1-24 0-24 0-24 1-8 0-8 1-32 0-32
+1 1 1 1 1 1 1 1 1;B-PRON B-ADV B-VERB B-ADP B-DET B-NOUN B-CCONJ B-VERB B-PRON;i just get on the mic and spit it;1-16 0-16 1-32 0-32 0-32 1-8 0-8 1-32 0-32
 1 1 0 1 1 1 0 1 1 1 1 1 1;B-CCONJ B-ADP I-ADP B-PRON B-VERB B-PART B-VERB I-VERB B-PRON B-PRON B-ADV B-VERB B-PRON;and whe ther you like to ad mit it i just shit it;0-16 1-16 0-16 0-16 1-8 0-32 0-32 1-32 0-32 1-8 0-16 1-32 0-16
 1 0 1 1 0 0 1 1 1 1 0 1 1;B-ADJ I-ADJ B-ADP B-NUM I-NUM B-NOUN I-NOUN B-ADP B-PRON B-VERB I-VERB B-PART B-VERB;be tter than nine ty per cent of you ra ppers out can;0-16 1-16 0-16 1-16 0-16 0-16 1-16 0-16 0-16 1-16 0-16 1-8 1-16
 1 1 1 0 1 1;B-ADV B-PRON B-VERB I-VERB B-ADV B-VERB;then you won der how can;1-16 0-16 1-16 0-16 1-8 0-16
@@ -5855,7 +5855,7 @@
 1 1 1 1 1 1 1 1 1 1;B-VERB B-DET B-NOUN B-VERB B-ADV B-VERB B-ADP B-DET B-NOUN B-NOUN;keep the door locked don't knock while the boat rock;1-32 1-32 1-16 1-16 1-16 1-16 1-32 0-32 1-16 1-16
 1 1 1 1 1 0 1 1 1 0 1 1 1 1 1;B-PRON B-VERB B-NOUN B-CCONJ B-NOUN I-NOUN B-ADV B-PRON B-VERB I-VERB B-VERB B-ADP B-DET B-NOUN B-NOUN;we go bots and ro bots so they go tta wait til the show stop;0-32 1-16 1-16 0-32 1-16 1-16 1-32 0-32 1-32 0-32 1-16 1-32 0-32 1-16 1-16
 1 1 1 1 1 1 1 1 1;B-CCONJ B-ADV B-ADV B-ADP B-DET B-NOUN B-ADP B-ADJ B-NOUN;or how 'bout on the beach with black sand;0-32 1-16 1-32 0-32 0-32 1-16 0-32 1-16 1-8
-1 1 1 1 1 1 1 1 1 1;B-VERB B-PART B-ADJ B-NOUN B-ADV B-VERB B-PRON B-DET B-NOUN B-NOUN;lick up your thigh then call me the pac man;1-24 0-24 0-24 1-16 0-32 1-32 0-32 0-32 1-16 1-8
+1 1 1 1 1 1 1 1 1 1;B-VERB B-PART B-ADJ B-NOUN B-ADV B-VERB B-PRON B-DET B-NOUN B-NOUN;lick up your thigh then call me the pac man;1-32 0-32 0-32 1-16 0-32 1-32 0-32 0-32 1-16 1-8
 1 0 1 1 1 1 1 1 1 1;B-NOUN I-NOUN B-NOUN B-CCONJ B-ADV B-VERB B-PRON B-DET B-NOUN B-NOUN;ta ble top or just give me the lap dance;1-16 0-32 1-16 1-32 0-32 1-32 0-32 0-32 1-16 1-16
 1 1 1 1 1 1 1 1 1 1 1 1;B-DET B-NOUN B-ADP B-DET B-NOUN B-ADP B-DET B-NOUN B-ADP B-DET B-ADJ B-NOUN;the rock to the park to the point to the flat lands;0-32 1-16 0-32 0-32 1-16 0-32 0-32 1-16 0-32 0-32 1-16 1-8
 1 1 1 1 0 0 1 1 1 1 0 1 0;B-DET B-NOUN B-ADP B-PROPN I-PROPN I-PROPN B-VERB B-ADP B-DET B-ADJ I-ADJ B-NOUN I-NOUN;that man that lu da cris woo in the pub lic bath room;1-16 1-16 1-16 1-16 0-32 1-32 1-8 0-32 0-32 1-16 0-16 1-16 1-16
@@ -5925,7 +5925,7 @@
 1 1 1 1 1 1;B-VERB B-ADV B-PRON B-VERB B-VERB B-PRON;whoomp there it is hit me;1-8 1-8 0-8 1-4 1-8 1-8
 0 1 1 1 0 1 1;B-ADV I-ADV B-ADV B-CCONJ B-ADP I-ADP B-ADV;up side down and in side out;1-8 1-8 1-8 0-16 1-8 1-8 1-8
 1 1 1 1 1 1 1 1 1 1 0 1;B-PRON B-ADP B-PART B-VERB B-DET B-PRON B-NOUN B-NOUN B-VERB B-DET B-ADP I-ADP;i'm 'bout to show all you folks what it's all a bout;0-16 1-16 0-16 1-8 1-16 0-16 1-8 1-16 0-16 1-8 0-16 1-8
-1 1 1 1 1 1 0 1 1 1 1 1;B-ADV B-ADJ B-NOUN B-ADP B-DET B-NOUN I-NOUN B-PART B-VERB B-ADP B-DET B-NOUN;now it's time for a ni gga to get on the mic;1-8 0-16 1-8 1-16 0-16 1-24 0-24 0-24 1-16 1-8 0-16 1-8
+1 1 1 1 1 1 0 1 1 1 1 1;B-ADV B-ADJ B-NOUN B-ADP B-DET B-NOUN I-NOUN B-PART B-VERB B-ADP B-DET B-NOUN;now it's time for a ni gga to get on the mic;1-8 0-16 1-8 1-16 0-16 1-32 0-32 0-32 1-16 1-8 0-16 1-8
 1 1 1 1 0 0 0 1 0 1;B-CCONJ B-VERB B-DET B-ADJ I-ADJ I-ADJ I-ADJ B-NOUN I-NOUN B-NOUN;and make this mo ther fu ckin' par ty hype;1-8 1-8 1-8 1-16 0-16 1-16 0-16 1-8 0-16 1-8
 1 1 0 1 1 1 1 1 1;B-PRON B-VERB I-VERB B-PRON B-ADV B-ADP B-DET B-ADJ B-NOUN;i'm ta kin' it back to the old school;0-16 1-16 0-16 0-16 1-8 1-8 0-16 1-8 1-8
 1 1 1 1 1 1 1 1;B-ADP B-PRON B-DET B-ADJ B-NOUN B-INTJ B-ADV B-ADJ;'cause i'm a old fool who's so cool;0-16 1-16 0-16 1-8 1-8 1-8 1-8 1-8
@@ -5956,7 +5956,7 @@
 1 0 1 0 1 1 1 0 1 1 1 1;B-NOUN I-NOUN B-NOUN I-NOUN B-VERB B-ADJ B-NOUN I-NOUN B-NOUN B-NOUN B-VERB B-ADP;par ty peo ple there's your par ty tag team is through;1-16 0-16 1-16 0-16 1-16 0-16 1-16 0-16 1-8 1-16 0-8 1-8
 1 1 1 1 1 1 1 1;B-VERB B-ADV B-PRON B-VERB B-PRON B-VERB B-PRON B-VERB;whoomp there it is i thought you knew;1-8 1-16 0-16 1-8 0-16 1-16 0-8 1-8
 1 0 1 1 1 1 1 1 1 1 0;B-VERB I-VERB B-DET B-NOUN B-NUM B-PART B-NUM B-ADP B-ADJ B-NOUN I-NOUN;work in' all week nine to five for my mo ney;1-8 0-8 1-8 1-16 1-16 0-16 1-4 1-8 0-8 1-8 0-8
-1 1 1 1 0 1 1 1 1 1 1 1 1 0;B-CCONJ B-ADV B-DET B-NOUN I-NOUN B-VERB B-PRON B-VERB B-VERB B-ADJ B-ADP B-DET B-NOUN I-NOUN;so when the week end comes i go get live with the ho ney;0-24 1-24 0-24 1-16 0-16 1-4 0-8 1-8 0-8 1-4 1-8 0-8 1-8 0-8
+1 1 1 1 0 1 1 1 1 1 1 1 1 0;B-CCONJ B-ADV B-DET B-NOUN I-NOUN B-VERB B-PRON B-VERB B-VERB B-ADJ B-ADP B-DET B-NOUN I-NOUN;so when the week end comes i go get live with the ho ney;0-32 1-32 0-32 1-16 0-16 1-4 0-8 1-8 0-8 1-4 1-8 0-8 1-8 0-8
 1 0 1 1 1 1 1 1 1 1 1 1 1 0;B-VERB I-VERB B-ADP B-DET B-NOUN B-PRON B-VERB B-DET B-NOUN B-CCONJ B-PRON B-VERB B-ADJ I-ADJ;ro llin' down the street i saw this girl and she was pum pin';1-8 0-8 1-8 0-8 1-8 0-16 1-16 0-16 1-8 0-8 1-8 0-8 1-8 0-8
 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 0;B-PRON B-VERB B-ADJ B-NOUN B-PRON B-VERB B-ADP I-ADP B-DET B-NOUN B-VERB B-ADP B-DET B-NOUN B-VERB B-ADJ I-ADJ;i winked my eye she got in to the ride went to a club was jum pin';0-16 1-8 0-16 1-8 0-16 1-8 1-16 0-16 0-16 1-8 0-8 1-8 0-8 1-8 0-8 1-8 0-4
 0 0 1 0 1 1 1 1 1 1 1 1 0;B-VERB I-VERB I-VERB B-PRON I-PRON B-ADP B-NOUN B-PRON B-VERB B-PRON B-DET B-NOUN I-NOUN;in tro duce my self as loc she said you're a li ar;1-8 0-8 1-8 0-8 1-8 0-8 1-8 0-8 1-8 1-8 0-8 1-8 0-8
@@ -6123,8 +6123,8 @@
 1 1 1 1;B-VERB B-NOUN B-PRON B-VERB;know what i like;1-16 0-16 0-16 1-8
 1 1 1;B-VERB B-PRON B-NOUN;keep it hype;1-16 0-16 1-8
 1 0 1 1;B-NOUN I-NOUN B-PRON B-ADV;bet cha i right;1-16 0-16 0-16 1-8
-1 1 1 1 1 1 1 1 1 1;B-VERB B-NOUN B-ADP B-NOUN B-ADP B-PRON B-ADP B-ADJ B-ADP B-NOUN;put pounds of ice on ya like white on rice;0-16 1-12 0-12 1-12 1-8 0-16 0-16 1-16 0-8 1-8
-1 1 1 1 1;B-VERB B-NOUN B-ADP B-DET B-NOUN;vise grips on the mics;1-12 0-12 0-12 0-16 1-8
+1 1 1 1 1 1 1 1 1 1;B-VERB B-NOUN B-ADP B-NOUN B-ADP B-PRON B-ADP B-ADJ B-ADP B-NOUN;put pounds of ice on ya like white on rice;0-16 1-16 0-16 1-16 1-8 0-16 0-16 1-16 0-8 1-8
+1 1 1 1 1;B-VERB B-NOUN B-ADP B-DET B-NOUN;vise grips on the mics;1-16 0-16 0-16 0-16 1-8
 1 0 1 1;B-ADJ I-ADJ B-ADP B-NOUN;tur nin' to fights;1-16 0-16 0-16 1-8
 1 0 1 1 1 0;B-VERB I-VERB B-PART B-DET B-NOUN I-NOUN;bur nin' up the lime light;1-16 0-16 1-16 0-16 1-8 0-16
 1 0;B-NOUN I-NOUN;fi re;1-8 0-16
@@ -6138,7 +6138,7 @@
 1 1 1 0 1 1;B-ADP B-ADJ B-NOUN I-NOUN B-VERB B-VERB;so our al bums can drop;1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 1 1 1 1 1 1;B-PROPN B-VERB B-PRON B-NOUN B-ADP B-DET B-NOUN B-PRON B-VERB B-INTJ B-ADJ B-NOUN;snoop fiend me beats by the pound you know that's gon' pop;1-8 1-8 1-8 1-16 0-32 0-32 1-16 0-16 1-16 0-16 0-16 1-8
 1 1 1 1 1 1 0 1;B-VERB B-ADP B-DET B-NOUN B-CCONJ B-VERB B-ADV I-ADV;jump in the game and walk a way;1-16 0-32 0-32 1-16 0-32 1-16 0-32 1-16
-1 0 1 1 0 1 1 1;B-ADP B-ADJ I-ADJ B-NOUN I-NOUN B-PART B-VERB B-ADP;with e nough mo ney to run with;1-32 0-32 1-16 1-24 0-24 0-24 1-16 1-16
+1 0 1 1 0 1 1 1;B-ADP B-ADJ I-ADJ B-NOUN I-NOUN B-PART B-VERB B-ADP;with e nough mo ney to run with;1-32 0-32 1-16 1-32 0-32 0-32 1-16 1-16
 1 1 1 1 1 1 0 1;B-ADP B-PRON B-VERB B-ADP B-ADJ B-ADJ I-ADJ B-NOUN;till ya hear that last fuck in' woof;1-16 0-16 1-16 0-16 0-8 1-16 0-16 1-16
 1 1 1 1;B-PRON B-VERB B-VERB B-NOUN;we ain't done bitch;1-16 0-16 1-8 1-8
 1 1 1 1 0 1 1 1 0 1 0;B-PRON B-VERB B-VERB B-ADV I-ADV B-ADP B-DET B-ADJ I-ADJ B-NOUN I-NOUN;i can come fas ter than a spee din' bu llet;1-16 0-32 1-16 1-16 0-16 1-32 0-32 1-16 0-16 1-32 0-32

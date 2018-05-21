@@ -66,7 +66,7 @@ class LSTMTagger(torch.nn.Module):
             torch.cat((stress_embeddings, wb_embeddings, syllable_embeddings), 2))
         lstm_out, self.hidden = self.lstm(embeddings, self.hidden)
         tag_space = self.hidden2tag(lstm_out)
-        tag_scores = torch.nn.functional.log_softmax(tag_space, dim=1)
+        tag_scores = torch.nn.functional.logsigmoid(tag_space) # log_softmax(tag_space, dim=1)
         return tag_scores
 
 
@@ -81,7 +81,7 @@ class BiLSTMTagger(LSTMTagger):
 
         self.lstm = torch.nn.LSTM(
             embedding_dim * 2 + syllable_encoder.weight.shape[1], hidden_dim // 2,
-            num_layers=num_layers, bidirectional=True, batch_first=True
+            num_layers=num_layers, bidirectional=True, batch_first=True, # dropout=0.5
         )
 
     def init_hidden(self, batch_size):
@@ -178,14 +178,6 @@ class Sample2Tensor:
         print('Correct ({:.3f}):'.format((true[:i] == pred[:i]).sum() / i))
         print('{}\n{}\n'.format(tag_str, syllable_str))
 
-
-
-def get_learning_rate(optimizer):
-    lr=[]
-    for param_group in optimizer.param_groups:
-       lr +=[ param_group['lr'] ]
-    return lr
-
         
 class Trainer:
     def __init__(self, model: BiLSTMTagger, train_data: DataLoader,
@@ -208,7 +200,7 @@ class Trainer:
         self.logger.info("Working on {}".format(self.device))
         for epoch in range(1, epochs + 1):
             self.logger.info('Starting epoch {} with lr={}'.format(
-                epoch, get_learning_rate(self.optimizer)))
+                epoch, self.optimizer.param_groups[0]['lr']))
             self._train_batches(epoch, epochs)
             self.logger.info('Finished epoch {}'.format(epoch))
             if self.dev_data is not None:
@@ -228,7 +220,6 @@ class Trainer:
 
             self.model.hidden = self.model.init_hidden(stress.size(0))
             tag_scores = self.model(stress, wb, syllables)
-
             loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1))
             loss.backward()
             self.optimizer.step()

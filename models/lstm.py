@@ -122,6 +122,59 @@ class VerseData(torch.utils.data.Dataset):
                 VerseData(data=X_test, transform=self.transform))
 
 
+class WindowedVerseData(VerseData):
+    def __init__(self, fpath=None, data=None, window=10, transform=lambda x: x, shuffle_data=True):
+        super(VerseData, self).__init__(
+            fpath=fpath, transform=transform, shuffle_data=shuffle_data)
+        self.window = window
+
+    def transform2window(self, samples, window):
+        new_samples = []
+        for sample in samples:
+            ws, wt, wb, sb, syl, beats = map(str.split, sample.strip().split(';'))
+            nws, nwt, nwb, nsb, nsyl, nbeats = [], [], [], [], [], []
+            if window is None:
+                for i, boundary in enumerate(sb):
+                    nws.append(ws[i])
+                    nwt.append(wt[i])
+                    nwb.append(wb[i])
+                    nsb.append(sb[i])
+                    nsyl.append(syl[i])
+                    nbeats.append(beats[i])
+                    if i > 0 and boundary == '1':
+                        new_samples.append(';'.join(map(lambda s: ' '.join(s), (nws, nwt, nwb, nsb, nsyl, nbeats))))
+                        nws, nwt, nwb, nsb, nsyl, nbeats = [], [], [], [], [], []
+                if nws:
+                    new_samples.append(';'.join(map(lambda s: ' '.join(s), (nws, nwt, nwb, nsb, nsyl, nbeats))))
+                    
+            else:
+                indexes = list(range(len(sb)))
+                windows = (indexes[i:i + window] for i in range(len(indexes) - window + 1))
+                for idx_list in windows:
+                    for idx in idx_list:
+                        nws.append(ws[i])
+                        nwt.append(wt[i])
+                        nwb.append(wb[i])
+                        nsb.append(sb[i])
+                        nsyl.append(syl[i])
+                        nbeats.append(beats[i])
+                    new_samples.append(';'.join(map(lambda s: ' '.join(s), (nws, nwt, nwb, nsb, nsyl, nbeats))))
+        return new_samples
+
+    def train_dev_test_split(self, dev_size=0.05, test_size=0.05):
+        X_train, X_dev = sklearn.model_selection.train_test_split(
+            self.data_samples, test_size=dev_size)
+        X_train, X_test = sklearn.model_selection.train_test_split(
+            X_train, test_size=test_size)
+        X_dev = self.transform2window(X_dev, window=None)
+        X_test = self.transform2window(X_test, window=None)
+        X_train = self.transform2window(X_train, window=self.window)
+        return (VerseData(data=X_train, transform=self.transform),
+                VerseData(data=X_dev, transform=self.transform),
+                VerseData(data=X_test, transform=self.transform))
+        
+
+
 def indexer(pre_fill=None):
     d = collections.defaultdict()
     d.default_factory = lambda: len(d)
@@ -322,35 +375,35 @@ if __name__ == '__main__':
     syllables, syllable_vectors = load_gensim_embeddings(args.pretrained_embeddings)
     transformer = Sample2Tensor(syllables)
     # load the data with the specified transformer
-    data = VerseData(args.dataset, transform=transformer, shuffle_data=True)
+    data = WindowedVerseData(args.dataset, transform=transformer, window=10, shuffle_data=True)
     # split the data into a training, development and test set
     train, dev, test = data.train_dev_test_split(
         dev_size=args.dev_size, test_size=args.test_size)
     # for each data set, creat a Dataloader object with specifier batch size
-    batch_size = args.batch_size
-    train_batches = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
-    dev_batches = torch.utils.data.DataLoader(dev, batch_size=batch_size, shuffle=True)
-    test_batches = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=True)
-    # construct a layer holding the pre-trained word2vec embeddings
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")        
-    syllable_encoder = embedding_layer(
-        syllable_vectors, trainable=args.retrain_embeddings).to(device)
-    # Initialize the tagger
-    tagger = BiLSTMTagger(
-        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
-        40, syllable_encoder, 2, batch_size, device)
-    # define the loss function. We choose CrossEntropyloss
-    loss_function = torch.nn.CrossEntropyLoss()
-    # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
-    # embeddings from optimizing
-    optimizer = torch.optim.Adam(
-        filter(lambda p: p.requires_grad, tagger.parameters()),
-        lr=args.learning_rate, weight_decay=args.weight_decay
-    ) #RMSprop
-    tagger.to(device)
-    trainer = Trainer(
-        tagger, train_batches, dev_batches, test_batches, optimizer,
-        loss_function, decoder=transformer, device=device
-    )
-    trainer.train(epochs=args.epochs)
-    trainer.test(statefile='model_best.pth.tar')
+    # batch_size = args.batch_size
+    # train_batches = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
+    # dev_batches = torch.utils.data.DataLoader(dev, batch_size=batch_size, shuffle=True)
+    # test_batches = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=True)
+    # # construct a layer holding the pre-trained word2vec embeddings
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")        
+    # syllable_encoder = embedding_layer(
+    #     syllable_vectors, trainable=args.retrain_embeddings).to(device)
+    # # Initialize the tagger
+    # tagger = BiLSTMTagger(
+    #     args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
+    #     40, syllable_encoder, 2, batch_size, device)
+    # # define the loss function. We choose CrossEntropyloss
+    # loss_function = torch.nn.CrossEntropyLoss()
+    # # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
+    # # embeddings from optimizing
+    # optimizer = torch.optim.Adam(
+    #     filter(lambda p: p.requires_grad, tagger.parameters()),
+    #     lr=args.learning_rate, weight_decay=args.weight_decay
+    # ) #RMSprop
+    # tagger.to(device)
+    # trainer = Trainer(
+    #     tagger, train_batches, dev_batches, test_batches, optimizer,
+    #     loss_function, decoder=transformer, device=device
+    # )
+    # trainer.train(epochs=args.epochs)
+    # trainer.test(statefile='model_best.pth.tar')

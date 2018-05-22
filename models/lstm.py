@@ -60,8 +60,8 @@ class LSTMTagger(torch.nn.Module):
                     torch.zeros(self.num_layers, batch_size, self.hidden_dim)).to(self.device))
 
     def forward(self, stress_sequence, wb_sequence, syllable_sequence, perm_index, lengths):
-        stress_embeddings = self.dropout(self.stress_encoder(stress_sequence))
-        wb_embeddings = self.dropout(self.wb_encoder(wb_sequence))
+        stress_embeddings = self.stress_encoder(stress_sequence)
+        wb_embeddings = self.wb_encoder(wb_sequence)
         syllable_embeddings = self.syllable_encoder(syllable_sequence)
         embeddings = self.dropout(torch.cat((stress_embeddings, wb_embeddings, syllable_embeddings), 2))
         embeddings = embeddings[perm_index]
@@ -177,7 +177,7 @@ class Sample2Tensor:
         word_boundaries = [b + 1 for b in sample.wb]
         syllables = [self.syllable_index.get(syllable.lower(), self.syllable_index['<UNK>'])
                      for syllable in sample.syllables]
-        beat_stress = sample.beatstress
+        beat_stress = [b for b in sample.beatstress]
         assert len(set(len(s) for s in (word_stress, word_boundaries, syllables, beat_stress))) == 1, [len(s) for s in (word_stress, word_boundaries, syllables, beat_stress)]
         # beat_stress = [self.beat_index[beat] for beat in sample[3].split()]
         length = len(word_stress)

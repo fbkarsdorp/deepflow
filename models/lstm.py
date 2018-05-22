@@ -123,15 +123,20 @@ class VerseData(torch.utils.data.Dataset):
 
 
 class WindowedVerseData(VerseData):
-    def __init__(self, fpath=None, data=None, window=10, transform=lambda x: x, shuffle_data=True):
-        super(VerseData, self).__init__(
-            fpath=fpath, transform=transform, shuffle_data=shuffle_data)
+    def __init__(self, fpath=None, data=None, window=10, transform=lambda x: x, shuffle_data=False):
+        if data is None:
+            self.data_samples = [line.strip().split(';') for line in open(fpath)]
+        else:
+            self.data_samples = data
+        if shuffle_data:
+            random.shuffle(self.data_samples)
+        self.transform = transform
         self.window = window
 
     def transform2window(self, samples, window):
         new_samples = []
         for sample in samples:
-            ws, wt, wb, sb, syl, beats = map(str.split, sample.strip().split(';'))
+            ws, wt, wb, sb, syl, beats = map(str.split, sample)
             nws, nwt, nwb, nsb, nsyl, nbeats = [], [], [], [], [], []
             if window is None:
                 for i, boundary in enumerate(sb):
@@ -152,13 +157,16 @@ class WindowedVerseData(VerseData):
                 windows = (indexes[i:i + window] for i in range(len(indexes) - window + 1))
                 for idx_list in windows:
                     for idx in idx_list:
-                        nws.append(ws[i])
-                        nwt.append(wt[i])
-                        nwb.append(wb[i])
-                        nsb.append(sb[i])
-                        nsyl.append(syl[i])
-                        nbeats.append(beats[i])
+                        nws.append(ws[idx])
+                        nwt.append(wt[idx])
+                        nwb.append(wb[idx])
+                        nsb.append(sb[idx])
+                        nsyl.append(syl[idx])
+                        nbeats.append(beats[idx])
                     new_samples.append(';'.join(map(lambda s: ' '.join(s), (nws, nwt, nwb, nsb, nsyl, nbeats))))
+                    print(' '.join(nsyl))
+                    print(nsb)
+                    nws, nwt, nwb, nsb, nsyl, nbeats = [], [], [], [], [], []                    
         return new_samples
 
     def train_dev_test_split(self, dev_size=0.05, test_size=0.05):
@@ -169,7 +177,7 @@ class WindowedVerseData(VerseData):
         X_dev = self.transform2window(X_dev, window=None)
         X_test = self.transform2window(X_test, window=None)
         X_train = self.transform2window(X_train, window=self.window)
-        return (VerseData(data=X_train, transform=self.transform),
+        return (VerseData(data=X_train, transform=self.transform, shuffle_data=True),
                 VerseData(data=X_dev, transform=self.transform),
                 VerseData(data=X_test, transform=self.transform))
         
@@ -375,7 +383,7 @@ if __name__ == '__main__':
     syllables, syllable_vectors = load_gensim_embeddings(args.pretrained_embeddings)
     transformer = Sample2Tensor(syllables)
     # load the data with the specified transformer
-    data = WindowedVerseData(args.dataset, transform=transformer, window=10, shuffle_data=True)
+    data = WindowedVerseData(args.dataset, transform=transformer, window=10, shuffle_data=False)
     # split the data into a training, development and test set
     train, dev, test = data.train_dev_test_split(
         dev_size=args.dev_size, test_size=args.test_size)

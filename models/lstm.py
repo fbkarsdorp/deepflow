@@ -1,6 +1,7 @@
 import argparse
 import collections
 import logging
+import json
 import shutil
 import random
 
@@ -12,14 +13,14 @@ import sklearn.metrics
 import torch
 from torch.utils.data import DataLoader
 
-random.seed(1685)
-np.random.seed(1685)
-torch.manual_seed(1685)
+random.seed(1983)
+np.random.seed(1983)
+torch.manual_seed(1983)
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 
-def embedding_layer(weights, n_padding_vectors=4, trainable=False):
+def embedding_layer(weights, n_padding_vectors=2, trainable=False):
     """Create an embedding layer from pre-trained gensim embeddings."""
     weights = np.vstack((np.zeros((n_padding_vectors, weights.shape[1])), weights))
     embedding_weights = torch.FloatTensor(weights)
@@ -43,7 +44,7 @@ class LSTMTagger(torch.nn.Module):
         self.batch_size = batch_size
         self.device = device
         self.stress_encoder = torch.nn.Embedding(stress_size, embedding_dim, padding_idx=0).to(device)
-        self.wb_encoder = torch.nn.Embedding(2, embedding_dim, padding_idx=0).to(device)
+        self.wb_encoder = torch.nn.Embedding(3, embedding_dim, padding_idx=0).to(device)
         self.syllable_encoder = syllable_encoder
         self.dropout = torch.nn.Dropout(p=embedding_dropout_p)
         self.lstm = torch.nn.LSTM(
@@ -58,15 +59,16 @@ class LSTMTagger(torch.nn.Module):
                 torch.autograd.Variable(
                     torch.zeros(self.num_layers, batch_size, self.hidden_dim)).to(self.device))
 
-    def forward(self, stress_sequence, wb_sequence, syllable_sequence):
-        stress_embeddings = self.stress_encoder(stress_sequence)
-        wb_embeddings = self.wb_encoder(wb_sequence)
+    def forward(self, stress_sequence, wb_sequence, syllable_sequence, perm_index, lengths):
+        stress_embeddings = self.dropout(self.stress_encoder(stress_sequence))
+        wb_embeddings = self.dropout(self.wb_encoder(wb_sequence))
         syllable_embeddings = self.syllable_encoder(syllable_sequence)
-        embeddings = self.dropout(
-            torch.cat((stress_embeddings, wb_embeddings, syllable_embeddings), 2))
+        embeddings = self.dropout(torch.cat((stress_embeddings, wb_embeddings, syllable_embeddings), 2))
+        embeddings = embeddings[perm_index]
+        packed = torch.nn.utils.rnn.pack_padded_sequence(embeddings, lengths, batch_first=True)
         lstm_out, self.hidden = self.lstm(embeddings, self.hidden)
         tag_space = self.hidden2tag(lstm_out)
-        tag_scores = torch.nn.functional.logsigmoid(tag_space) # log_softmax(tag_space, dim=1)
+        tag_scores = torch.nn.functional.log_softmax(tag_space, dim=1)
         return tag_scores
 
 
@@ -81,7 +83,7 @@ class BiLSTMTagger(LSTMTagger):
 
         self.lstm = torch.nn.LSTM(
             embedding_dim * 2 + syllable_encoder.weight.shape[1], hidden_dim // 2,
-            num_layers=num_layers, bidirectional=True, batch_first=True, # dropout=0.5
+            num_layers =num_layers, bidirectional=True, batch_first=True, # dropout=0.5
         )
 
     def init_hidden(self, batch_size):
@@ -92,10 +94,41 @@ class BiLSTMTagger(LSTMTagger):
         )
 
 
+Verse = collections.namedtuple('Verse', 'stress, wb, syllables, beats, beatstress')
+        
+def parse_lyrics(fpath):
+    def format_syllables(syllables):
+        if len(syllables) == 1:
+            return syllables
+        return ['{}{}{}'.format('-' if i > 0 else '', s, '-' if (i < len(syllables) - 1) else '')
+                for i, s in enumerate(syllables)]
+
+    def word_boundaries(syllables):
+        return [1] + [0] * (len(syllables) - 1)
+
+    def format_stress(stress):
+        return [int(s) if s != '.' else 0 for s in stress]
+    
+    with open(fpath) as f:
+        data = json.load(f)
+    for song in data:
+        for verse in song['text']:
+            for line in verse:
+                samples = [(format_stress(w['stress']),
+                            format_syllables(w['syllables']),
+                            word_boundaries(w['syllables']),
+                            w['beat'],
+                            format_stress(w['beatstress'])) for w in line]
+                stress, syllables, wb, beat, beatstress = map(lambda x: sum(x, []), zip(*samples))
+                verse = Verse(stress, wb, syllables, beat, beatstress)
+                yield verse
+
+
 class VerseData(torch.utils.data.Dataset):
     def __init__(self, fpath=None, data=None, transform=lambda x: x, shuffle_data=True):
         if data is None:
-            self.data_samples = [line.strip().split(';') for line in open(fpath)]
+            self.data_samples = list(parse_lyrics(fpath))
+            print(len(self.data_samples))
         else:
             self.data_samples = data
         if shuffle_data:
@@ -119,68 +152,7 @@ class VerseData(torch.utils.data.Dataset):
             X_train, test_size=test_size)
         return (VerseData(data=X_train, transform=self.transform),
                 VerseData(data=X_dev, transform=self.transform),
-                VerseData(data=X_test, transform=self.transform))
-
-
-class WindowedVerseData(VerseData):
-    def __init__(self, fpath=None, data=None, window=10, transform=lambda x: x, shuffle_data=False):
-        if data is None:
-            self.data_samples = [line.strip().split(';') for line in open(fpath)]
-        else:
-            self.data_samples = data
-        if shuffle_data:
-            random.shuffle(self.data_samples)
-        self.transform = transform
-        self.window = window
-
-    def transform2window(self, samples, window):
-        new_samples = []
-        for sample in samples:
-            ws, wt, wb, sb, syl, beats = map(str.split, sample)
-            nws, nwt, nwb, nsb, nsyl, nbeats = [], [], [], [], [], []
-            if window is None:
-                for i, boundary in enumerate(sb):
-                    nws.append(ws[i])
-                    nwt.append(wt[i])
-                    nwb.append(wb[i])
-                    nsb.append(sb[i])
-                    nsyl.append(syl[i])
-                    nbeats.append(beats[i])
-                    if i > 0 and boundary == '1':
-                        new_samples.append(';'.join(map(lambda s: ' '.join(s), (nws, nwt, nwb, nsb, nsyl, nbeats))))
-                        nws, nwt, nwb, nsb, nsyl, nbeats = [], [], [], [], [], []
-                if nws:
-                    new_samples.append(';'.join(map(lambda s: ' '.join(s), (nws, nwt, nwb, nsb, nsyl, nbeats))))
-                    
-            else:
-                indexes = list(range(len(sb)))
-                windows = (indexes[i:i + window] for i in range(len(indexes) - window + 1))
-                for idx_list in windows:
-                    for idx in idx_list:
-                        nws.append(ws[idx])
-                        nwt.append(wt[idx])
-                        nwb.append(wb[idx])
-                        nsb.append(sb[idx])
-                        nsyl.append(syl[idx])
-                        nbeats.append(beats[idx])
-                    new_samples.append(';'.join(map(lambda s: ' '.join(s), (nws, nwt, nwb, nsb, nsyl, nbeats))))
-                    print(' '.join(nsyl))
-                    print(nsb)
-                    nws, nwt, nwb, nsb, nsyl, nbeats = [], [], [], [], [], []                    
-        return new_samples
-
-    def train_dev_test_split(self, dev_size=0.05, test_size=0.05):
-        X_train, X_dev = sklearn.model_selection.train_test_split(
-            self.data_samples, test_size=dev_size)
-        X_train, X_test = sklearn.model_selection.train_test_split(
-            X_train, test_size=test_size)
-        X_dev = self.transform2window(X_dev, window=None)
-        X_test = self.transform2window(X_test, window=None)
-        X_train = self.transform2window(X_train, window=self.window)
-        return (VerseData(data=X_train, transform=self.transform, shuffle_data=True),
-                VerseData(data=X_dev, transform=self.transform),
-                VerseData(data=X_test, transform=self.transform))
-        
+                VerseData(data=X_test, transform=self.transform))        
 
 
 def indexer(pre_fill=None):
@@ -195,29 +167,29 @@ def indexer(pre_fill=None):
 class Sample2Tensor:
     def __init__(self, syllable_vocab, max_input_len=30, padding_char='<PAD>'):
         self.max_input_len = max_input_len
-        self.stress_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>'))
-        self.pos_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>'))
-        self.syllable_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>', '<UNK>') + tuple(syllable_vocab))
+        self.stress_index = indexer(pre_fill=(padding_char,))
+        self.pos_index = indexer(pre_fill=(padding_char,))
+        self.syllable_index = indexer(pre_fill=(padding_char, '<UNK>') + tuple(syllable_vocab))
         self.beat_index = indexer(pre_fill=(padding_char,))
 
-    def __call__(self, sample):
-        word_stress = [self.stress_index[x] for x in sample[0].split()]
-        pos_tags = [self.pos_index[tag] for tag in sample[1].split()]
+    def __call__(self, sample: Verse):
+        word_stress = [self.stress_index[x] for x in sample.stress]
+        word_boundaries = [b + 1 for b in sample.wb]
         syllables = [self.syllable_index.get(syllable.lower(), self.syllable_index['<UNK>'])
-                     for syllable in sample[2].split()]
-        word_boundaries = [int(b) for b in sample[3].split()]
-        beat_stress = list(map(int, sample[4].split()))
+                     for syllable in sample.syllables]
+        beat_stress = sample.beatstress
+        assert len(set(len(s) for s in (word_stress, word_boundaries, syllables, beat_stress))) == 1, [len(s) for s in (word_stress, word_boundaries, syllables, beat_stress)]
         # beat_stress = [self.beat_index[beat] for beat in sample[3].split()]
+        length = len(word_stress)
         while len(word_stress) < self.max_input_len:
             word_stress.append(0)
-            pos_tags.append(0)
             syllables.append(0)
             word_boundaries.append(0)
             beat_stress.append(0)
         return {'stress': torch.LongTensor(word_stress),
-                'pos': torch.LongTensor(pos_tags),
                 'syllables': torch.LongTensor(syllables),
                 'wb': torch.LongTensor(word_boundaries),
+                'length': length,
                 'tags': torch.LongTensor(beat_stress)}
 
     def _pad_sequence(self, sequence, index):
@@ -230,7 +202,7 @@ class Sample2Tensor:
         prev_len = 0
         for i in range(syllables.size(0)):
             syllable = syllables[i]
-            if syllable.item() == 0:
+            if self.index2syllable[syllable.item()] == '<PAD>':
                 break
             syllable = self.index2syllable[syllable.item()]
             syllable = syllable + ' ' + (' ' * abs(len(syllable) - 3) if len(syllable) < 3 else '')
@@ -276,11 +248,13 @@ class Trainer:
             wb = torch.autograd.Variable(batch['wb']).to(self.device)
             syllables = torch.autograd.Variable(batch['syllables']).to(self.device)
             targets = torch.autograd.Variable(batch['tags']).to(self.device)
+            lengths, perm_index = batch['length'].sort(0, descending=True)
             
             self.model.zero_grad()
 
             self.model.hidden = self.model.init_hidden(stress.size(0))
-            tag_scores = self.model(stress, wb, syllables)
+            tag_scores = self.model(stress, wb, syllables, perm_index, lengths)
+            targets = targets[perm_index]
             loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1))
             loss.backward()
             self.optimizer.step()
@@ -289,7 +263,7 @@ class Trainer:
             if i > 0 and i % 50 == 0:
                 logging.info(
                     'Epoch [{}/{}], Step [{}/{:.0f}]'.format(
-                        epoch + 1, epochs, i, len(data) / batch_size))
+                        epoch, epochs, i, len(self.train_data)))
                 logging.info(
                     'Loss: {}'.format(epoch_loss.item() / i))
     
@@ -302,11 +276,13 @@ class Trainer:
             wb = torch.autograd.Variable(batch['wb']).to(self.device)
             syllables = torch.autograd.Variable(batch['syllables']).to(self.device)
             targets = torch.autograd.Variable(batch['tags']).to(self.device)
+            lengths, perm_index = batch['length'].sort(0, descending=True)            
             
             self.model.zero_grad()
             
             self.model.hidden = self.model.init_hidden(stress.size(0))
-            tag_scores = self.model(stress, wb, syllables)
+            tag_scores = self.model(stress, wb, syllables, perm_index, lengths)
+            targets = targets[perm_index]
 
             if not test:
                 loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1))
@@ -322,6 +298,7 @@ class Trainer:
             accuracy += (true == pred).all(1).sum() / stress.size(0)
             baccuracy += ((true > 0) == (pred > 0)).all(1).sum() / stress.size(0)
             if i % 10 == 0:
+                syllables = syllables[perm_index]
                 for elt in np.random.randint(0, tag_scores.shape[0], 2):
                     self.decoder.decode(syllables[elt], true[elt], pred[elt])
         if not test:
@@ -383,35 +360,35 @@ if __name__ == '__main__':
     syllables, syllable_vectors = load_gensim_embeddings(args.pretrained_embeddings)
     transformer = Sample2Tensor(syllables)
     # load the data with the specified transformer
-    data = WindowedVerseData(args.dataset, transform=transformer, window=10, shuffle_data=False)
+    data = VerseData(args.dataset, transform=transformer, shuffle_data=True)
     # split the data into a training, development and test set
     train, dev, test = data.train_dev_test_split(
         dev_size=args.dev_size, test_size=args.test_size)
     # for each data set, creat a Dataloader object with specifier batch size
-    # batch_size = args.batch_size
-    # train_batches = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
-    # dev_batches = torch.utils.data.DataLoader(dev, batch_size=batch_size, shuffle=True)
-    # test_batches = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=True)
-    # # construct a layer holding the pre-trained word2vec embeddings
-    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")        
-    # syllable_encoder = embedding_layer(
-    #     syllable_vectors, trainable=args.retrain_embeddings).to(device)
-    # # Initialize the tagger
-    # tagger = BiLSTMTagger(
-    #     args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
-    #     40, syllable_encoder, 2, batch_size, device)
-    # # define the loss function. We choose CrossEntropyloss
-    # loss_function = torch.nn.CrossEntropyLoss()
-    # # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
-    # # embeddings from optimizing
-    # optimizer = torch.optim.Adam(
-    #     filter(lambda p: p.requires_grad, tagger.parameters()),
-    #     lr=args.learning_rate, weight_decay=args.weight_decay
-    # ) #RMSprop
-    # tagger.to(device)
-    # trainer = Trainer(
-    #     tagger, train_batches, dev_batches, test_batches, optimizer,
-    #     loss_function, decoder=transformer, device=device
-    # )
-    # trainer.train(epochs=args.epochs)
-    # trainer.test(statefile='model_best.pth.tar')
+    batch_size = args.batch_size
+    train_batches = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
+    dev_batches = torch.utils.data.DataLoader(dev, batch_size=batch_size, shuffle=True)
+    test_batches = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=True)
+    # construct a layer holding the pre-trained word2vec embeddings
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")        
+    syllable_encoder = embedding_layer(
+        syllable_vectors, trainable=args.retrain_embeddings).to(device)
+    # Initialize the tagger
+    tagger = BiLSTMTagger(
+        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
+        40, syllable_encoder, 2, batch_size, device)
+    # define the loss function. We choose CrossEntropyloss
+    loss_function = torch.nn.CrossEntropyLoss()
+    # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
+    # embeddings from optimizing
+    optimizer = torch.optim.Adam(
+        filter(lambda p: p.requires_grad, tagger.parameters()),
+        lr=args.learning_rate, weight_decay=args.weight_decay
+    ) #RMSprop
+    tagger.to(device)
+    trainer = Trainer(
+        tagger, train_batches, dev_batches, test_batches, optimizer,
+        loss_function, decoder=transformer, device=device
+    )
+    trainer.train(epochs=args.epochs)
+    trainer.test(statefile='model_best.pth.tar')

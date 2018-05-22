@@ -29,7 +29,15 @@ def load_data(fpath):
                 for i, word in enumerate(line):
                     token = word.get('token', word.get('word'))
                     if not is_punct(token):
-                        words.extend([syllable.lower() for syllable in word['syllables']])
+                        for j, syllable in enumerate(word['syllables']):
+                            if len(word['syllables']) > 1:
+                                if j == 0:
+                                    syllable = syllable + '-'
+                                elif j == (len(word['syllables']) - 1):
+                                    syllable = '-' + syllable
+                                else:
+                                    syllable = '-' + syllable + '-'
+                            words.append(syllable.lower())
                         if i < (n_words - 1):
                             words.append("<SPACE>")
                 lines.append(words)

@@ -39,6 +39,9 @@ class LSTMTagger(torch.nn.Module):
     def __init__(self, embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
                  stress_size, pos_size, syllable_encoder, tagset_size, batch_size):
         super(LSTMTagger, self).__init__()
+        nll_weight = torch.ones(stress_size)
+        nll_weight[0] = 0.
+        self.register_buffer('nll_weight', nll_weight)
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.batch_size = batch_size
@@ -80,7 +83,7 @@ class BiLSTMTagger(LSTMTagger):
 
 Verse = collections.namedtuple('Verse', 'stress, wb, syllables, beats, beatstress')
         
-def parse_lyrics(fpath, hyphenate=False):
+def parse_lyrics(fpath, hyphenate=True):
     def format_syllables(syllables):
         if not hyphenate or len(syllables) == 1:
             return syllables
@@ -235,7 +238,9 @@ class Trainer:
 
             tag_scores = self.model(stress, wb, syllables, perm_index, lengths)
             targets = targets[perm_index]
-            loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1))
+            loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1),
+                                weight=self.model.nll_weight, size_average=False)
+            loss = loss / lengths.sum().item()
             loss.backward()
             self.optimizer.step()
             loss = loss.item()

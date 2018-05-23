@@ -193,6 +193,10 @@ class Sample2Tensor:
         print('{}\n{}\n'.format(tag_str, syllable_str))
 
 
+def chop_padding(samples, lengths):
+    return [samples[i,:lengths[i]] for i in range(samples.shape[0])]
+    
+
 class Trainer:
     def __init__(self, model: BiLSTMTagger, train_data: DataLoader,
                  dev_data: DataLoader = None, test_data: DataLoader = None,
@@ -275,12 +279,13 @@ class Trainer:
             # collect predictions
             pred = tag_scores.view(-1, tag_scores.size(2)).data.cpu().numpy().argmax(1)
             true = targets.view(-1).data.cpu().numpy()
+            pred = pred.reshape(tag_scores.shape[0], stress.size(1))            
+            true = true.reshape(tag_scores.shape[0], stress.size(1))
+            pred = chop_padding(pred, lengths)
+            true = chop_padding(true, lengths)
             y_true.append(true)
             y_pred.append(pred)
-            true = true.reshape(tag_scores.shape[0], stress.size(1))
-            pred = pred.reshape(tag_scores.shape[0], stress.size(1))
-            accuracy += (true == pred).all(1).sum() / stress.size(0)
-            baccuracy += ((true > 0) == (pred > 0)).all(1).sum() / stress.size(0)
+            accuracy += sum((t == p).all() for t, p in zip(pred, true)) / stress.size(0)
             if i % 10 == 0:
                 syllables = syllables[perm_index]
                 for elt in np.random.randint(0, tag_scores.shape[0], 2):
@@ -293,17 +298,11 @@ class Trainer:
             if closs < self.best_loss:
                 self.best_loss = closs
         p, r, f, s = sklearn.metrics.precision_recall_fscore_support(
-            np.hstack(y_true), np.hstack(y_pred))
+            np.hstack(np.hstack(y_true)), np.hstack(np.hstack(y_pred)))
         for i in range(p.shape[0]):
             logging.info('Validation Scores: c={} p={:.3f}, r={:.3f}, f={:.3f}, s={}'.format(
                 i, p[i], r[i], f[i], s[i]))
-        p, r, f, s = sklearn.metrics.precision_recall_fscore_support(
-            np.hstack(y_true) > 0, np.hstack(y_pred) > 0)
-        for i in range(p.shape[0]):
-            logging.info('Validation Scores: c={} p={:.3f}, r={:.3f}, f={:.3f}, s={}'.format(
-                i, p[i], r[i], f[i], s[i]))            
         logging.info('Accuracy score: {:.3f}'.format(accuracy / len(data)))
-        logging.info('Binary Accuracy score: {:.3f}'.format(baccuracy / len(data)))
 
     def save_checkpoint(self, is_best, filename='checkpoint.pth.tar'):
         checkpoint = {

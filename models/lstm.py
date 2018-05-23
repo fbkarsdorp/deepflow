@@ -39,9 +39,6 @@ class LSTMTagger(torch.nn.Module):
     def __init__(self, embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
                  stress_size, pos_size, syllable_encoder, tagset_size, batch_size):
         super(LSTMTagger, self).__init__()
-        nll_weight = torch.ones(stress_size)
-        nll_weight[0] = 0.
-        self.register_buffer('nll_weight', nll_weight)
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.batch_size = batch_size
@@ -239,8 +236,7 @@ class Trainer:
 
             tag_scores = self.model(stress, wb, syllables, perm_index, lengths)
             targets = targets[perm_index]
-            loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1),
-                                weight=self.model.nll_weight, size_average=False)
+            loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1))
             loss = loss / lengths.sum().item()
             loss.backward()
             self.optimizer.step()
@@ -252,7 +248,7 @@ class Trainer:
                     'Epoch [{}/{}], Step [{}/{:.0f}]'.format(
                         epoch, epochs, i, len(self.train_data)))
                 logging.info(
-                    'Loss: {}'.format(epoch_loss.item() / i))
+                    'Loss: {}'.format(epoch_loss / i))
     
     def _validate(self, data: DataLoader, test=False):
         self.logger.info('Validating model')
@@ -271,7 +267,7 @@ class Trainer:
             targets = targets[perm_index]
 
             if not test:
-                loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1))
+                loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1)).item()
                 run_loss += loss
 
             # collect predictions
@@ -288,8 +284,8 @@ class Trainer:
                 for elt in np.random.randint(0, tag_scores.shape[0], 2):
                     self.decoder.decode(syllables[elt], true[elt], pred[elt])
         if not test:
-            logging.info('Validation Loss: {}'.format(run_loss.item() / len(data)))
-            closs = run_loss.item() / len(data)
+            logging.info('Validation Loss: {}'.format(run_loss / len(data)))
+            closs = run_loss / len(data)
             self.scheduler.step(closs)
             self.save_checkpoint(closs < self.best_loss)
             if closs < self.best_loss:
@@ -362,9 +358,11 @@ if __name__ == '__main__':
     # Initialize the tagger
     tagger = BiLSTMTagger(
         args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
-        40, syllable_encoder, 2, batch_size)
+        40, syllable_encoder, 3, batch_size)
     # define the loss function. We choose CrossEntropyloss
-    loss_function = torch.nn.CrossEntropyLoss()
+    weight = torch.ones(3).to(device)
+    weight[0] = 0.
+    loss_function = torch.nn.CrossEntropyLoss(weight=weight, size_average=False)
     # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
     # embeddings from optimizing
     optimizer = torch.optim.Adam(

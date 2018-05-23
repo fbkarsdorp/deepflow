@@ -237,7 +237,7 @@ class Sample2Tensor:
         prev_len = 0
         for i in range(syllables.size(0)):
             syllable = syllables[i]
-            if self.index2syllable[syllable.item()] == '<PAD>':
+            if self.index2syllable[syllable.item()] == '<EOS>':
                 break
             syllable = self.index2syllable[syllable.item()]
             syllable = syllable + ' ' + (' ' * abs(len(syllable) - 3) if len(syllable) < 3 else '')
@@ -246,6 +246,10 @@ class Sample2Tensor:
         print('Correct ({:.3f}):'.format((true[:i] == pred[:i]).sum() / i))
         print('{}\n{}\n'.format(tag_str, syllable_str))
 
+
+def chop_padding(samples, lengths):
+    return [samples[i,:lengths[i]] for i in range(samples.shape[0])]
+    
 
 class Trainer:
     def __init__(self, model: LSTMTagger, train_data: DataLoader,
@@ -328,12 +332,13 @@ class Trainer:
             # collect predictions
             pred = self.model.predict(stress, wb, syllables, lengths)
             true = targets.view(-1).cpu().numpy()
-            y_true.append(true)
-            y_pred.append(pred)
             true = true.reshape(data.batch_size, stress.size(1))
             pred = pred.reshape(data.batch_size, stress.size(1))
-            accuracy += (true == pred).all(1).sum() / stress.size(0)
-            baccuracy += ((true > 0) == (pred > 0)).all(1).sum() / stress.size(0)
+            pred = chop_padding(pred, lengths)
+            true = chop_padding(true, lengths)
+            y_true.append(true)
+            y_pred.append(pred)
+            accuracy += sum((t == p).all() for t, p in zip(pred, true)) / stress.size(0)
             if i % 10 == 0:
                 syllables = syllables[perm_index]
                 for elt in np.random.randint(0, data.batch_size, 2):
@@ -346,17 +351,11 @@ class Trainer:
             if closs < self.best_loss:
                 self.best_loss = closs
         p, r, f, s = sklearn.metrics.precision_recall_fscore_support(
-            np.hstack(y_true), np.hstack(y_pred))
+            np.hstack(np.hstack(y_true)), np.hstack(np.hstack(y_pred)))
         for i in range(p.shape[0]):
             logging.info('Validation Scores: c={} p={:.3f}, r={:.3f}, f={:.3f}, s={}'.format(
                 i, p[i], r[i], f[i], s[i]))
-        p, r, f, s = sklearn.metrics.precision_recall_fscore_support(
-            np.hstack(y_true) > 0, np.hstack(y_pred) > 0)
-        for i in range(p.shape[0]):
-            logging.info('Validation Scores: c={} p={:.3f}, r={:.3f}, f={:.3f}, s={}'.format(
-                i, p[i], r[i], f[i], s[i]))            
         logging.info('Accuracy score: {:.3f}'.format(accuracy / len(data)))
-        logging.info('Binary Accuracy score: {:.3f}'.format(baccuracy / len(data)))
 
     def save_checkpoint(self, is_best, filename='checkpoint.pth.tar'):
         checkpoint = {

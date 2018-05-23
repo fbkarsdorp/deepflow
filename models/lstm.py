@@ -96,9 +96,9 @@ class BiLSTMTagger(LSTMTagger):
 
 Verse = collections.namedtuple('Verse', 'stress, wb, syllables, beats, beatstress')
         
-def parse_lyrics(fpath):
+def parse_lyrics(fpath, hyphenate=False):
     def format_syllables(syllables):
-        if len(syllables) == 1:
+        if not hyphenate or len(syllables) == 1:
             return syllables
         return ['{}{}{}'.format('-' if i > 0 else '', s, '-' if (i < len(syllables) - 1) else '')
                 for i, s in enumerate(syllables)]
@@ -115,20 +115,17 @@ def parse_lyrics(fpath):
         for verse in song['text']:
             for line in verse:
                 samples = [(format_stress(w['stress']),
-                            format_syllables(w['syllables']),
                             word_boundaries(w['syllables']),
-                            w['beat'],
+                            format_syllables(w['syllables']),                            
+                            [float(b) for b in w['beat']],
                             format_stress(w['beatstress'])) for w in line]
-                stress, syllables, wb, beat, beatstress = map(lambda x: sum(x, []), zip(*samples))
-                verse = Verse(stress, wb, syllables, beat, beatstress)
-                yield verse
+                yield Verse(*map(lambda x: sum(x, []), zip(*samples)))
 
 
 class VerseData(torch.utils.data.Dataset):
     def __init__(self, fpath=None, data=None, transform=lambda x: x, shuffle_data=True):
         if data is None:
             self.data_samples = list(parse_lyrics(fpath))
-            print(len(self.data_samples))
         else:
             self.data_samples = data
         if shuffle_data:
@@ -177,8 +174,7 @@ class Sample2Tensor:
         word_boundaries = [b + 1 for b in sample.wb]
         syllables = [self.syllable_index.get(syllable.lower(), self.syllable_index['<UNK>'])
                      for syllable in sample.syllables]
-        beat_stress = [b for b in sample.beatstress]
-        assert len(set(len(s) for s in (word_stress, word_boundaries, syllables, beat_stress))) == 1, [len(s) for s in (word_stress, word_boundaries, syllables, beat_stress)]
+        beat_stress = sample.beatstress[:]
         # beat_stress = [self.beat_index[beat] for beat in sample[3].split()]
         length = len(word_stress)
         while len(word_stress) < self.max_input_len:

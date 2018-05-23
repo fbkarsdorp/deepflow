@@ -152,13 +152,14 @@ class Sample2Tensor:
         self.pos_index = indexer(pre_fill=(padding_char,))
         self.syllable_index = indexer(pre_fill=(padding_char, '<UNK>') + tuple(syllable_vocab))
         self.beat_index = indexer(pre_fill=(padding_char,))
+        self.target_index = indexer(pre_fill=(padding_char,))
 
     def __call__(self, sample: Verse):
         word_stress = [self.stress_index[x] for x in sample.stress]
         word_boundaries = [b + 1 for b in sample.wb]
         syllables = [self.syllable_index.get(syllable.lower(), self.syllable_index['<UNK>'])
                      for syllable in sample.syllables]
-        beat_stress = sample.beatstress[:]
+        beat_stress = [self.target_index[beat] for beat in sample.beatstress]
         # beat_stress = [self.beat_index[beat] for beat in sample[3].split()]
         length = len(word_stress)
         while len(word_stress) < self.max_input_len:

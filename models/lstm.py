@@ -324,23 +324,22 @@ class Trainer:
             targets = targets[perm_index]
 
             if not test:
-                loss = self.model.loss(stress, wb, syllables, lengths, targets)
-                loss = loss / lengths.sum().item()
+                loss = self.model.loss(stress, wb, syllables, lengths, targets).item()
                 run_loss += loss
 
             # collect predictions
+            batch_size = stress.size(0)
             pred = self.model.predict(stress, wb, syllables, lengths)
             true = targets.view(-1).cpu().numpy()
-            true = true.reshape(data.batch_size, stress.size(1))
-            pred = pred.reshape(data.batch_size, stress.size(1))
+            true = true.reshape(batch_size, stress.size(1))
+            pred = pred.reshape(batch_size, stress.size(1))
             pred = chop_padding(pred, lengths)
             true = chop_padding(true, lengths)
             y_true.append(true)
             y_pred.append(pred)
             accuracy += sum((t == p).all() for t, p in zip(pred, true)) / stress.size(0)
             if i % 10 == 0:
-                syllables = syllables[perm_index]
-                for elt in np.random.randint(0, data.batch_size, 2):
+                for elt in np.random.randint(0, batch_size, 2):
                     self.decoder.decode(syllables[elt], true[elt], pred[elt])
         if not test:
             logging.info('Validation Loss: {}'.format(run_loss / len(data)))

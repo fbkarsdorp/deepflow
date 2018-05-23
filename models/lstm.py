@@ -60,8 +60,7 @@ class LSTMTagger(torch.nn.Module):
         packed = torch.nn.utils.rnn.pack_padded_sequence(embeddings, lengths, batch_first=True)
         lstm_out, _ = self.lstm(embeddings)
         tag_space = self.hidden2tag(lstm_out)
-        tag_scores = torch.nn.functional.log_softmax(tag_space, dim=1)
-        return tag_scores
+        return tag_space
 
 
 class BiLSTMTagger(LSTMTagger):
@@ -279,6 +278,7 @@ class Trainer:
             # collect predictions
             pred = tag_scores.view(-1, tag_scores.size(2)).data.cpu().numpy().argmax(1)
             true = targets.view(-1).data.cpu().numpy()
+            print(tag_scores.size())
             pred = pred.reshape(tag_scores.shape[0], stress.size(1))            
             true = true.reshape(tag_scores.shape[0], stress.size(1))
             pred = chop_padding(pred, lengths)

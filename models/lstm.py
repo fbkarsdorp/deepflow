@@ -267,7 +267,9 @@ class Trainer:
             targets = targets[perm_index]
 
             if not test:
-                loss = self.loss_fn(tag_scores.view(-1, tag_scores.size(2)), targets.view(-1)).item()
+                loss = self.loss_fn(
+                    tag_scores.view(-1, tag_scores.size(2)), targets.view(-1)).item()
+                loss = loss / lengths.sum().item()
                 run_loss += loss
 
             # collect predictions
@@ -362,7 +364,7 @@ if __name__ == '__main__':
     # define the loss function. We choose CrossEntropyloss
     weight = torch.ones(3).to(device)
     weight[0] = 0.
-    loss_function = torch.nn.CrossEntropyLoss(weight=weight, size_average=False)
+    loss_function = torch.nn.CrossEntropyLoss(size_average=False, weight=weight)
     # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
     # embeddings from optimizing
     optimizer = torch.optim.Adam(

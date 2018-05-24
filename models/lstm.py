@@ -1,5 +1,6 @@
 import argparse
 import collections
+import functools
 import logging
 import json
 import shutil
@@ -271,7 +272,7 @@ class VerseData(torch.utils.data.Dataset):
             self.data_samples, test_size=dev_size)
         X_train, X_test = sklearn.model_selection.train_test_split(
             X_train, test_size=test_size)
-        return (VerseData(data=X_train, transform=self.transform),
+        return (VerseData(data=X_train, transform=functools.partial(self.transform, add_bos=False)),
                 VerseData(data=X_dev, transform=self.transform),
                 VerseData(data=X_test, transform=self.transform))        
 
@@ -300,7 +301,7 @@ class Sample2Tensor:
         self.syllable_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>', '<UNK>') + tuple(syllable_vocab))
         self.target_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>'))
 
-    def __call__(self, sample: Verse):
+    def __call__(self, sample: Verse, add_bos=True):
         # to integers
         word_stress = [self.stress_index[x] for x in sample.stress]
         word_boundaries = [self.wb_index[b] for b in sample.wb]
@@ -308,10 +309,10 @@ class Sample2Tensor:
                      for syllable in sample.syllables]
         beat_stress = [self.target_index[beat] for beat in sample.beatstress]
         # to sequences
-        word_stress = self._pad_sequence(word_stress, self.stress_index)
-        word_boundaries = self._pad_sequence(word_boundaries, self.wb_index)
-        syllables = self._pad_sequence(syllables, self.syllable_index)
-        beat_stress = self._pad_sequence(beat_stress, self.target_index)
+        word_stress = self._pad_sequence(word_stress, self.stress_index, add_bos=add_bos)
+        word_boundaries = self._pad_sequence(word_boundaries, self.wb_index, add_bos=add_bos)
+        syllables = self._pad_sequence(syllables, self.syllable_index, add_bos=add_bos)
+        beat_stress = self._pad_sequence(beat_stress, self.target_index, add_bos=add_bos)
         # length
         length = len(word_stress)
         # padding
@@ -327,8 +328,10 @@ class Sample2Tensor:
                 'length': length,
                 'tags': torch.LongTensor(beat_stress)}
 
-    def _pad_sequence(self, sequence, index):
-        return [index['<BOS>']] + sequence + [index['<EOS>']]
+    def _pad_sequence(self, sequence, index, add_bos=True):
+        if add_bos:
+            return [index['<BOS>']] + sequence + [index['<EOS>']]
+        return sequence + [index['<EOS>']]
 
     def decode(self, syllables, true, pred):
         if not hasattr(self, 'index2syllable'):
@@ -508,7 +511,7 @@ if __name__ == '__main__':
     syllable_encoder = embedding_layer(
         syllable_vectors, trainable=args.retrain_embeddings)
     # Initialize the tagger
-    tagger = LSTMTagger(
+    tagger = CRFLSTMTagger(
         args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
         5, syllable_encoder, 5, batch_size, bidirectional=True)
     print(tagger)

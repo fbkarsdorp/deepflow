@@ -162,9 +162,9 @@ class CRFLSTMTagger(LSTMTagger):
         # TODO: don't iterate over batches
         for t in range(seq_len):
             emit = torch.stack(
-                [tag_space[b, t, targets[b][t+1]] for b in range(batch)])
+                [tag_space[b, t, targets[b, t+1]] for b in range(batch)])
             trans = torch.stack(
-                [self.trans[targets[b][t+1], targets[b][t]] for b in range(batch)])
+                [self.trans[targets[b, t+1], targets[b, t]] for b in range(batch)])
             score = score + emit + (trans * mask[:, t])
 
         return score
@@ -210,7 +210,7 @@ class CRFLSTMTagger(LSTMTagger):
             for bptr_t in reversed(bptr):
                 hyp.append(bptr_t[best])
             hyp = list(reversed(hyp))
-            hyp = [PAD] + hyp + [PAD] * (maxlen - len(hyp))
+            hyp = hyp + [PAD] * (1+ maxlen - len(hyp))
 
             hyps.append(np.array(hyp))
 

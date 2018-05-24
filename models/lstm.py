@@ -212,7 +212,7 @@ class CRFLSTMTagger(LSTMTagger):
             hyp = list(reversed(hyp))
             hyp = [PAD] + hyp + [PAD] * (maxlen - len(hyp))
 
-            hyps.append(hyp)
+            hyps.append(np.array(hyp))
 
         return np.array(hyps)
 

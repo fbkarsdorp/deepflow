@@ -15,6 +15,7 @@ PUNCT_RE = re.compile(r'[^\w\s]+$')
 def is_punct(string):
     return PUNCT_RE.match(string) is not None
 
+ft_home = '/home/folgert/local/fastText-0.1.0/fasttext'
 
 def load_data(fpath):
     logging.info("Loading dataset... {}".format(fpath))
@@ -47,8 +48,13 @@ def load_data(fpath):
 
 def train_model(data, output, min_count, dim, window, workers, model):
     sg = 1 if model == 'skipgram' else 0
-    model = gensim.models.Word2Vec(
-        data, min_count=min_count, size=dim, window=window, workers=workers, sg=sg)
+    if model == 'fasttext':
+        model = gensim.models.FastText(size=dim, window=window, workers=workers, min_count=min_count)
+        model.build_vocab(data)
+        model.train(data, total_examples=model.corpus_count, epochs=10)
+    else:
+        model = gensim.models.Word2Vec(
+            data, min_count=min_count, size=dim, window=window, workers=workers, sg=sg)
     model.wv.save(output)
 
 
@@ -58,7 +64,7 @@ if __name__ == '__main__':
     parser.add_argument("--output_file")
     parser.add_argument("--dim", default=300, type=int)
     parser.add_argument("--window", default=5, type=int)
-    parser.add_argument("--model", default="cbow")
+    parser.add_argument("--model", default="cbow", choices=('skipgram', 'cbow', 'fasttext'))
     parser.add_argument("--workers", default=4)
     parser.add_argument("--min_count", default=5, type=int)
     args = parser.parse_args()

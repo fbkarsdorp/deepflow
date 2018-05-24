@@ -76,7 +76,6 @@ class LSTMTagger(torch.nn.Module):
         #     embs, lengths, batch_first=True)
         lstm_out, _ = self.lstm(embs)
         tag_space = self.hidden2tag(lstm_out)
-
         return tag_space
 
     def loss(self, stress_sequence, wb_sequence, syllable_sequence, lengths, targets):
@@ -334,22 +333,21 @@ class Sample2Tensor:
     def decode(self, syllables, true, pred):
         if not hasattr(self, 'index2syllable'):
             self.index2syllable = sorted(self.syllable_index, key=self.syllable_index.get)
+            self.index2tag = sorted(self.target_index, key=self.target_index.get)
         syllable_str, tag_str = '', ''
         prev_len = 0
-        for i in range(syllables.size(0)):
-            syllable = syllables[i]
-            if self.index2syllable[syllable.item()] == '<EOS>':
-                break
+        for i in range(len(true)):
+            syllable = syllables[i + 1]
             syllable = self.index2syllable[syllable.item()]
             syllable = syllable + ' ' + (' ' * abs(len(syllable) - 3) if len(syllable) < 3 else '')
             syllable_str += syllable
-            tag_str += '{}/{}'.format(true[i].item(), pred[i].item()) + ' ' * abs(len(syllable) - 3)
+            tag_str += '{}/{}'.format(self.index2tag[true[i].item()], self.index2tag[pred[i].item()]) + ' ' * abs(len(syllable) - 3)
         print('Correct ({:.3f}):'.format((true[:i] == pred[:i]).sum() / i))
         print('{}\n{}\n'.format(tag_str, syllable_str))
 
 
 def chop_padding(samples, lengths):
-    return [samples[i,:lengths[i]] for i in range(samples.shape[0])]
+    return [samples[i, 1: lengths[i] - 1] for i in range(samples.shape[0])]
     
 
 class Trainer:

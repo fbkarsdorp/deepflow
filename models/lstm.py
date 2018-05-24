@@ -13,6 +13,8 @@ import sklearn.metrics
 import torch
 from torch.utils.data import DataLoader
 
+import torch_utils
+
 random.seed(1983)
 np.random.seed(1983)
 torch.manual_seed(1983)
@@ -42,6 +44,7 @@ class LSTMTagger(torch.nn.Module):
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.batch_size = batch_size
+        self.tagset_size = tagset_size
         self.embedding_dropout_p = embedding_dropout_p
         super(LSTMTagger, self).__init__()
 
@@ -93,33 +96,131 @@ class LSTMTagger(torch.nn.Module):
         return pred
 
 
-class CRFLSTM(LSTMTagger):
+class CRFLSTMTagger(LSTMTagger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # matrix of transition scores from j to i
-        trans = torch.randn(vocab, vocab)
+        trans = torch.randn(self.tagset_size, self.tagset_size)
         trans[BOS, :] = -10000. # no transition to <bos>
         trans[:, EOS] = -10000. # no transition from <eos> except to <pad>
         trans[:, PAD] = -10000. # no transition from <pad> except to <pad>
         trans[PAD, :] = -10000.
         trans[PAD, EOS] = 0.
         trans[PAD, PAD] = 0.
-        self.trans = nn.Parameter(trans)
+        self.trans = torch.nn.Parameter(trans)
 
     def forward(self, stress_sequence, wb_sequence, syllable_sequence, lengths):
         tag_space = super().forward(
             stress_sequence, wb_sequence, syllable_sequence, lengths)
+        tag_space = torch.nn.functional.log_softmax(tag_space, dim=2)
+        return tag_space
 
-    def loss(self):
-        pass
+    def loss(self, stress_sequence, wb_sequence, syllable_sequence, lengths, targets):
+        tag_space = self(stress_sequence, wb_sequence, syllable_sequence, lengths)
 
-    def predict(self):
-        pass
+        # mask on padding
+        mask = torch_utils.make_length_mask(
+            lengths, maxlen=tag_space.size(1), device=tag_space.device).float()
+        tag_space = tag_space * mask.unsqueeze(2).expand_as(tag_space)
+
+        Z = self.partition(tag_space, mask)
+        score = self.score(tag_space, mask, targets)
+
+        return torch.mean(Z - score)
+
+    def partition(self, tag_space, mask):
+        tag_space = tag_space[:, 1:]
+        batch, seq_len, vocab = tag_space.size()
+
+        # initialize forward variables in log space
+        Z = tag_space.new(batch, vocab).fill_(-10000.)
+        Z[:, BOS] = 0.
+
+        # iterate through the sequence
+        for t in range(seq_len): 
+            Z_t = Z.unsqueeze(1).expand(-1, vocab, vocab)
+            emit = tag_space[:, t].unsqueeze(-1).expand_as(Z_t)
+            trans = self.trans.unsqueeze(0).expand_as(Z_t)
+            Z_t = torch_utils.log_sum_exp(Z_t + emit + trans)
+            mask_t = mask[:, t].unsqueeze(-1).expand_as(Z)
+            Z = Z_t * mask_t + Z * (1 - mask_t)
+
+        Z = torch_utils.log_sum_exp(Z)
+
+        return Z
+
+    def score(self, tag_space, mask, targets):
+        tag_space = tag_space[:, 1:]
+        # calculate the score of a given sequence
+        batch, seq_len, vocab = tag_space.size()
+        score = tag_space.new(batch).fill_(0.)
+
+        # # prepend <bos>
+        # targets = torch_utils.prepad(targets, pad=self.label_encoder.get_bos())
+
+        # iterate over sequence
+        # TODO: don't iterate over batches
+        for t in range(seq_len):
+            emit = torch.stack(
+                [tag_space[b, t, targets[b][t+1]] for b in range(batch)])
+            trans = torch.stack(
+                [self.trans[targets[b][t+1], targets[b][t]] for b in range(batch)])
+            score = score + emit + (trans * mask[:, t])
+
+        return score
+
+    def predict(self, stress_sequence, wb_sequence, syllable_sequence, lengths):
+        tag_space = self(stress_sequence, wb_sequence, syllable_sequence, lengths)
+        tag_space = tag_space[:, 1:]
+
+        maxlen = tag_space.size(1)
+
+        vocab = tag_space.size(-1)
+
+        hyps, scores = [], []
+
+        # TODO: don't iterate over batches
+        # iterate over batches
+        for item, length in zip(tag_space, lengths.tolist()):
+            # (seq_len x batch x vocab) => (real_len x vocab)
+            item = item[:length]
+            bptr = []
+            score = tag_space.new(vocab).fill_(-10000.)
+            score[BOS] = 0.
+
+            # iterate over sequence
+            for emit in item:
+                bptr_t, score_t = [], []
+
+                # TODO: don't iterate over tags
+                # for each next tag
+                for i in range(vocab):
+                    prob, best = torch.max(score + self.trans[i], dim=0)
+                    bptr_t.append(best.item())
+                    score_t.append(prob)
+                # accumulate
+                bptr.append(bptr_t)
+                score = torch.stack(score_t) + emit
+
+            score, best = torch.max(score, dim=0)
+            score, best = score.item(), best.item()
+
+            # back-tracking
+            hyp = [best]
+            for bptr_t in reversed(bptr):
+                hyp.append(bptr_t[best])
+            hyp = list(reversed(hyp))
+            hyp = [PAD] + hyp + [PAD] * (maxlen - len(hyp))
+
+            hyps.append(hyp)
+
+        return np.array(hyps)
 
 
 Verse = collections.namedtuple('Verse', 'stress, wb, syllables, beats, beatstress')
-        
+
+
 def parse_lyrics(fpath, hyphenate=True):
     def format_syllables(syllables):
         if not hyphenate or len(syllables) == 1:
@@ -132,7 +233,7 @@ def parse_lyrics(fpath, hyphenate=True):
 
     def format_stress(stress):
         return [int(s) if s != '.' else 0 for s in stress]
-    
+
     with open(fpath) as f:
         data = json.load(f)
     for song in data:
@@ -405,7 +506,7 @@ if __name__ == '__main__':
     dev_batches = torch.utils.data.DataLoader(dev, batch_size=batch_size, shuffle=True)
     test_batches = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=True)
     # construct a layer holding the pre-trained word2vec embeddings
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     syllable_encoder = embedding_layer(
         syllable_vectors, trainable=args.retrain_embeddings)
     # Initialize the tagger

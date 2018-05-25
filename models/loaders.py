@@ -13,10 +13,15 @@ def load_gensim_embeddings(fpath: str):
     # model.init_sims(replace=True)
     return model.index2word, model.vectors
 
+def identity(x): return x
+
+def word_boundaries(syllables):
+    return [1] + [0] * (len(syllables) - 1)
+
 
 class Encoder:
     def __init__(self, name, pad_token=PAD, eos_token=EOS, bos_token=BOS, unk_token=UNK,
-                 vocab=None, loader=None):
+                 vocab=None, preprocessor=identity):
         self.index = collections.defaultdict()
         self.index.default_factory = lambda: len(self.index)
         self.pad_token = pad_token
@@ -24,6 +29,7 @@ class Encoder:
         self.bos_token = bos_token
         self.unk_token = unk_token
         self.name = name
+        self.preprocessor = preprocessor
 
         for token in (pad_token, eos_token, bos_token, unk_token):
             self.index[token]
@@ -36,7 +42,7 @@ class Encoder:
 
     def transform(self, sample, max_seq_len):
         eos = [self.index[self.eos_token]] if self.eos_token is not None else []
-        sample = [self.index[elt] for item in sample for elt in item[self.name]] + eos
+        sample = [self.index[elt] for item in sample for elt in self.preprocessor(item[self.name])] + eos
         sample = sample + [self.index[self.pad_token]] * (max_seq_len - len(sample) - 1)
         return sample
 
@@ -79,8 +85,9 @@ if __name__ == '__main__':
     stress_encoder = Encoder('stress')
     beat_encoder = Encoder('beatstress')
     syllable_encoder = Encoder('syllables', vocab=syllable_vocab)
+    wb_encoder = Encoder('syllables', preprocessor=word_boundaries)
     data = DataSet('../data/mcflow/mcflow-primary-recip.json',
                    stress=stress_encoder, syllables=syllable_encoder,
-                   beat=beat_encoder)
+                   beat=beat_encoder, wb=wb_encoder)
         
 

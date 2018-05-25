@@ -151,31 +151,22 @@ class CRFLSTMTagger(LSTMTagger):
         return Z
 
     def score(self, tag_space, mask, targets):
-        tag_space = tag_space[:, 1:]
         # calculate the score of a given sequence
         batch, seq_len, vocab = tag_space.size()
         score = tag_space.new(batch).fill_(0.)
 
-        # # prepend <bos>
-        # targets = torch_utils.prepad(targets, pad=self.label_encoder.get_bos())
-
         # iterate over sequence
-        # TODO: don't iterate over batches
         for t in range(seq_len):
-            emit = torch.stack(
-                [tag_space[b, t, targets[b, t+1]] for b in range(batch)])
-            trans = torch.stack(
-                [self.trans[targets[b, t+1], targets[b, t]] for b in range(batch)])
+            emit = tag_space[:, t, targets[:, t+1]].diag()
+            trans = self.trans[targets[:, t+1], targets[:, t]]
             score = score + emit + (trans * mask[:, t])
 
         return score
 
     def predict(self, stress_sequence, wb_sequence, syllable_sequence, lengths):
         tag_space = self(stress_sequence, wb_sequence, syllable_sequence, lengths)
-        tag_space = tag_space[:, 1:]
 
         maxlen = tag_space.size(1)
-
         vocab = tag_space.size(-1)
 
         hyps, scores = [], []
@@ -211,7 +202,7 @@ class CRFLSTMTagger(LSTMTagger):
             for bptr_t in reversed(bptr):
                 hyp.append(bptr_t[best])
             hyp = list(reversed(hyp))
-            hyp = hyp + [PAD] * (1+ maxlen - len(hyp))
+            hyp = hyp + [PAD] * (maxlen - len(hyp))
 
             hyps.append(np.array(hyp))
 
@@ -433,7 +424,7 @@ class Trainer:
             # collect predictions
             batch_size = stress.size(0)
             pred = self.model.predict(stress, wb, syllables, lengths)
-            true = targets.view(-1).cpu().numpy()
+            true = targets[:, 1:].contiguous().view(-1).cpu().numpy()
             true = true.reshape(batch_size, stress.size(1))
             pred = pred.reshape(batch_size, stress.size(1))
             pred = chop_padding(pred, lengths)

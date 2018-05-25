@@ -508,7 +508,7 @@ if __name__ == '__main__':
     syllable_encoder = embedding_layer(
         syllable_vectors, trainable=args.retrain_embeddings)
     # Initialize the tagger
-    tagger = LSTMTagger(
+    tagger = CRFLSTMTagger(
         args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
         5, syllable_encoder, 5, batch_size, bidirectional=True)
     print(tagger)

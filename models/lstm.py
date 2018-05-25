@@ -12,7 +12,7 @@ import sklearn.model_selection
 import sklearn.metrics
 
 import torch
-from torch.utils.data import DataLoader
+import loaders
 
 import torch_utils
 
@@ -23,6 +23,12 @@ torch.manual_seed(1983)
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 
+PAD = 0
+EOS = 1
+BOS = 2
+UNK = 3  # if it exists
+
+
 def embedding_layer(weights, n_padding_vectors=4, trainable=False):
     """Create an embedding layer from pre-trained gensim embeddings."""
     weights = np.vstack((np.zeros((n_padding_vectors, weights.shape[1])), weights))
@@ -30,12 +36,6 @@ def embedding_layer(weights, n_padding_vectors=4, trainable=False):
     embedding = torch.nn.Embedding(*embedding_weights.shape, padding_idx=PAD)
     embedding.weight = torch.nn.Parameter(embedding_weights, requires_grad=trainable)
     return embedding
-
-
-def load_gensim_embeddings(fpath: str):
-    model = gensim.models.KeyedVectors.load(fpath)
-    # model.init_sims(replace=True)
-    return model.index2word, model.vectors
 
 
 class LSTMTagger(torch.nn.Module):
@@ -155,6 +155,9 @@ class CRFLSTMTagger(LSTMTagger):
         batch, seq_len, vocab = tag_space.size()
         score = tag_space.new(batch).fill_(0.)
 
+        # targets = torch_utils.prepad(targets, pad=BOS)
+        targets = torch.nn.functional.pad(targets, (1, 0), value=BOS)
+
         # iterate over sequence
         for t in range(seq_len):
             emit = tag_space[:, t, targets[:, t+1]].diag()
@@ -209,144 +212,13 @@ class CRFLSTMTagger(LSTMTagger):
         return np.array(hyps)
 
 
-Verse = collections.namedtuple('Verse', 'stress, wb, syllables, beats, beatstress')
-
-
-def parse_lyrics(fpath, hyphenate=True):
-    def format_syllables(syllables):
-        if not hyphenate or len(syllables) == 1:
-            return syllables
-        return ['{}{}{}'.format('-' if i > 0 else '', s, '-' if (i < len(syllables) - 1) else '')
-                for i, s in enumerate(syllables)]
-
-    def word_boundaries(syllables):
-        return [1] + [0] * (len(syllables) - 1)
-
-    def format_stress(stress):
-        return [int(s) if s != '.' else 0 for s in stress]
-
-    with open(fpath) as f:
-        data = json.load(f)
-    for song in data:
-        for verse in song['text']:
-            for line in verse:
-                samples = [(format_stress(w['stress']),
-                            word_boundaries(w['syllables']),
-                            format_syllables(w['syllables']),                            
-                            [float(b) for b in w['beat']],
-                            format_stress(w['beatstress'])) for w in line]
-                yield Verse(*map(lambda x: sum(x, []), zip(*samples)))
-
-
-class VerseData(torch.utils.data.Dataset):
-    def __init__(self, fpath=None, data=None, transform=lambda x: x, shuffle_data=True):
-        if data is None:
-            self.data_samples = list(parse_lyrics(fpath))
-        else:
-            self.data_samples = data
-        if shuffle_data:
-            random.shuffle(self.data_samples)
-        self.transform = transform
-
-    def __len__(self):
-        return len(self.data_samples)
-
-    def __iter__(self):
-        for sample in self.data_samples:
-            yield self.transform(sample)
-
-    def __getitem__(self, idx):
-        return self.transform(self.data_samples[idx])
-
-    def train_dev_test_split(self, dev_size=0.05, test_size=0.05):
-        X_train, X_dev = sklearn.model_selection.train_test_split(
-            self.data_samples, test_size=dev_size)
-        X_train, X_test = sklearn.model_selection.train_test_split(
-            X_train, test_size=test_size)
-        return (VerseData(data=X_train, transform=functools.partial(self.transform, add_bos=False)),
-                VerseData(data=X_dev, transform=self.transform),
-                VerseData(data=X_test, transform=self.transform))        
-
-
-def indexer(pre_fill=None):
-    d = collections.defaultdict()
-    d.default_factory = lambda: len(d)
-    if pre_fill is not None:
-        for item in pre_fill:
-            d[item]
-    return d
-
-
-PAD = 0
-BOS = 1
-EOS = 2
-UNK = 3  # if it exists
-
-
-class Sample2Tensor:
-    def __init__(self, syllable_vocab, max_input_len=30, padding_char='<PAD>'):
-        self.max_input_len = max_input_len
-        self.stress_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>'))
-        # self.pos_index = indexer(pre_fill=(padding_char,))
-        self.wb_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>'))
-        self.syllable_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>', '<UNK>') + tuple(syllable_vocab))
-        self.target_index = indexer(pre_fill=(padding_char, '<BOS>', '<EOS>'))
-
-    def __call__(self, sample: Verse, add_bos=True):
-        # to integers
-        word_stress = [self.stress_index[x] for x in sample.stress]
-        word_boundaries = [self.wb_index[b] for b in sample.wb]
-        syllables = [self.syllable_index.get(syllable.lower(), self.syllable_index['<UNK>'])
-                     for syllable in sample.syllables]
-        beat_stress = [self.target_index[beat] for beat in sample.beatstress]
-        # to sequences
-        word_stress = self._pad_sequence(word_stress, self.stress_index, add_bos=False)
-        word_boundaries = self._pad_sequence(word_boundaries, self.wb_index, add_bos=False)
-        syllables = self._pad_sequence(syllables, self.syllable_index, add_bos=False)
-        beat_stress = self._pad_sequence(beat_stress, self.target_index)
-        # length
-        length = len(word_stress)
-        # padding
-        while len(word_stress) < self.max_input_len:
-            word_stress.append(0)
-            syllables.append(0)
-            word_boundaries.append(0)
-            beat_stress.append(0)
-
-        return {'stress': torch.LongTensor(word_stress),
-                'syllables': torch.LongTensor(syllables),
-                'wb': torch.LongTensor(word_boundaries),
-                'length': length,
-                'tags': torch.LongTensor(beat_stress)}
-
-    def _pad_sequence(self, sequence, index, add_bos=True):
-        if add_bos:
-            return [index['<BOS>']] + sequence + [index['<EOS>']]
-        return sequence + [index['<EOS>']]
-
-    def decode(self, syllables, true, pred):
-        if not hasattr(self, 'index2syllable'):
-            self.index2syllable = sorted(self.syllable_index, key=self.syllable_index.get)
-            self.index2tag = sorted(self.target_index, key=self.target_index.get)
-        syllable_str, tag_str = '', ''
-        prev_len = 0
-        for i in range(len(true)):
-            syllable = syllables[i + 1]
-            syllable = self.index2syllable[syllable.item()]
-            syllable = syllable + ' ' + (' ' * abs(len(syllable) - 3) if len(syllable) < 3 else '')
-            syllable_str += syllable
-            tag_str += '{}/{}'.format(self.index2tag[true[i].item()], self.index2tag[pred[i].item()]) + ' ' * abs(len(syllable) - 3)
-        print('Correct ({:.3f}):'.format((true[:i] == pred[:i]).sum() / i))
-        print('{}\n{}\n'.format(tag_str, syllable_str))
-
-
 def chop_padding(samples, lengths):
-    return [samples[i, 1: lengths[i] - 1] for i in range(samples.shape[0])]
+    return [samples[i, 0:lengths[i] - 1] for i in range(samples.shape[0])]
     
 
 class Trainer:
-    def __init__(self, model: LSTMTagger, train_data: DataLoader,
-                 dev_data: DataLoader = None, test_data: DataLoader = None,
+    def __init__(self, model: LSTMTagger, train_data: loaders.DataSet,
+                 dev_data: loaders.DataSet = None, test_data: loaders.DataSet = None,
                  optimizer=None, device=None, decoder=None):
         self.logger = logging.getLogger('Trainer({})'.format(model.__class__.__name__))
         self.model = model
@@ -375,11 +247,12 @@ class Trainer:
 
     def _train_batches(self, epoch, epochs):
         epoch_loss = 0
-        for i, batch in enumerate(self.train_data):
+        n_samples = 0
+        for i, batch in enumerate(self.train_data.batches()):
             stress = batch['stress'].to(self.device)
             wb = batch['wb'].to(self.device)
             syllables = batch['syllables'].to(self.device)
-            targets = batch['tags'].to(self.device)
+            targets = batch['beatstress'].to(self.device)
             lengths, perm_index = batch['length'].sort(0, descending=True)
 
             stress = stress[perm_index]
@@ -394,23 +267,27 @@ class Trainer:
             self.optimizer.step()
             loss = loss.item()
             epoch_loss += loss
+
+            batch_size = stress.size(0)
+            n_samples += batch_size
             
             if i > 0 and i % 50 == 0:
                 logging.info(
-                    'Epoch [{}/{}], Step [{}/{:.0f}]'.format(
-                        epoch, epochs, i, len(self.train_data)))
+                    'Epoch [{}/{}], Step [{}]'.format(
+                        epoch, epochs, i))
                 logging.info(
                     'Loss: {}'.format(epoch_loss / i))
     
-    def _validate(self, data: DataLoader, test=False):
+    def _validate(self, data: loaders.DataSet, test=False):
         self.logger.info('Validating model')
         y_true, y_pred, accuracy, baccuracy = [], [], 0, 0
         run_loss, example_print = 0, 0
-        for i, batch in enumerate(data):
+        n_batches = 0
+        for i, batch in enumerate(data.batches()):
             stress = batch['stress'].to(self.device)
             wb = batch['wb'].to(self.device)
             syllables = batch['syllables'].to(self.device)
-            targets = batch['tags'].to(self.device)
+            targets = batch['beatstress'].to(self.device)
             lengths, perm_index = batch['length'].sort(0, descending=True)
             stress = stress[perm_index]
             wb = wb[perm_index]
@@ -424,20 +301,21 @@ class Trainer:
             # collect predictions
             batch_size = stress.size(0)
             pred = self.model.predict(stress, wb, syllables, lengths)
-            true = targets[:, 1:].contiguous().view(-1).cpu().numpy()
+            true = targets.view(-1).cpu().numpy()
             true = true.reshape(batch_size, stress.size(1))
             pred = pred.reshape(batch_size, stress.size(1))
             pred = chop_padding(pred, lengths)
             true = chop_padding(true, lengths)
             y_true.append(true)
             y_pred.append(pred)
-            accuracy += sum((t == p).all() for t, p in zip(pred, true)) / stress.size(0)
-            if i % 10 == 0:
-                for elt in np.random.randint(0, batch_size, 2):
-                    self.decoder.decode(syllables[elt], true[elt], pred[elt])
+            accuracy += sum((t == p).all() for t, p in zip(pred, true)) / batch_size
+            n_batches += 1
+            # if i % 10 == 0:
+            #     for elt in np.random.randint(0, batch_size, 2):
+            #         self.decoder.decode(syllables[elt], true[elt], pred[elt])
         if not test:
-            logging.info('Validation Loss: {}'.format(run_loss / len(data)))
-            closs = run_loss / len(data)
+            logging.info('Validation Loss: {}'.format(run_loss / n_batches))
+            closs = run_loss / n_samples
             self.scheduler.step(closs)
             self.save_checkpoint(closs < self.best_loss)
             if closs < self.best_loss:
@@ -447,7 +325,7 @@ class Trainer:
         for i in range(p.shape[0]):
             logging.info('Validation Scores: c={} p={:.3f}, r={:.3f}, f={:.3f}, s={}'.format(
                 i, p[i], r[i], f[i], s[i]))
-        logging.info('Accuracy score: {:.3f}'.format(accuracy / len(data)))
+        logging.info('Accuracy score: {:.3f}'.format(accuracy / n_batches))
 
     def save_checkpoint(self, is_best, filename='checkpoint.pth.tar'):
         checkpoint = {
@@ -458,7 +336,7 @@ class Trainer:
         if is_best:
             shutil.copyfile(filename, 'model_best.pth.tar')
 
-    def test(self, data: DataLoader = None, statefile=None):
+    def test(self, data: loaders.DataSet = None, statefile=None):
         if data is None and self.test_data is not None:
             data = self.test_data
         if statefile is not None:
@@ -478,33 +356,39 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate', default=0.001, type=float)
     parser.add_argument('--weight_decay', default=0, type=float)
     parser.add_argument('--batch_size', default=5, type=int)
-    parser.add_argument('--dataset', required=True, type=str)
+    parser.add_argument('--train_file', required=True, type=str)
+    parser.add_argument('--dev_file', required=True, type=str)
+    parser.add_argument('--test_file', type=str)
     parser.add_argument('--pretrained_embeddings', required=True, type=str)
     parser.add_argument('--retrain_embeddings', action='store_true')
     parser.add_argument('--dev_size', default=0.05, type=float)
     parser.add_argument('--test_size', default=0.05, type=float)
     args = parser.parse_args()
     
-    syllables, syllable_vectors = load_gensim_embeddings(args.pretrained_embeddings)
-    transformer = Sample2Tensor(syllables)
-    # load the data with the specified transformer
-    data = VerseData(args.dataset, transform=transformer, shuffle_data=True)
-    # split the data into a training, development and test set
-    train, dev, test = data.train_dev_test_split(
-        dev_size=args.dev_size, test_size=args.test_size)
-    # for each data set, creat a Dataloader object with specifier batch size
-    batch_size = args.batch_size
-    train_batches = torch.utils.data.DataLoader(train, batch_size=batch_size, shuffle=True)
-    dev_batches = torch.utils.data.DataLoader(dev, batch_size=batch_size, shuffle=True)
-    test_batches = torch.utils.data.DataLoader(test, batch_size=batch_size, shuffle=True)
+    syllable_vocab, syllable_vectors = loaders.load_gensim_embeddings(args.pretrained_embeddings)
+
+    stress_encoder = loaders.Encoder('stress', preprocessor=loaders.normalize_stress)
+    beat_encoder = loaders.Encoder('beatstress', preprocessor=loaders.normalize_stress)
+    syllable_encoder = loaders.Encoder('syllables', vocab=syllable_vocab, fixed_vocab=True)
+    wb_encoder = loaders.Encoder('syllables', preprocessor=loaders.word_boundaries)
+
+    syllable_embeddings = embedding_layer(
+        syllable_vectors, n_padding_vectors=len(syllable_encoder.reserved_tokens),
+        trainable=args.retrain_embeddings)    
+
+    train = loaders.DataSet(args.train_file, stress=stress_encoder, beatstress=beat_encoder,
+                            wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)
+    dev = loaders.DataSet(args.dev_file, stress=stress_encoder, beatstress=beat_encoder,
+                          wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)
+    if args.test_file is not None:
+        test = loaders.DataSet(args.test_file, stress=stress_encoder, beatstress=beat_encoder,
+                               wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)    
     # construct a layer holding the pre-trained word2vec embeddings
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    syllable_encoder = embedding_layer(
-        syllable_vectors, trainable=args.retrain_embeddings)
+    device = "cpu"#torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # Initialize the tagger
     tagger = CRFLSTMTagger(
-        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, 5,
-        5, syllable_encoder, 5, batch_size, bidirectional=True)
+        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, stress_encoder.size() + 2,
+        wb_encoder.size() + 2, syllable_embeddings, beat_encoder.size() + 2, args.batch_size, bidirectional=True)
     print(tagger)
     # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
     # embeddings from optimizing
@@ -514,7 +398,6 @@ if __name__ == '__main__':
     ) # RMSprop
     tagger.to(device)
     trainer = Trainer(
-        tagger, train_batches, dev_batches, test_batches, optimizer,
-        decoder=transformer, device=device)
+        tagger, train, dev, test, optimizer, device=device)
     trainer.train(epochs=args.epochs)
     trainer.test(statefile='model_best.pth.tar')

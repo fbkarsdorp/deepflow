@@ -51,7 +51,7 @@ class LSTMTagger(torch.nn.Module):
 
         # loss weight to remove padding
         weight = torch.ones(tagset_size)
-        weight[BOS] = 0.
+        weight[PAD] = 0.
         self.register_buffer('weight', weight)
         self.stress_encoder = torch.nn.Embedding(
             stress_size, embedding_dim, padding_idx=PAD)
@@ -309,10 +309,10 @@ class Sample2Tensor:
                      for syllable in sample.syllables]
         beat_stress = [self.target_index[beat] for beat in sample.beatstress]
         # to sequences
-        word_stress = self._pad_sequence(word_stress, self.stress_index, add_bos=add_bos)
-        word_boundaries = self._pad_sequence(word_boundaries, self.wb_index, add_bos=add_bos)
-        syllables = self._pad_sequence(syllables, self.syllable_index, add_bos=add_bos)
-        beat_stress = self._pad_sequence(beat_stress, self.target_index, add_bos=add_bos)
+        word_stress = self._pad_sequence(word_stress, self.stress_index, add_bos=False)
+        word_boundaries = self._pad_sequence(word_boundaries, self.wb_index, add_bos=False)
+        syllables = self._pad_sequence(syllables, self.syllable_index, add_bos=False)
+        beat_stress = self._pad_sequence(beat_stress, self.target_index)
         # length
         length = len(word_stress)
         # padding

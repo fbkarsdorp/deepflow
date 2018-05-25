@@ -67,11 +67,13 @@ class DataSet:
                     for line in verse:
                         for f, t in self.encoders.items():
                             sample[f].append(t.transform(line, self.max_seq_len))
+                        sample['length'].append(sample[f][-1].index(t.pad_index))
                         batch_size += 1
                         if batch_size == self.batch_size:
                             yield self.make_tensors(sample)
                             batch_size = 0
                             sample = {f: [] for f in self.encoders.keys()}
+                            sample['length'] = []                            
             if sample:
                 yield self.make_tensors(sample)
 

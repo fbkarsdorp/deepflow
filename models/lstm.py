@@ -201,7 +201,7 @@ class CRFLSTMTagger(LSTMTagger):
             hyp = [best]
             for bptr_t in reversed(bptr):
                 hyp.append(bptr_t[best])
-            hyp = list(reversed(hyp))
+            hyp = list(reversed(hyp[:-1]))
             hyp = hyp + [PAD] * (maxlen - len(hyp))
 
             hyps.append(np.array(hyp))

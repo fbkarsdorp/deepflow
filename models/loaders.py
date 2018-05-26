@@ -75,7 +75,7 @@ class Encoder:
     def transform(self, sample, max_seq_len):
         eos = [self.eos_index] if self.eos_token is not None else []
         bos = [self.bos_index] if self.bos_token is not None else []
-        sample = [self[elt] for item in sample for elt in self.preprocessor(item[self.name])] + eos
+        sample = bos + [self[elt] for item in sample for elt in self.preprocessor(item[self.name])] + eos
         sample = sample + [self.pad_index] * (max_seq_len - len(sample) - 1)
         return sample
 

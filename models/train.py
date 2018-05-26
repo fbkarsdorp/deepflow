@@ -2,7 +2,7 @@ import argparse
 
 import torch
 
-from lstm import LSTMTagger, CRFLSTMTagger, CRFTagger, Trainer, embedding_layer
+from lstm import LSTMTagger, CRFTagger, Trainer, embedding_layer
 import loaders
 
 
@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_file', required=True, type=str)
     parser.add_argument('--dev_file', required=True, type=str)
     parser.add_argument('--test_file', type=str)
+    parser.add_argument('--include_start_end_transitions', action='store_true')
     parser.add_argument('--pretrained_embeddings', required=True, type=str)
     parser.add_argument('--finetune_embeddings', action='store_true')
     args = parser.parse_args()
@@ -27,10 +28,10 @@ if __name__ == '__main__':
     syllable_vocab, syllable_vectors = loaders.load_gensim_embeddings(args.pretrained_embeddings)
 
     eos, bos = None, None
-    if args.tagger in ('crf-lstm', 'crf'):
+    if args.include_start_end_transitions:
         eos, bos = '<EOS>', '<BOS>'
     stress_encoder = loaders.Encoder('stress', preprocessor=loaders.normalize_stress,
-                                     eos_token=eos, bos_token=bos)
+                                     bos_token=bos, eos_token=eos)
     beat_encoder = loaders.Encoder('beatstress', preprocessor=loaders.normalize_stress,
                                    unk_token=None, bos_token=bos, eos_token=eos)
     syllable_encoder = loaders.Encoder('syllables', vocab=syllable_vocab, fixed_vocab=True,
@@ -40,23 +41,31 @@ if __name__ == '__main__':
 
     syllable_embeddings = embedding_layer(
         syllable_vectors, n_padding_vectors=len(syllable_encoder.reserved_tokens),
-        padding_idx=syllable_encoder.pad_index, trainable=args.finetune_embeddings)
+        padding_idx=syllable_encoder.pad_index, trainable=args.finetune_embeddings
+    )
 
-    train = loaders.DataSet(args.train_file, stress=stress_encoder, beatstress=beat_encoder,
-                            wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)
-    dev = loaders.DataSet(args.dev_file, stress=stress_encoder, beatstress=beat_encoder,
-                          wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)
+    train = loaders.DataSet(
+        args.train_file, stress=stress_encoder, beatstress=beat_encoder,
+        wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size
+    )
+    dev = loaders.DataSet(
+        args.dev_file, stress=stress_encoder, beatstress=beat_encoder,
+        wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size
+    )
     if args.test_file is not None:
-        test = loaders.DataSet(args.test_file, stress=stress_encoder, beatstress=beat_encoder,
-                               wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)    
+        test = loaders.DataSet(
+            args.test_file, stress=stress_encoder, beatstress=beat_encoder,
+            wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size
+        )
     # construct a layer holding the pre-trained word2vec embeddings
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    tagger = LSTMTagger if args.tagger == 'lstm' else CRFLSTMTagger if args.tagger == 'crf-lstm' else CRFTagger
+    tagger = LSTMTagger if args.tagger == 'lstm' else CRFTagger
     # Initialize the tagger
+    print(beat_encoder.size())
     tagger = tagger(
-        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, stress_encoder.size() + 2,
-        wb_encoder.size() + 2, syllable_embeddings, beat_encoder.size() + 2,
-        args.batch_size, bidirectional=True)
+        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, syllable_embeddings,
+        stress_encoder.size() + 2, wb_encoder.size() + 2, beat_encoder.size() + 2,
+        bidirectional=True)
     print(tagger)
     # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
     # embeddings from optimizing

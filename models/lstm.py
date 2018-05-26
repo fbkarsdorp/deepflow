@@ -4,6 +4,7 @@ import functools
 import logging
 import json
 import shutil
+from typing import Tuple, Dict, List
 import random
 
 import gensim
@@ -13,12 +14,10 @@ import sklearn.metrics
 
 import torch
 import loaders
+from allennlp.modules import ConditionalRandomField
 
 import torch_utils
 
-random.seed(1983)
-np.random.seed(1983)
-torch.manual_seed(1983)
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -29,32 +28,40 @@ BOS = 2
 UNK = 3  # if it exists
 
 
-def embedding_layer(weights, n_padding_vectors=4, trainable=False):
+def accuracy_score(x, y):
+    return sum((a == b).all() for a, b in zip(x, y)) / len(x)
+
+
+def embedding_layer(
+        weights: np.ndarray, n_padding_vectors: int = 4,
+        padding_idx: int = None, trainable: bool = False
+    ) -> torch.nn.Embedding:
     """Create an embedding layer from pre-trained gensim embeddings."""
     weights = np.vstack((np.zeros((n_padding_vectors, weights.shape[1])), weights))
     embedding_weights = torch.tensor(weights, dtype=torch.float32)
-    embedding = torch.nn.Embedding(*embedding_weights.shape, padding_idx=PAD)
+    embedding = torch.nn.Embedding(*embedding_weights.shape, padding_idx=padding_idx)
     embedding.weight = torch.nn.Parameter(embedding_weights, requires_grad=trainable)
     return embedding
 
 
-class LSTMTagger(torch.nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
-                 stress_size, wb_size, syllable_encoder, tagset_size, batch_size,
-                 bidirectional=True):
+class LSTM(torch.nn.Module):
+    def __init__(self, embedding_dim: int, hidden_dim: int,
+                 num_layers: int, embedding_dropout_p: float,
+                 syllable_encoder: torch.nn.Embedding,
+                 stress_size: int, wb_size: int, tagset_size: int,
+                 bidirectional: bool = True) -> None:
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
-        self.batch_size = batch_size
         self.tagset_size = tagset_size
         self.embedding_dropout_p = embedding_dropout_p
-        super(LSTMTagger, self).__init__()
+        super(LSTM, self).__init__()
 
         # loss weight to remove padding
         weight = torch.ones(tagset_size)
         weight[PAD] = 0.
         self.register_buffer('weight', weight)
-        self.stress_encoder = torch.nn.Embedding(
-            stress_size, embedding_dim, padding_idx=PAD)
+        
+        self.stress_encoder = torch.nn.Embedding(stress_size, embedding_dim, padding_idx=PAD)
         self.wb_encoder = torch.nn.Embedding(wb_size, embedding_dim, padding_idx=PAD)
         self.syllable_encoder = syllable_encoder
 
@@ -73,8 +80,6 @@ class LSTMTagger(torch.nn.Module):
         embs = torch.cat([stress_embs, wb_embs, syllable_embs], 2)
         embs = torch.nn.functional.dropout(
             embs, p=self.embedding_dropout_p, training=self.training)
-        # packed = torch.nn.utils.rnn.pack_padded_sequence(
-        #     embs, lengths, batch_first=True)
         lstm_out, _ = self.lstm(embs)
         tag_space = self.hidden2tag(lstm_out)
         return tag_space
@@ -85,135 +90,70 @@ class LSTMTagger(torch.nn.Module):
             tag_space.view(-1, tag_space.size(2)), targets.view(-1),
             weight=self.weight, size_average=False)
         loss = loss / lengths.sum().item()
-
         return loss
+    
 
-    def predict(self, stress_sequence, wb_sequence, syllable_sequence, lengths):
-        tag_space = self(stress_sequence, wb_sequence, syllable_sequence, lengths)
-        # tag_scores = torch.nn.functional.log_softmax(tag_space, dim=1)
-        pred = tag_space.view(-1, tag_space.size(2)).data.cpu().numpy().argmax(1)
+class LSTMTagger(torch.nn.Module):
+    def __init__(self, embedding_dim: int, hidden_dim: int,
+                 num_layers: int, embedding_dropout_p: float,
+                 syllable_encoder: torch.nn.Embedding,
+                 stress_size: int, wb_size: int, tagset_size: int,
+                 bidirectional: bool = True) -> None:
+        
+        super(LSTMTagger, self).__init__()
+        self.encoder = LSTM(
+            embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
+            syllable_encoder, stress_size, wb_size, tagset_size,
+            bidirectional=True
+        )
 
-        return pred
+    def forward(self, stress, wb, syllables, lengths, targets=None):
+        tag_space = self.encoder(stress, wb, syllables, lengths)
+        _, preds = tag_space.max(2)
+        preds = chop_padding(preds.cpu().numpy(), lengths)
+        output = {"tag_space": tag_space, "tags": preds}
+        if targets is not None:
+            loss = self.encoder.loss(stress, wb, syllables, lengths, targets)
+            output['loss'] = loss
+        return output
 
 
-class CRFLSTMTagger(LSTMTagger):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class CRFTagger(torch.nn.Module):
+    def __init__(self, embedding_dim: int, hidden_dim: int,
+                 num_layers: int, embedding_dropout_p: float,
+                 syllable_encoder: torch.nn.Embedding,
+                 stress_size: int, wb_size: int, tagset_size: int,
+                 bidirectional: bool = True,
+                 constraints: List[Tuple[int, int]] = None,
+                 include_start_end_transitions: bool = True) -> None:
+        
+        super(CRFTagger, self).__init__()
+        self.crf = ConditionalRandomField(
+            num_tags=tagset_size, constraints=constraints,
+            include_start_end_transitions=include_start_end_transitions
+        )
+        self.encoder = LSTM(
+            embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
+            syllable_encoder, stress_size, wb_size, tagset_size,
+            bidirectional=True
+        )
 
-        # matrix of transition scores from j to i
-        trans = torch.randn(self.tagset_size, self.tagset_size)
-        trans[BOS, :] = -10000. # no transition to <bos>
-        trans[:, EOS] = -10000. # no transition from <eos> except to <pad>
-        trans[:, PAD] = -10000. # no transition from <pad> except to <pad>
-        trans[PAD, :] = -10000.
-        trans[PAD, EOS] = 0.
-        trans[PAD, PAD] = 0.
-        self.trans = torch.nn.Parameter(trans)
-
-    def forward(self, stress_sequence, wb_sequence, syllable_sequence, lengths):
-        tag_space = super().forward(
-            stress_sequence, wb_sequence, syllable_sequence, lengths)
-        tag_space = torch.nn.functional.log_softmax(tag_space, dim=2)
-        return tag_space
-
-    def loss(self, stress_sequence, wb_sequence, syllable_sequence, lengths, targets):
-        tag_space = self(stress_sequence, wb_sequence, syllable_sequence, lengths)
-
-        # mask on padding
+    def forward(self, stress, wb, syllables, lengths, targets=None):
+        tag_space = self.encoder(stress, wb, syllables, lengths)
+        # tag_space = torch.nn.functional.log_softmax(tag_space, dim=2)
         mask = torch_utils.make_length_mask(
-            lengths, maxlen=tag_space.size(1), device=tag_space.device).float()
-        tag_space = tag_space * mask.unsqueeze(2).expand_as(tag_space)
-
-        Z = self.partition(tag_space, mask)
-        score = self.score(tag_space, mask, targets)
-
-        return torch.mean(Z - score)
-
-    def partition(self, tag_space, mask):
-        tag_space = tag_space[:, 1:]
-        batch, seq_len, vocab = tag_space.size()
-
-        # initialize forward variables in log space
-        Z = tag_space.new(batch, vocab).fill_(-10000.)
-        Z[:, BOS] = 0.
-
-        # iterate through the sequence
-        for t in range(seq_len): 
-            Z_t = Z.unsqueeze(1).expand(-1, vocab, vocab)
-            emit = tag_space[:, t].unsqueeze(-1).expand_as(Z_t)
-            trans = self.trans.unsqueeze(0).expand_as(Z_t)
-            Z_t = torch_utils.log_sum_exp(Z_t + emit + trans)
-            mask_t = mask[:, t].unsqueeze(-1).expand_as(Z)
-            Z = Z_t * mask_t + Z * (1 - mask_t)
-
-        Z = torch_utils.log_sum_exp(Z)
-
-        return Z
-
-    def score(self, tag_space, mask, targets):
-        # calculate the score of a given sequence
-        batch, seq_len, vocab = tag_space.size()
-        score = tag_space.new(batch).fill_(0.)
-
-        # targets = torch_utils.prepad(targets, pad=BOS)
-        targets = torch.nn.functional.pad(targets, (1, 0), value=BOS)
-
-        # iterate over sequence
-        for t in range(seq_len):
-            emit = tag_space[:, t, targets[:, t+1]].diag()
-            trans = self.trans[targets[:, t+1], targets[:, t]]
-            score = score + emit + (trans * mask[:, t])
-
-        return score
-
-    def predict(self, stress_sequence, wb_sequence, syllable_sequence, lengths):
-        tag_space = self(stress_sequence, wb_sequence, syllable_sequence, lengths)
-
-        maxlen = tag_space.size(1)
-        vocab = tag_space.size(-1)
-
-        hyps, scores = [], []
-
-        # TODO: don't iterate over batches
-        # iterate over batches
-        for item, length in zip(tag_space, lengths.tolist()):
-            # (seq_len x batch x vocab) => (real_len x vocab)
-            item = item[:length]
-            bptr = []
-            score = tag_space.new(vocab).fill_(-10000.)
-            score[BOS] = 0.
-
-            # iterate over sequence
-            for emit in item:
-                bptr_t, score_t = [], []
-
-                # TODO: don't iterate over tags
-                # for each next tag
-                for i in range(vocab):
-                    prob, best = torch.max(score + self.trans[i], dim=0)
-                    bptr_t.append(best.item())
-                    score_t.append(prob)
-                # accumulate
-                bptr.append(bptr_t)
-                score = torch.stack(score_t) + emit
-
-            score, best = torch.max(score, dim=0)
-            score, best = score.item(), best.item()
-
-            # back-tracking
-            hyp = [best]
-            for bptr_t in reversed(bptr):
-                hyp.append(bptr_t[best])
-            hyp = list(reversed(hyp[:-1]))
-            hyp = hyp + [PAD] * (maxlen - len(hyp))
-
-            hyps.append(np.array(hyp))
-
-        return np.array(hyps)
+            lengths, maxlen=tag_space.size(1), device=tag_space.device).float()     
+        preds = self.crf.viterbi_tags(tag_space, mask)
+        output = {"tag_space": tag_space, "mask": mask, "tags": preds}
+        if targets is not None:
+            # Add negative log-likelihood as loss
+            log_likelihood = self.crf(tag_space, targets, mask)
+            output["loss"] = -log_likelihood
+        return output
 
 
 def chop_padding(samples, lengths):
-    return [samples[i, 0:lengths[i] - 1] for i in range(samples.shape[0])]
+    return [samples[i, 0:lengths[i]] for i in range(samples.shape[0])]
     
 
 class Trainer:
@@ -232,7 +172,7 @@ class Trainer:
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer, 'min', verbose=True, patience=5)
 
-    def train(self, epochs=10):
+    def train(self, epochs: int = 10) -> None:
         self.logger.info("Working on {}".format(self.device))
         for epoch in range(1, epochs + 1):
             self.logger.info('Starting epoch {} with lr={}'.format(
@@ -245,31 +185,35 @@ class Trainer:
                     self._validate(self.dev_data)
                     self.model.train() # set all trainable attributes back to True
 
-    def _train_batches(self, epoch, epochs):
-        epoch_loss = 0
-        n_samples = 0
-        for i, batch in enumerate(self.train_data.batches()):
-            stress = batch['stress'].to(self.device)
-            wb = batch['wb'].to(self.device)
-            syllables = batch['syllables'].to(self.device)
-            targets = batch['beatstress'].to(self.device)
-            lengths, perm_index = batch['length'].sort(0, descending=True)
+    def get_batch(self, batch: Dict[str, torch.Tensor]) -> Tuple[torch.Tensor]:
+        stress = batch['stress'].to(self.device)
+        wb = batch['wb'].to(self.device)
+        syllables = batch['syllables'].to(self.device)
+        targets = batch['beatstress'].to(self.device)
+        lengths, perm_index = batch['length'].sort(0, descending=True)
 
-            stress = stress[perm_index]
-            wb = wb[perm_index]
-            syllables = syllables[perm_index]
-            targets = targets[perm_index]
+        stress = stress[perm_index]
+        wb = wb[perm_index]
+        syllables = syllables[perm_index]
+        targets = targets[perm_index]
+
+        return stress, wb, syllables, targets, lengths
+
+    def _train_batches(self, epoch: int, epochs: int) -> None:
+        epoch_loss = 0
+        n_batches = 0
+        for i, batch in enumerate(self.train_data.batches()):
+            stress, wb, syllables, targets, lengths = self.get_batch(batch)
             
             self.model.zero_grad()
 
-            loss = self.model.loss(stress, wb, syllables, lengths, targets)
-            loss.backward()
+            output = self.model(stress, wb, syllables, lengths, targets)
+            output['loss'].backward()
             self.optimizer.step()
-            loss = loss.item()
+            loss = output['loss'].item()
             epoch_loss += loss
 
-            batch_size = stress.size(0)
-            n_samples += batch_size
+            n_batches += 1
             
             if i > 0 and i % 50 == 0:
                 logging.info(
@@ -278,44 +222,26 @@ class Trainer:
                 logging.info(
                     'Loss: {}'.format(epoch_loss / i))
     
-    def _validate(self, data: loaders.DataSet, test=False):
+    def _validate(self, data: loaders.DataSet, test: bool = False) -> None:
         self.logger.info('Validating model')
         y_true, y_pred, accuracy, baccuracy = [], [], 0, 0
         run_loss, example_print = 0, 0
         n_batches = 0
         for i, batch in enumerate(data.batches()):
-            stress = batch['stress'].to(self.device)
-            wb = batch['wb'].to(self.device)
-            syllables = batch['syllables'].to(self.device)
-            targets = batch['beatstress'].to(self.device)
-            lengths, perm_index = batch['length'].sort(0, descending=True)
-            stress = stress[perm_index]
-            wb = wb[perm_index]
-            syllables = syllables[perm_index]
-            targets = targets[perm_index]
-
+            stress, wb, syllables, targets, lengths = self.get_batch(batch)
+            output = self.model(stress, wb, syllables, lengths, targets)
             if not test:
-                loss = self.model.loss(stress, wb, syllables, lengths, targets).item()
-                run_loss += loss
-
-            # collect predictions
+                run_loss += output['loss'].item()
             batch_size = stress.size(0)
-            pred = self.model.predict(stress, wb, syllables, lengths)
-            true = targets.view(-1).cpu().numpy()
-            true = true.reshape(batch_size, stress.size(1))
-            pred = pred.reshape(batch_size, stress.size(1))
-            pred = chop_padding(pred, lengths)
-            true = chop_padding(true, lengths)
+            pred = output['tags']
+            true = chop_padding(targets.cpu().numpy(), lengths)
             y_true.append(true)
             y_pred.append(pred)
-            accuracy += sum((t == p).all() for t, p in zip(pred, true)) / batch_size
+            accuracy += accuracy_score(pred, true)
             n_batches += 1
-            # if i % 10 == 0:
-            #     for elt in np.random.randint(0, batch_size, 2):
-            #         self.decoder.decode(syllables[elt], true[elt], pred[elt])
         if not test:
             logging.info('Validation Loss: {}'.format(run_loss / n_batches))
-            closs = run_loss / n_samples
+            closs = run_loss / n_batches
             self.scheduler.step(closs)
             self.save_checkpoint(closs < self.best_loss)
             if closs < self.best_loss:
@@ -327,7 +253,7 @@ class Trainer:
                 i, p[i], r[i], f[i], s[i]))
         logging.info('Accuracy score: {:.3f}'.format(accuracy / n_batches))
 
-    def save_checkpoint(self, is_best, filename='checkpoint.pth.tar'):
+    def save_checkpoint(self, is_best: bool, filename: str = 'checkpoint.pth.tar') -> None:
         checkpoint = {
             'state_dict': self.model.state_dict(),
             'optimizer': self.optimizer.state_dict()
@@ -336,68 +262,12 @@ class Trainer:
         if is_best:
             shutil.copyfile(filename, 'model_best.pth.tar')
 
-    def test(self, data: loaders.DataSet = None, statefile=None):
+    def test(self, data: loaders.DataSet = None, statefile: str = None):
         if data is None and self.test_data is not None:
             data = self.test_data
         if statefile is not None:
             checkpoint = torch.load(statefile)
             self.model.load_state_dict(checkpoint['state_dict'])
             self.optimizer.load_state_dict(checkpoint['optimizer'])
-        self._validate(data)
+        self._validate(data, test=True)
             
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--num_layers', default=2, type=int)
-    parser.add_argument('--emb_dim', default=32, type=int)
-    parser.add_argument('--hid_dim', default=64, type=int)
-    parser.add_argument('--dropout', default=0.5, type=float)
-    parser.add_argument('--epochs', default=100, type=int)
-    parser.add_argument('--learning_rate', default=0.001, type=float)
-    parser.add_argument('--weight_decay', default=0, type=float)
-    parser.add_argument('--batch_size', default=5, type=int)
-    parser.add_argument('--train_file', required=True, type=str)
-    parser.add_argument('--dev_file', required=True, type=str)
-    parser.add_argument('--test_file', type=str)
-    parser.add_argument('--pretrained_embeddings', required=True, type=str)
-    parser.add_argument('--retrain_embeddings', action='store_true')
-    parser.add_argument('--dev_size', default=0.05, type=float)
-    parser.add_argument('--test_size', default=0.05, type=float)
-    args = parser.parse_args()
-    
-    syllable_vocab, syllable_vectors = loaders.load_gensim_embeddings(args.pretrained_embeddings)
-
-    stress_encoder = loaders.Encoder('stress', preprocessor=loaders.normalize_stress)
-    beat_encoder = loaders.Encoder('beatstress', preprocessor=loaders.normalize_stress)
-    syllable_encoder = loaders.Encoder('syllables', vocab=syllable_vocab, fixed_vocab=True)
-    wb_encoder = loaders.Encoder('syllables', preprocessor=loaders.word_boundaries)
-
-    syllable_embeddings = embedding_layer(
-        syllable_vectors, n_padding_vectors=len(syllable_encoder.reserved_tokens),
-        trainable=args.retrain_embeddings)    
-
-    train = loaders.DataSet(args.train_file, stress=stress_encoder, beatstress=beat_encoder,
-                            wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)
-    dev = loaders.DataSet(args.dev_file, stress=stress_encoder, beatstress=beat_encoder,
-                          wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)
-    if args.test_file is not None:
-        test = loaders.DataSet(args.test_file, stress=stress_encoder, beatstress=beat_encoder,
-                               wb=wb_encoder, syllables=syllable_encoder, batch_size=args.batch_size)    
-    # construct a layer holding the pre-trained word2vec embeddings
-    device = "cpu"#torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # Initialize the tagger
-    tagger = CRFLSTMTagger(
-        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, stress_encoder.size() + 2,
-        wb_encoder.size() + 2, syllable_embeddings, beat_encoder.size() + 2, args.batch_size, bidirectional=True)
-    print(tagger)
-    # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
-    # embeddings from optimizing
-    optimizer = torch.optim.Adam(
-        filter(lambda p: p.requires_grad, tagger.parameters()),
-        lr=args.learning_rate, weight_decay=args.weight_decay
-    ) # RMSprop
-    tagger.to(device)
-    trainer = Trainer(
-        tagger, train, dev, test, optimizer, device=device)
-    trainer.train(epochs=args.epochs)
-    trainer.test(statefile='model_best.pth.tar')

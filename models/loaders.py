@@ -31,7 +31,7 @@ class Encoder:
         self.eos_token = eos_token
         self.bos_token = bos_token
         self.unk_token = unk_token
-        self.reserved_tokens = (pad_token, eos_token, bos_token, unk_token)
+        self.reserved_tokens = [t for t in (pad_token, eos_token, bos_token, unk_token) if t is not None]
         self.name = name
         self.preprocessor = preprocessor
         self.fixed_vocab = fixed_vocab

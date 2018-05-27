@@ -274,5 +274,8 @@ class Trainer:
             checkpoint = torch.load(statefile)
             self.model.load_state_dict(checkpoint['state_dict'])
             self.optimizer.load_state_dict(checkpoint['optimizer'])
-        self._validate(data, test=True)
+        with torch.no_grad():
+            self.model.eval()
+            self._validate(data, test=True)
+        self.model.train()
             

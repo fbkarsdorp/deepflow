@@ -3,9 +3,9 @@ import collections
 import functools
 import logging
 import json
+import random
 import shutil
 from typing import Tuple, Dict, List
-import random
 
 import gensim
 import numpy as np
@@ -15,15 +15,9 @@ import sklearn.metrics
 import torch
 from torch.nn.utils.rnn import pad_sequence
 
-
-random.seed(1983)
-np.random.seed(1983)
-torch.manual_seed(1983)
-
-
-import loaders
 from allennlp.modules import ConditionalRandomField
 
+import loaders
 import torch_utils
 
 
@@ -36,7 +30,7 @@ BOS = 2
 UNK = 3  # if it exists
 
 
-def accuracy_score(x, y):
+def accuracy_score(x: np.ndarray, y: np.ndarray) -> float:
     return sum((a == b).all() for a, b in zip(x, y)) / len(x)
 
 
@@ -46,7 +40,7 @@ def embedding_layer(
     ) -> torch.nn.Embedding:
     """Create an embedding layer from pre-trained gensim embeddings."""
     weights = np.vstack((np.zeros((n_padding_vectors, weights.shape[1])), weights))
-    embedding_weights = torch.tensor(weights, dtype=torch.float32)
+    embedding_weights = torch.FloatTensor(weights, dtype=torch.float32)
     embedding = torch.nn.Embedding(*embedding_weights.shape, padding_idx=padding_idx)
     embedding.weight = torch.nn.Parameter(embedding_weights, requires_grad=trainable)
     return embedding
@@ -99,7 +93,8 @@ class LSTMTagger(Tagger):
         
         self.tag_projection_layer = torch.nn.Linear(hidden_dim, tagset_size)
         
-    def forward(self, stress, wb, syllables, lengths, targets=None) -> Dict[str, torch.Tensor]:
+    def forward(self, stress: torch.Tensor, wb: torch.Tensor, syllables: torch.Tensor,
+                lengths: torch.Tensor, targets: torch.Tensor = None) -> Dict[str, torch.Tensor]:
         encoder_out, _ = self.sequence_encoder(self.pack(stress, wb, syllables, lengths))
         tag_space = self.tag_projection_layer(self.unpack(encoder_out))
         _, preds = tag_space.max(2)
@@ -138,7 +133,8 @@ class CRFTagger(Tagger):
 
         self.tag_projection_layer = torch.nn.Linear(hidden_dim, tagset_size)
 
-    def forward(self, stress, wb, syllables, lengths, targets=None) -> Dict[str, torch.Tensor]:
+    def forward(self, stress: torch.Tensor, wb: torch.Tensor, syllables: torch.Tensor,
+                lengths: torch.Tensor, targets: torch.Tensor = None) -> Dict[str, torch.Tensor]:
         encoder_out, _ = self.sequence_encoder(self.pack(stress, wb, syllables, lengths))
         tag_space = self.tag_projection_layer(self.unpack(encoder_out))
         # TODO: do we need to log_softmax?
@@ -237,7 +233,6 @@ class Trainer:
             output = self.model(stress, wb, syllables, lengths, targets)
             if not test:
                 run_loss += output['loss'].item()
-            batch_size = stress.size(0)
             pred = output['tags']
             true = chop_padding(targets.cpu().numpy(), lengths)
             y_true.append(true)

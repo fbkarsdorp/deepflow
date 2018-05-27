@@ -1,9 +1,11 @@
 import argparse
-
+import random
+import numpy as np
 import torch
 
-from lstm import LSTMTagger, CRFTagger, Trainer, embedding_layer
+from lstm import LSTMTagger, CRFTagger, embedding_layer, Trainer
 import loaders
+
 
 
 if __name__ == '__main__':
@@ -20,6 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_file', required=True, type=str)
     parser.add_argument('--dev_file', required=True, type=str)
     parser.add_argument('--test_file', type=str)
+    parser.add_argument('--lr_patience', type=int, default=5)
     parser.add_argument('--include_start_end_transitions', action='store_true')
     parser.add_argument('--pretrained_embeddings', required=True, type=str)
     parser.add_argument('--finetune_embeddings', action='store_true')
@@ -61,11 +64,14 @@ if __name__ == '__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tagger = LSTMTagger if args.tagger == 'lstm' else CRFTagger
     # Initialize the tagger
-    print(beat_encoder.size())
+    lstm_encoder = torch.nn.LSTM(
+        args.emb_dim * 2 + syllable_embeddings.weight.shape[1],
+        args.hid_dim // 2, num_layers=args.num_layers, dropout=0.1,
+        batch_first=True, bidirectional=True)
     tagger = tagger(
-        args.emb_dim, args.hid_dim, args.num_layers, args.dropout, syllable_embeddings,
+        args.emb_dim, args.hid_dim, syllable_embeddings, args.dropout,
         stress_encoder.size() + 2, wb_encoder.size() + 2, beat_encoder.size() + 2,
-        bidirectional=True)
+        lstm_encoder)
     print(tagger)
     # The Adam optimizer seems to be working fine. Make sure to exlcude the pretrained
     # embeddings from optimizing
@@ -75,7 +81,7 @@ if __name__ == '__main__':
     ) # RMSprop
     tagger.to(device)
     trainer = Trainer(
-        tagger, train, dev, test, optimizer, device=device)
+        tagger, train, dev, test, optimizer, device=device, lr_patience=args.lr_patience)
     trainer.train(epochs=args.epochs)
     with torch.no_grad():
         tagger.eval() # set all trainable attributes to False

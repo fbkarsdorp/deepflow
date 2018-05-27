@@ -13,6 +13,14 @@ import sklearn.model_selection
 import sklearn.metrics
 
 import torch
+from torch.nn.utils.rnn import pad_sequence
+
+
+random.seed(1983)
+np.random.seed(1983)
+torch.manual_seed(1983)
+
+
 import loaders
 from allennlp.modules import ConditionalRandomField
 
@@ -44,106 +52,100 @@ def embedding_layer(
     return embedding
 
 
-class LSTM(torch.nn.Module):
+class Tagger(torch.nn.Module):
     def __init__(self, embedding_dim: int, hidden_dim: int,
-                 num_layers: int, embedding_dropout_p: float,
                  syllable_encoder: torch.nn.Embedding,
+                 embedding_dropout_p: float,
                  stress_size: int, wb_size: int, tagset_size: int,
-                 bidirectional: bool = True) -> None:
-        self.hidden_dim = hidden_dim
-        self.num_layers = num_layers
-        self.tagset_size = tagset_size
-        self.embedding_dropout_p = embedding_dropout_p
-        super(LSTM, self).__init__()
+                 sequence_encoder) -> None:
+        super(Tagger, self).__init__()
 
-        # loss weight to remove padding
-        weight = torch.ones(tagset_size)
-        weight[PAD] = 0.
-        self.register_buffer('weight', weight)
-        
+        self.embedding_dropout_p = embedding_dropout_p
+
         self.stress_encoder = torch.nn.Embedding(stress_size, embedding_dim, padding_idx=PAD)
         self.wb_encoder = torch.nn.Embedding(wb_size, embedding_dim, padding_idx=PAD)
         self.syllable_encoder = syllable_encoder
 
-        num_dirs = 1 + int(bidirectional)
-        self.lstm = torch.nn.LSTM(
-            embedding_dim * 2 + syllable_encoder.weight.shape[1],
-            hidden_dim // num_dirs, num_layers=num_layers, batch_first=True,
-            bidirectional=True)
+        self.sequence_encoder = sequence_encoder
 
-        self.hidden2tag = torch.nn.Linear(hidden_dim, tagset_size)
-
-    def forward(self, stress_sequence, wb_sequence, syllable_sequence, lengths):
-        stress_embs = self.stress_encoder(stress_sequence)
-        wb_embs = self.wb_encoder(wb_sequence)
-        syllable_embs = self.syllable_encoder(syllable_sequence)
+    def pack(self, stress, wb, syllables, lengths):
+        stress_embs = self.stress_encoder(stress)
+        wb_embs = self.wb_encoder(wb)
+        syllable_embs = self.syllable_encoder(syllables)
         embs = torch.cat([stress_embs, wb_embs, syllable_embs], 2)
         embs = torch.nn.functional.dropout(
             embs, p=self.embedding_dropout_p, training=self.training)
-        lstm_out, _ = self.lstm(embs)
-        tag_space = self.hidden2tag(lstm_out)
-        return tag_space
+        embs = torch.nn.utils.rnn.pack_padded_sequence(embs, lengths, batch_first=True)
+        return embs
 
-    def loss(self, stress_sequence, wb_sequence, syllable_sequence, lengths, targets):
-        tag_space = self(stress_sequence, wb_sequence, syllable_sequence, lengths)
-        loss = torch.nn.functional.cross_entropy(
-            tag_space.view(-1, tag_space.size(2)), targets.view(-1),
-            weight=self.weight, size_average=False)
-        loss = loss / lengths.sum().item()
-        return loss
+    def unpack(self, out):
+        out, _ = torch.nn.utils.rnn.pad_packed_sequence(out, batch_first=True)
+        return out
+
+    def forward(self, stress, wb, syllables, lengths, targets=None) -> Dict[str, torch.Tensor]:
+        raise NotImplementedError
     
 
-class LSTMTagger(torch.nn.Module):
+class LSTMTagger(Tagger):
     def __init__(self, embedding_dim: int, hidden_dim: int,
-                 num_layers: int, embedding_dropout_p: float,
-                 syllable_encoder: torch.nn.Embedding,
+                 syllable_encoder: torch.nn.Embedding,                 
+                 embedding_dropout_p: float,
                  stress_size: int, wb_size: int, tagset_size: int,
-                 bidirectional: bool = True) -> None:
-        
-        super(LSTMTagger, self).__init__()
-        self.encoder = LSTM(
-            embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
-            syllable_encoder, stress_size, wb_size, tagset_size,
-            bidirectional=True
-        )
+                 sequence_encoder) -> None:
 
-    def forward(self, stress, wb, syllables, lengths, targets=None):
-        tag_space = self.encoder(stress, wb, syllables, lengths)
+        super(LSTMTagger, self).__init__(
+            embedding_dim, hidden_dim, syllable_encoder, embedding_dropout_p,
+            stress_size, wb_size, tagset_size, sequence_encoder)
+        
+        self.tag_projection_layer = torch.nn.Linear(hidden_dim, tagset_size)
+        
+    def forward(self, stress, wb, syllables, lengths, targets=None) -> Dict[str, torch.Tensor]:
+        encoder_out, _ = self.sequence_encoder(self.pack(stress, wb, syllables, lengths))
+        tag_space = self.tag_projection_layer(self.unpack(encoder_out))
         _, preds = tag_space.max(2)
         preds = chop_padding(preds.cpu().numpy(), lengths)
         output = {"tag_space": tag_space, "tags": preds}
         if targets is not None:
-            loss = self.encoder.loss(stress, wb, syllables, lengths, targets)
+            loss = self.loss(tag_space, lengths, targets)
             output['loss'] = loss
         return output
 
+    def loss(self, tag_space, lengths, targets):
+        loss = torch.nn.functional.cross_entropy(
+            tag_space.view(-1, tag_space.size(2)), targets.view(-1),
+            size_average=False, ignore_index=0)
+        loss = loss / lengths.sum().item()
+        return loss
 
-class CRFTagger(torch.nn.Module):
+
+class CRFTagger(Tagger):
     def __init__(self, embedding_dim: int, hidden_dim: int,
-                 num_layers: int, embedding_dropout_p: float,
                  syllable_encoder: torch.nn.Embedding,
+                 embedding_dropout_p: float,                 
                  stress_size: int, wb_size: int, tagset_size: int,
-                 bidirectional: bool = True,
+                 sequence_encoder: torch.nn.LSTM,
                  constraints: List[Tuple[int, int]] = None,
                  include_start_end_transitions: bool = True) -> None:
         
-        super(CRFTagger, self).__init__()
+        super(CRFTagger, self).__init__(
+            embedding_dim, hidden_dim, syllable_encoder, embedding_dropout_p,
+            stress_size, wb_size, tagset_size, sequence_encoder)
+        
         self.crf = ConditionalRandomField(
             num_tags=tagset_size, constraints=constraints,
             include_start_end_transitions=include_start_end_transitions
         )
-        self.encoder = LSTM(
-            embedding_dim, hidden_dim, num_layers, embedding_dropout_p,
-            syllable_encoder, stress_size, wb_size, tagset_size,
-            bidirectional=True
-        )
 
-    def forward(self, stress, wb, syllables, lengths, targets=None):
-        tag_space = self.encoder(stress, wb, syllables, lengths)
+        self.tag_projection_layer = torch.nn.Linear(hidden_dim, tagset_size)
+
+    def forward(self, stress, wb, syllables, lengths, targets=None) -> Dict[str, torch.Tensor]:
+        encoder_out, _ = self.sequence_encoder(self.pack(stress, wb, syllables, lengths))
+        tag_space = self.tag_projection_layer(self.unpack(encoder_out))
+        # TODO: do we need to log_softmax?
         # tag_space = torch.nn.functional.log_softmax(tag_space, dim=2)
         mask = torch_utils.make_length_mask(
             lengths, maxlen=tag_space.size(1), device=tag_space.device).float()     
-        preds = self.crf.viterbi_tags(tag_space, mask)
+        preds = self.crf.viterbi_tags(tag_space, mask) if not self.training else []
         output = {"tag_space": tag_space, "mask": mask, "tags": preds}
         if targets is not None:
             # Add negative log-likelihood as loss
@@ -154,12 +156,15 @@ class CRFTagger(torch.nn.Module):
 
 def chop_padding(samples, lengths):
     return [samples[i, 0:lengths[i]] for i in range(samples.shape[0])]
+
+def perm_sort(x, index):
+    return [x[i] for i in index]
     
 
 class Trainer:
     def __init__(self, model: LSTMTagger, train_data: loaders.DataSet,
                  dev_data: loaders.DataSet = None, test_data: loaders.DataSet = None,
-                 optimizer=None, device=None, decoder=None):
+                 optimizer=None, device=None, decoder=None, lr_patience: int = 5):
         self.logger = logging.getLogger('Trainer({})'.format(model.__class__.__name__))
         self.model = model
         self.optimizer = optimizer
@@ -170,7 +175,7 @@ class Trainer:
         self.decoder = decoder
         self.best_loss = np.inf
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, 'min', verbose=True, patience=5)
+            self.optimizer, 'min', verbose=True, patience=lr_patience)
 
     def train(self, epochs: int = 10) -> None:
         self.logger.info("Working on {}".format(self.device))
@@ -185,17 +190,17 @@ class Trainer:
                     self._validate(self.dev_data)
                     self.model.train() # set all trainable attributes back to True
 
-    def get_batch(self, batch: Dict[str, torch.Tensor]) -> Tuple[torch.Tensor]:
-        stress = batch['stress'].to(self.device)
-        wb = batch['wb'].to(self.device)
-        syllables = batch['syllables'].to(self.device)
-        targets = batch['beatstress'].to(self.device)
-        lengths, perm_index = batch['length'].sort(0, descending=True)
-
-        stress = stress[perm_index]
-        wb = wb[perm_index]
-        syllables = syllables[perm_index]
-        targets = targets[perm_index]
+    def get_batch(self, batch: Dict[str, List[torch.LongTensor]]) -> Tuple[torch.Tensor]:
+        lengths, perm_index = torch.LongTensor(batch['length']).sort(0, descending=True)
+        stress = perm_sort(batch['stress'], perm_index)
+        wb = perm_sort(batch['wb'], perm_index)
+        syllables = perm_sort(batch['syllables'], perm_index)
+        targets = perm_sort(batch['beatstress'], perm_index)
+        
+        stress = pad_sequence(stress, batch_first=True).to(self.device)
+        wb = pad_sequence(wb, batch_first=True).to(self.device)
+        syllables = pad_sequence(syllables, batch_first=True).to(self.device)
+        targets = pad_sequence(targets, batch_first=True).to(self.device)
 
         return stress, wb, syllables, targets, lengths
 

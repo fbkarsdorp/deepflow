@@ -76,8 +76,7 @@ class Encoder:
         eos = [self.eos_index] if self.eos_token is not None else []
         bos = [self.bos_index] if self.bos_token is not None else []
         sample = bos + [self[elt] for item in sample for elt in self.preprocessor(item[self.name])] + eos
-        sample = sample + [self.pad_index] * (max_seq_len - len(sample) - 1)
-        return sample
+        return torch.LongTensor(sample)
 
     def decode(self, sample):
         if not hasattr(self, 'index2item'):
@@ -107,18 +106,15 @@ class DataSet:
                     for line in verse:
                         for f, t in self.encoders.items():
                             sample[f].append(t.transform(line, self.max_seq_len))
-                        sample['length'].append(sample[f][-1].index(t.pad_index))
+                        sample['length'].append(len(sample[f][-1]))#sample[f][-1].index(t.pad_index))
                         batch_size += 1
                         if batch_size == self.batch_size:
-                            yield self.make_tensors(sample)
+                            yield sample
                             batch_size = 0
                             sample = {f: [] for f in self.encoders.keys()}
-                            sample['length'] = []                            
-            if sample:
-                yield self.make_tensors(sample)
-
-    def make_tensors(self, sample):
-        return {f: torch.LongTensor(item) for f, item in sample.items()}
+                            sample['length'] = []                   
+            if sample['length']:
+                yield sample
                     
                 
 if __name__ == '__main__':

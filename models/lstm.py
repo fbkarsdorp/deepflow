@@ -233,7 +233,6 @@ class Trainer:
             output = self.model(stress, wb, syllables, lengths, targets)
             if not test:
                 run_loss += output['loss'].item()
-            batch_size = stress.size(0)
             pred = output['tags']
             true = chop_padding(targets.cpu().numpy(), lengths)
             y_true.append(true)

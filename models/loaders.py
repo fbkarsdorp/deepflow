@@ -98,7 +98,7 @@ class DataSet:
     def batches(self):
         batch_size = 0
         sample = {f: [] for f in self.encoders.keys()}
-        sample['length'] = []
+        sample['length'], sample['song_id'] = [], []
         with open(self.fpath) as f:
             songs = ijson.items(f, 'item')
             for song in songs:
@@ -113,7 +113,7 @@ class DataSet:
                             yield sample
                             batch_size = 0
                             sample = {f: [] for f in self.encoders.keys()}
-                            sample['length'] = []                   
+                            sample['length'], sample['song_id'] = [], []
             if sample['length']:
                 yield sample
                     

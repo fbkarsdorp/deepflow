@@ -39,7 +39,8 @@ class Scanner:
                 output = self.tagger(stress, wb, syllables, lengths)
                 preds = [self.label_encoder.decode(sample) for sample in output['tags']]
                 preds = utils.inverse_perm_sort(preds, perm_index)
-                results[batch['id']].append(preds)
+                for id, pred in zip(batch['song_id'], preds):
+                    results[id].append(pred)
                 n_samples += len(preds)
                 if n_samples % 500 == 0:
                     self.logger.info(f"Processed {n_samples} samples")

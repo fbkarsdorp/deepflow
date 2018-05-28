@@ -19,6 +19,7 @@ from allennlp.modules import ConditionalRandomField
 
 import loaders
 import torch_utils
+import utils
 
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -30,17 +31,13 @@ BOS = 2
 UNK = 3  # if it exists
 
 
-def accuracy_score(x: np.ndarray, y: np.ndarray) -> float:
-    return sum((a == b).all() for a, b in zip(x, y)) / len(x)
-
-
 def embedding_layer(
         weights: np.ndarray, n_padding_vectors: int = 4,
         padding_idx: int = None, trainable: bool = False
     ) -> torch.nn.Embedding:
     """Create an embedding layer from pre-trained gensim embeddings."""
     weights = np.vstack((np.zeros((n_padding_vectors, weights.shape[1])), weights))
-    embedding_weights = torch.FloatTensor(weights, dtype=torch.float32)
+    embedding_weights = torch.tensor(weights, dtype=torch.float32)
     embedding = torch.nn.Embedding(*embedding_weights.shape, padding_idx=padding_idx)
     embedding.weight = torch.nn.Parameter(embedding_weights, requires_grad=trainable)
     return embedding
@@ -98,7 +95,7 @@ class LSTMTagger(Tagger):
         encoder_out, _ = self.sequence_encoder(self.pack(stress, wb, syllables, lengths))
         tag_space = self.tag_projection_layer(self.unpack(encoder_out))
         _, preds = tag_space.max(2)
-        preds = chop_padding(preds.cpu().numpy(), lengths)
+        preds = utils.chop_padding(preds.cpu().numpy(), lengths)
         output = {"tag_space": tag_space, "tags": preds}
         if targets is not None:
             loss = self.loss(tag_space, lengths, targets)
@@ -148,13 +145,6 @@ class CRFTagger(Tagger):
             log_likelihood = self.crf(tag_space, targets, mask)
             output["loss"] = -log_likelihood
         return output
-
-
-def chop_padding(samples, lengths):
-    return [samples[i, 0:lengths[i]] for i in range(samples.shape[0])]
-
-def perm_sort(x, index):
-    return [x[i] for i in index]
     
 
 class Trainer:
@@ -188,10 +178,10 @@ class Trainer:
 
     def get_batch(self, batch: Dict[str, List[torch.LongTensor]]) -> Tuple[torch.Tensor]:
         lengths, perm_index = torch.LongTensor(batch['length']).sort(0, descending=True)
-        stress = perm_sort(batch['stress'], perm_index)
-        wb = perm_sort(batch['wb'], perm_index)
-        syllables = perm_sort(batch['syllables'], perm_index)
-        targets = perm_sort(batch['beatstress'], perm_index)
+        stress = utils.perm_sort(batch['stress'], perm_index)
+        wb = utils.perm_sort(batch['wb'], perm_index)
+        syllables = utils.perm_sort(batch['syllables'], perm_index)
+        targets = utils.perm_sort(batch['beatstress'], perm_index)
         
         stress = pad_sequence(stress, batch_first=True).to(self.device)
         wb = pad_sequence(wb, batch_first=True).to(self.device)
@@ -234,10 +224,10 @@ class Trainer:
             if not test:
                 run_loss += output['loss'].item()
             pred = output['tags']
-            true = chop_padding(targets.cpu().numpy(), lengths)
+            true = utils.chop_padding(targets.cpu().numpy(), lengths)
             y_true.append(true)
             y_pred.append(pred)
-            accuracy += accuracy_score(pred, true)
+            accuracy += utils.accuracy_score(pred, true)
             n_batches += 1
         if not test:
             logging.info('Validation Loss: {}'.format(run_loss / n_batches))
@@ -273,4 +263,5 @@ class Trainer:
             self.model.eval()
             self._validate(data, test=True)
         self.model.train()
-            
+
+

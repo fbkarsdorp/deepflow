@@ -10,7 +10,7 @@ PAD, EOS, BOS, UNK = '<PAD>', '<EOS>', '<BOS>', '<UNK>'
 
 def load_gensim_embeddings(fpath: str):
     model = gensim.models.KeyedVectors.load(fpath)
-    # model.init_sims(replace=True)
+    model.init_sims(replace=True)
     return model.index2word, model.vectors
 
 def identity(x): return x
@@ -106,7 +106,8 @@ class DataSet:
                     for line in verse:
                         for f, t in self.encoders.items():
                             sample[f].append(t.transform(line, self.max_seq_len))
-                        sample['length'].append(len(sample[f][-1]))#sample[f][-1].index(t.pad_index))
+                        sample['length'].append(len(sample[f][-1]))
+                        sample['song_id'].append(song['id'])
                         batch_size += 1
                         if batch_size == self.batch_size:
                             yield sample

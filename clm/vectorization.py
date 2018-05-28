@@ -66,10 +66,6 @@ class SequenceVectorizer(object):
         self.idx2syll = {i: s for s, i in self.syll2idx.items()}
         self.dim = len(self.syll2idx)
 
-        for k in self.syll2idx:
-            if 'eminem' in k.lower():
-                print(k)
-
         return self
 
     def transform(self, lines):
@@ -89,7 +85,7 @@ class SequenceVectorizer(object):
                     break
             # left-pad shorter BPTT:
             while len(x) < self.max_len:
-                x = ['<PAD>'] + x
+                x = [self.syll2idx['<PAD>']] + x
             X.append(x)
 
         return np.array(X, dtype=np.int32)

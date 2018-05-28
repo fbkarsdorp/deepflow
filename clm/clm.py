@@ -12,14 +12,14 @@ from vectorization import SequenceVectorizer, LabelVectorizer
 
 
 def main():
-    bptt = 22
+    bptt = 12
     batch_size = 128
-    min_syll_cnt = 50
-    max_songs = 10000
+    min_syll_cnt = 300
+    max_songs = None
     random_shift = 6
     syll_emb_dim = 150
     cond_emb_dim = 10
-    lstm_dim = 512
+    lstm_dim = 1024
     nb_epochs = 200
     max_gen_len = 20
     min_artist_cnt = 10
@@ -52,7 +52,10 @@ def main():
     for vectorizer in vectorizers.values():
         vectorizer.finalize_fit()
 
-    """
+    #for batch in clm_data.get_batches():
+    #    for sylls, trgts, arts in zip(batch['syllables'], batch['targets'], batch['artists']):
+    #        print(sylls, trgts)
+
     model = modelling.build_model(conditions=clm_data.conditions,
                                   vectorizers=vectorizers,
                                   bptt=bptt,
@@ -70,7 +73,6 @@ def main():
                         max_gen_len=max_gen_len)
 
     model = load_model(model_path)
-    """
 
 
 if __name__ == '__main__':

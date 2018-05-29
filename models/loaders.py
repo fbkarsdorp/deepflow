@@ -16,7 +16,9 @@ def load_gensim_embeddings(fpath: str):
 def identity(x): return x
 
 def word_boundaries(syllables):
-    return [1] + [0] * (len(syllables) - 1)
+    if syllables:
+        return [1] + [0] * (len(syllables) - 1)
+    return []
 
 def normalize_stress(stress):
     return [int(s) if s != '.' else 0 for s in stress]
@@ -72,10 +74,12 @@ class Encoder:
     def __repr__(self):
         return '<Encoder({})>'.format(self.name)
 
-    def transform(self, sample, max_seq_len):
+    def transform(self, sample):
         eos = [self.eos_index] if self.eos_token is not None else []
         bos = [self.bos_index] if self.bos_token is not None else []
-        sample = bos + [self[elt] for item in sample for elt in self.preprocessor(item[self.name])] + eos
+        sample = bos + [
+            self[elt] for item in sample for elt in self.preprocessor(item[self.name])
+        ] + eos
         return torch.LongTensor(sample)
 
     def decode(self, sample):
@@ -86,11 +90,10 @@ class Encoder:
 
     
 class DataSet:
-    def __init__(self, fpath, max_seq_len=30, batch_size=1, **encoders):
+    def __init__(self, fpath, batch_size=1, **encoders):
         self.encoders = encoders
         self.fpath = fpath
         self.batch_size = batch_size
-        self.max_seq_len = max_seq_len
 
     def __iter__(self):
         return self.batches()
@@ -98,21 +101,26 @@ class DataSet:
     def batches(self):
         batch_size = 0
         sample = {f: [] for f in self.encoders.keys()}
-        sample['length'] = []
+        sample['length'], sample['song_id'] = [], []
         with open(self.fpath) as f:
             songs = ijson.items(f, 'item')
             for song in songs:
                 for verse in song['text']:
                     for line in verse:
                         for f, t in self.encoders.items():
-                            sample[f].append(t.transform(line, self.max_seq_len))
-                        sample['length'].append(len(sample[f][-1]))#sample[f][-1].index(t.pad_index))
+                            item = t.transform(line)
+                            if item is None:
+                                print("EMPTY ITEM")
+                            else:
+                                sample[f].append(item)
+                        sample['length'].append(len(sample[f][-1]))
+                        sample['song_id'].append(song['id'])
                         batch_size += 1
                         if batch_size == self.batch_size:
                             yield sample
                             batch_size = 0
                             sample = {f: [] for f in self.encoders.keys()}
-                            sample['length'] = []                   
+                            sample['length'], sample['song_id'] = [], []
             if sample['length']:
                 yield sample
                     

@@ -114,8 +114,9 @@ class Batch:
             if item is not None:
                 self.data[f].append(item)
                 done.add(f)
-            if self.include_length:
-                self.data['length'] = len(data[self.length_field])
+
+        if self.include_length:
+            self.data['length'].append(len(data[self.length_field]))
 
         # check missing inputs
         missing = done.difference(self.fields)
@@ -143,7 +144,7 @@ class DataSet:
         return self.batches()
 
     def batches(self):
-        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='syllables')
+        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='stress')
 
         with open(self.fpath) as f:
             for song in ijson.items(f, 'item'):
@@ -197,16 +198,16 @@ def buffer_groups(groups, batch_size):
             break
 
 
-class BlockDataset(DataSet):
+class BlockDataSet(DataSet):
     def batches(self):
-        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='syllables')
+        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='stress')
 
         with open(self.fpath) as f:
-            groups = (((song['id'], line) for verse in song for line in verse)
+            groups = (((song['id'], line) for verse in song['text'] for line in verse)
                       for song in ijson.items(f, 'item'))
 
-            for batch in buffer_groups(groups, self.batch_size):
-                for song_id, line in batch:
+            for lines in buffer_groups(groups, self.batch_size):
+                for song_id, line in lines:
                     data = {f: t.transform(line) for f, t in self.encoders.items()}
                     data = {'song_id': song_id, **data}
                     batch.add(data)

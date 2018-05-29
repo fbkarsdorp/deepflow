@@ -41,7 +41,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--training_file", type=str)
-    parser.add_argument("--output_file", default='topic_vectorizer', type=str)
+    parser.add_argument("--output_file", default='topic_', type=str)
 
     parser.add_argument("--min_df",  default=5, type=int)
     parser.add_argument("--max_df",  default=.2, type=int)
@@ -68,6 +68,6 @@ if __name__ == '__main__':
         logging.info('topic' + str(topic_idx) + '->' + ' - '.join(top_words))
 
     joblib.dump(vectorizer, args.output_file + '_vector.pkl')
-    joblib.dump(vectorizer, args.output_file + '_nmf.pkl')
+    joblib.dump(nmf, args.output_file + '_nmf.pkl')
 
     logging.info("vectorizer and model saved")

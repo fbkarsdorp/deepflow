@@ -12,17 +12,17 @@ from vectorization import SequenceVectorizer, LabelVectorizer
 
 
 def main():
-    bptt = 12
+    bptt = 6
     batch_size = 128
     min_syll_cnt = 300
     max_songs = None
     random_shift = 6
-    syll_emb_dim = 150
+    syll_emb_dim = 300
     cond_emb_dim = 10
-    lstm_dim = 1024
+    lstm_dim = 512
     nb_epochs = 200
     max_gen_len = 20
-    min_artist_cnt = 10
+    min_artist_cnt = 50
     model_path = 'clm_model'
     conditions = {'artists',
                   #'topics',

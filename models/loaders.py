@@ -86,7 +86,51 @@ class Encoder:
         if not hasattr(self, 'index2item'):
             self.index2item = sorted(self.index, key=self.index.get)
         return [self.index2item[elt] for elt in sample]
-        
+
+
+class Batch:
+    def __init__(self, fields, include_length=True, length_field=None):
+
+        self.include_length = include_length
+        self.length_field = length_field
+
+        if include_length and length_field is None:
+            raise ValueError("`include_length` requires `length_field`")
+
+        self.fields = set(fields)
+        if length_field:
+            self.fields.add('length')
+
+        self.reset()
+
+    def __len__(self):
+        return self.size
+
+    def add(self, data):
+        done = set()
+        for f, item in data.items():
+            if f not in self.fields:
+                raise ValueError("Got data for unexisting field: {}".format(f))
+            if item is not None:
+                self.data[f].append(item)
+                done.add(f)
+            if self.include_length:
+                self.data['length'] = len(data[self.length_field])
+
+        # check missing inputs
+        missing = done.difference(self.fields)
+        if missing:
+            print("Missing fields: {}".format(', '.join(missing)))
+
+        # increment
+        self.size += 1
+
+    def reset(self):
+        self.data = {f: [] for f in self.fields}
+        self.size = 0
+
+    def get_batch(self):
+        return self.data
 
     
 class DataSet:
@@ -99,32 +143,78 @@ class DataSet:
         return self.batches()
 
     def batches(self):
-        batch_size = 0
-        sample = {f: [] for f in self.encoders.keys()}
-        sample['length'], sample['song_id'] = [], []
+        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='syllables')
+
         with open(self.fpath) as f:
-            songs = ijson.items(f, 'item')
-            for song in songs:
+            for song in ijson.items(f, 'item'):
                 for verse in song['text']:
                     for line in verse:
-                        for f, t in self.encoders.items():
-                            item = t.transform(line)
-                            if item is None:
-                                print("EMPTY ITEM")
-                            else:
-                                sample[f].append(item)
-                        sample['length'].append(len(sample[f][-1]))
-                        sample['song_id'].append(song['id'])
-                        batch_size += 1
-                        if batch_size == self.batch_size:
-                            yield sample
-                            batch_size = 0
-                            sample = {f: [] for f in self.encoders.keys()}
-                            sample['length'], sample['song_id'] = [], []
-            if sample['length']:
-                yield sample
-                    
-                
+                        # yield if needed
+                        if len(batch) == self.batch_size:
+                            yield batch.get_batch()
+                            batch.reset()
+                        # accumulate data
+                        data = {f: t.transform(line) for f, t in self.encoders.items()}
+                        data = {'song_id': song['id'], **data}
+                        batch.add(data)
+
+            if len(batch) > 0:
+                yield batch.get_batch()
+
+
+def chunks(it, size):
+    buf = []
+    for s in it:
+        buf.append(s)
+        if len(buf) == size:
+            yield buf
+            buf = []
+    if len(buf) > 0:
+        yield buf
+
+
+def buffer_groups(groups, batch_size):
+    gchunks = chunks(groups, batch_size)
+
+    while True:
+        try:
+            cgroups = [list(group) for group in next(gchunks)]
+            # sort by number of lines per group in descending order
+            cgroups = sorted(cgroups, key=len, reverse=True)
+            max_lines = len(cgroups[0])
+
+            for _ in range(max_lines):
+                batch = []
+                for group in cgroups:
+                    try:
+                        batch.append(group.pop())
+                    except:
+                        pass
+
+                yield batch
+
+        except StopIteration:
+            break
+
+
+class BlockDataset(DataSet):
+    def batches(self):
+        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='syllables')
+
+        with open(self.fpath) as f:
+            groups = (((song['id'], line) for verse in song for line in verse)
+                      for song in ijson.items(f, 'item'))
+
+            for batch in buffer_groups(groups, self.batch_size):
+                for song_id, line in batch:
+                    data = {f: t.transform(line) for f, t in self.encoders.items()}
+                    data = {'song_id': song_id, **data}
+                    batch.add(data)
+
+                yield batch.get_batch()
+                batch.reset()
+
+
 if __name__ == '__main__':
     syllable_vocab, syllable_embeddings = load_gensim_embeddings(
         '../data/syllable-embeddings/syllables.200.10.10.fasttext.gensim')

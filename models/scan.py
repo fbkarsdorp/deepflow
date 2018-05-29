@@ -10,6 +10,7 @@ import lstm
 import loaders
 import utils
 
+
 class Scanner:
     def __init__(self, tagger: lstm.Tagger, label_encoder: loaders.Encoder, device="cpu"):
         self.tagger = tagger
@@ -19,13 +20,17 @@ class Scanner:
 
     def get_batch(self, batch: Dict[str, List[torch.LongTensor]]) -> Tuple[torch.Tensor]:
         lengths, perm_index = torch.LongTensor(batch['length']).sort(0, descending=True)
+        
         stress = utils.perm_sort(batch['stress'], perm_index)
         wb = utils.perm_sort(batch['wb'], perm_index)
         syllables = utils.perm_sort(batch['syllables'], perm_index)
-        
-        stress = pad_sequence(stress, batch_first=True).to(self.device)
-        wb = pad_sequence(wb, batch_first=True).to(self.device)
-        syllables = pad_sequence(syllables, batch_first=True).to(self.device)
+
+        try:
+            stress = pad_sequence(stress, batch_first=True).to(self.device)
+            wb = pad_sequence(wb, batch_first=True).to(self.device)
+            syllables = pad_sequence(syllables, batch_first=True).to(self.device)
+        except ValueError:
+            import pdb; pdb.set_trace()
 
         return stress, wb, syllables, lengths, perm_index   
 

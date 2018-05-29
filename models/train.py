@@ -34,13 +34,13 @@ if __name__ == '__main__':
     if args.include_start_end_transitions:
         eos, bos = '<EOS>', '<BOS>'
     stress_encoder = loaders.Encoder('stress', preprocessor=loaders.normalize_stress,
-                                     bos_token=bos, eos_token=eos)
+                                     bos_token=bos, eos_token=eos, unk_token=None)
     beat_encoder = loaders.Encoder('beatstress', preprocessor=loaders.normalize_stress,
                                    unk_token=None, bos_token=bos, eos_token=eos)
     syllable_encoder = loaders.Encoder('syllables', vocab=syllable_vocab, fixed_vocab=True,
                                        eos_token=eos, bos_token=bos)
     wb_encoder = loaders.Encoder('syllables', preprocessor=loaders.word_boundaries,
-                                 eos_token=eos, bos_token=bos)
+                                 eos_token=eos, bos_token=bos, unk_token=None)
 
     syllable_embeddings = embedding_layer(
         syllable_vectors, n_padding_vectors=len(syllable_encoder.reserved_tokens),

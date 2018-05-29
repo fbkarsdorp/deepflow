@@ -35,3 +35,7 @@ def log_sum_exp(x):
     max_score, _ = torch.max(x, -1)
     max_score_broadcast = max_score.unsqueeze(-1).expand_as(x)
     return max_score + torch.log(torch.sum(torch.exp(x - max_score_broadcast), -1))
+
+
+def prepad(x, pad=0):
+    return torch.nn.functional.pad(x, (1, 0), value=pad)

@@ -8,10 +8,10 @@ def weighted_pick(weights):
     s = np.sum(weights)
     return(int(np.searchsorted(t, np.random.rand(1) * s)))
 
-topic_repr = 'topics_repr.csv'
-id2topic = pd.read_csv(topic_repr)
-id2topic.set_index('id', inplace=True, drop=True)
-del id2topic[id2topic.columns[0]]  # bug in pd?
+#topic_repr = 'topics_repr.csv'
+#id2topic = pd.read_csv(topic_repr)
+#id2topic.set_index('id', inplace=True, drop=True)
+#del id2topic[id2topic.columns[0]]  # bug in pd?
 
 
 def extract_artist(song):

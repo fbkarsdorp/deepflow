@@ -65,13 +65,13 @@ class ClmData(object):
                 shift_ = random.choice(range(self.shift))
                 si, ei = 0 + shift_, self.bptt + shift_
 
-                while ei < len(song_data['syllables']):
+                while ei + 1 < len(song_data['syllables']):
                     batch['syllables'].append(song_data['syllables'][si:ei])
 
                     for c in self.conditions:
                         batch[c].append(song_data[c][si:ei])
 
-                    batch['targets'].append(song_data['syllables'][ei])
+                    batch['targets'].append(song_data['syllables'][si + 1: ei + 1])
 
                     si += self.bptt
                     ei += self.bptt
@@ -100,4 +100,5 @@ class ClmData(object):
             for k, vectorizer in vectorizers.items():
                 batch_dict[k] = vectorizer.transform(batch[k])
             X = {k: batch_dict[k] for k in ['syllables'] + list(self.conditions)}
-            yield X, batch_dict['targets']
+            Y = vectorizers['syllables'].transform(batch['targets'])
+            yield X, Y

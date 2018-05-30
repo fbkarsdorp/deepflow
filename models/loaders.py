@@ -24,6 +24,15 @@ def normalize_stress(stress):
     return [int(s) if s != '.' else 0 for s in stress]
 
 
+def format_syllables(syllables):
+    if len(syllables) == 1:
+        return syllables
+    return ['{}{}{}'.format('-' if i > 0 else '',
+                            s,
+                            '-' if (i < len(syllables) - 1) else '')
+            for i, s in enumerate(syllables)]
+
+
 class Encoder:
     def __init__(self, name, pad_token=PAD, eos_token=EOS, bos_token=BOS, unk_token=UNK,
                  vocab=None, fixed_vocab=False, preprocessor=identity):

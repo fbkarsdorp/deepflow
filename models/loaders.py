@@ -188,7 +188,7 @@ def buffer_groups(groups, batch_size):
                 batch = []
                 for group in cgroups:
                     try:
-                        batch.append(group.pop())
+                        batch.append(group.pop(0))
                     except:
                         pass
 
@@ -200,7 +200,7 @@ def buffer_groups(groups, batch_size):
 
 class BlockDataSet(DataSet):
     def batches(self):
-        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='stress')
+        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='syllables')
 
         with open(self.fpath) as f:
             groups = (((song['id'], line) for verse in song['text'] for line in verse)
@@ -218,13 +218,20 @@ class BlockDataSet(DataSet):
 
 if __name__ == '__main__':
     syllable_vocab, syllable_embeddings = load_gensim_embeddings(
-        '../data/syllable-embeddings/syllables.200.10.10.fasttext.gensim')
+        '../data/syllable-embeddings/syllables.200.10.10.syllable.cbow.gensim')
     stress_encoder = Encoder('stress')
     beat_encoder = Encoder('beatstress')
     syllable_encoder = Encoder('syllables', vocab=syllable_vocab)
     wb_encoder = Encoder('syllables', preprocessor=word_boundaries)
-    data = DataSet('../data/mcflow/mcflow-primary-recip.json',
-                   stress=stress_encoder, syllables=syllable_encoder,
-                   beat=beat_encoder, wb=wb_encoder)
-        
+    data = BlockDataSet('../data/mcflow/mcflow-primary-recip.json', batch_size=5,
+                        syllables=syllable_encoder)
 
+    def reverse(*bs):
+        for lines in zip(*[b['syllables'] for b in bs]):
+            for idx, line in enumerate( lines):
+                print(idx, syllable_encoder.decode(line))
+            print()
+
+    bat = data.batches()
+
+    reverse(*[next(bat) for _ in range(20)])

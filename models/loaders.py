@@ -223,13 +223,13 @@ if __name__ == '__main__':
     beat_encoder = Encoder('beatstress')
     syllable_encoder = Encoder('syllables', vocab=syllable_vocab)
     wb_encoder = Encoder('syllables', preprocessor=word_boundaries)
-    data = BlockDataSet('../data/mcflow/mcflow-primary-recip.json', batch_size=5,
+    data = BlockDataSet('../data/ohhla-beatstress.json', batch_size=5,
                         syllables=syllable_encoder)
 
     def reverse(*bs):
         for lines in zip(*[b['syllables'] for b in bs]):
             for idx, line in enumerate( lines):
-                print(idx, syllable_encoder.decode(line))
+                print(idx, ' '.join(syllable_encoder.decode(line)))
             print()
 
     bat = data.batches()

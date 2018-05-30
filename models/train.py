@@ -38,7 +38,8 @@ if __name__ == '__main__':
                                      bos_token=bos, eos_token=eos, unk_token=None)
     beat_encoder = loaders.Encoder('beatstress', preprocessor=loaders.normalize_stress,
                                    unk_token=None, bos_token=bos, eos_token=eos)
-    syllable_encoder = loaders.Encoder('syllables', vocab=syllable_vocab, fixed_vocab=True,
+    syllable_encoder = loaders.Encoder('syllables', preprocessor=loaders.format_syllables,
+                                       vocab=syllable_vocab, fixed_vocab=True,
                                        eos_token=eos, bos_token=bos)
     wb_encoder = loaders.Encoder('syllables', preprocessor=loaders.word_boundaries,
                                  eos_token=eos, bos_token=bos, unk_token=None)

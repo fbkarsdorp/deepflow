@@ -28,7 +28,8 @@ if __name__ == '__main__':
     parser.add_argument('--finetune_embeddings', action='store_true')
     args = parser.parse_args()
     
-    syllable_vocab, syllable_vectors = loaders.load_gensim_embeddings(args.pretrained_embeddings)
+    syllable_vocab, syllable_vectors = loaders.load_gensim_embeddings(
+        args.pretrained_embeddings)
 
     eos, bos = None, None
     if args.include_start_end_transitions:

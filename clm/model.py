@@ -26,11 +26,13 @@ class RNNModel(nn.Module):
         
         self.encoder = nn.Embedding(ntoken, ninp)
 
-        self.cond_encoders = OrderedDict()
-        for c in sorted(conditions):
+        cond_encoders = []
+        for c in sorted(self.conditions):
             dim = vectorizers[c].dim
-            self.cond_encoders[c] = nn.Embedding(dim, cond_emsize)
+            cond_encoders.append(nn.Embedding(dim, cond_emsize))
             total_ninp += cond_emsize
+
+        self.cond_encoders = nn.ModuleList(cond_encoders)
 
         if rnn_type in ['LSTM', 'GRU']:
             self.rnn = getattr(nn, rnn_type)(total_ninp, nhid, nlayers, dropout=dropout)
@@ -64,21 +66,18 @@ class RNNModel(nn.Module):
     def init_weights(self):
         initrange = 0.1
         self.encoder.weight.data.uniform_(-initrange, initrange)
-        for c in self.cond_encoders:
-            self.cond_encoders[c].weight.data.uniform_(-initrange, initrange)
+        for ce in self.cond_encoders:
+            ce.weight.data.uniform_(-initrange, initrange)
         self.decoder.bias.data.zero_()
         self.decoder.weight.data.uniform_(-initrange, initrange)
 
-    def cond2cuda(self):
-        for c in self.cond_encoders:
-            self.cond_encoders[c] = self.cond_encoders[c].to('cuda')
-
     def forward(self, input, hidden, **kwargs):
         emb = self.drop(self.encoder(input))
-        conds = kwargs['conds']
-        for c in sorted(conds.keys()):
-            emb_ = self.cond_encoders[c](conds[c])
-            emb = torch.cat([emb, emb_], 2)
+
+        if 'conds' in kwargs:
+            for idx, c in enumerate(self.conditions):
+                emb_ = self.cond_encoders[idx](kwargs['conds'][c])
+                emb = torch.cat([emb, emb_], 2)
 
         output, hidden = self.rnn(emb, hidden)
         output = self.drop(output)

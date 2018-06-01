@@ -10,7 +10,7 @@ PAD, EOS, BOS, UNK = '<PAD>', '<EOS>', '<BOS>', '<UNK>'
 
 def load_gensim_embeddings(fpath: str):
     model = gensim.models.KeyedVectors.load(fpath)
-    # model.init_sims(replace=True)
+    model.init_sims(replace=True)
     return model.index2word, model.vectors
 
 def identity(x): return x
@@ -23,6 +23,14 @@ def word_boundaries(syllables):
 def normalize_stress(stress):
     return [int(s) if s != '.' else 0 for s in stress]
 
+def format_syllables(syllables):
+    if len(syllables) == 1:
+        return syllables
+    syllables = ['{}{}{}'.format('-' if i > 0 else '',
+                            s,
+                            '-' if (i < len(syllables) - 1) else '').lower()
+                 for i, s in enumerate(syllables)]
+    return syllables
 
 class Encoder:
     def __init__(self, name, pad_token=PAD, eos_token=EOS, bos_token=BOS, unk_token=UNK,

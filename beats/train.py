@@ -50,7 +50,6 @@ rnn = models.LSTM(
 ).to(device)
 
 lr = args.lr
-criterion = torch.nn.CrossEntropyLoss(ignore_index=0)
 optimizer = torch.optim.Adam(rnn.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
     optimizer, 'min', verbose=True, patience=5)
@@ -65,7 +64,9 @@ def train():
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         logits, _ = rnn(inputs, lengths)
-        loss = criterion(logits.view(-1, logits.size(2)), targets.view(-1))
+        loss = torch.nn.functional.cross_entropy(
+            logits.view(-1, logits.size(2)), targets.view(-1),
+            ignore_index=0)
         loss.backward()        
         torch.nn.utils.clip_grad_norm_(rnn.parameters(), args.clip)
         epoch_loss += loss.item()
@@ -84,7 +85,9 @@ def evaluate():
         for inputs, targets, lengths in data.dev_batches():
             inputs, targets = inputs.to(device), targets.to(device)
             logits, _ = rnn(inputs, lengths)
-            loss = criterion(logits.view(-1, logits.size(2)), targets.view(-1))
+            loss = torch.nn.functional.cross_entropy(
+                logits.view(-1, logits.size(2)), targets.view(-1),
+                ignore_index=0)
             val_loss += loss.item()
             n_batches += 1
     return val_loss / n_batches

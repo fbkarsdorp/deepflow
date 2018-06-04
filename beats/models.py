@@ -158,7 +158,7 @@ class DrumData:
         return inputs, targets, lengths
 
 
-def sample_from_piano_rnn(rnn, sample_length=16, temperature=1, start=None):
+def sample_from_piano_rnn(rnn, sample_length=16, temperature=1, start=None, device="cpu"):
     if start is None:
         current_input = torch.zeros(1, 1, dtype=torch.int).type(torch.LongTensor)
         current_input[0, 0] = 1
@@ -193,63 +193,3 @@ class LSTM(torch.nn.Module):
         logits = self.projection_layer(outputs)
         return logits, hidden
 
-if __name__ == '__main__':
-    midi_encoder = MidiEncoder(q=24)
-    data = DrumData('midifiles', midi_encoder)
-    rnn = LSTM(input_size=len(midi_encoder.index),
-               hidden_size=512,
-               emb_dim=32,
-               num_classes=len(midi_encoder.index),
-               n_layers=3,
-               dropout=0.5)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    rnn.to(device)
-    optimizer = torch.optim.Adam(rnn.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, 'min', verbose=True, patience=5)
-
-    clip = 1.0
-    epochs = 100
-    best_val_loss = float("inf")
-
-    for epoch in range(epochs):
-        epoch_loss = 0
-        for i, (inputs, targets, lengths) in enumerate(data.train_batches(), 1):
-            inputs = inputs.to(device)
-            targets = targets.to(device)
-            optimizer.zero_grad()
-            logits, _ = rnn(inputs, lengths)
-            loss = torch.nn.functional.cross_entropy(
-                logits.view(-1, logits.size(2)), targets.view(-1),
-                size_average=True, ignore_index=0)
-            epoch_loss += loss.item()
-            loss.backward()
-            torch.nn.utils.clip_grad_norm(rnn.parameters(), clip)
-            optimizer.step()
-            if i % 5 == 0:
-                print("Epoch {}, batch {}, Loss {}".format(epoch, i, epoch_loss / i))
-            # validate
-        with torch.no_grad():
-            rnn.eval()
-            val_loss = 0.0
-            n_batches = 0
-            for inputs, targets, lengths in data.dev_batches():
-                inputs = inputs.to(device)
-                targets = targets.to(device)
-                logits, _ = rnn(inputs, lengths)
-                loss = torch.nn.functional.cross_entropy(
-                    logits.view(-1, logits.size(2)), targets.view(-1),
-                    size_average=True, ignore_index=0)
-                val_loss += loss.item()
-                n_batches += 1
-            val_loss = val_loss / n_batches
-            print("Validation loss: {}".format(val_loss))
-            scheduler.step(val_loss)
-            if val_loss < best_val_loss:
-                torch.save(rnn.state_dict(), 'music_rnn.pth')
-                best_val_loss = val_loss
-            if epoch % 10 == 0:
-                samples = sample_from_piano_rnn(rnn, sample_length=24, temperature=1)
-                midi_encoder.sequence_to_midi(
-                    midi_encoder.decode_sequence(samples)).write(f'output-{epoch}.mid')
-            rnn.train()

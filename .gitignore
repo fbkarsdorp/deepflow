@@ -100,3 +100,6 @@ ENV/
 # mypy
 .mypy_cache/
 data/lyrics-corpora/ohhla.com
+
+# midi files
+*.mid

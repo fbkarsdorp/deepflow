@@ -56,9 +56,8 @@ class DrumEncoding:
 
 
 class MidiEncoder:
-    def __init__(self, pad_symbol: str = '<PAD>', beats: int = 16, q: int = 16) -> None:
+    def __init__(self, pad_symbol: str = '<PAD>', q: int = 16) -> None:
         self.pad_symbol = pad_symbol
-        self.beats = beats
         self.index = collections.defaultdict()
         self.index.default_factory = lambda: len(self.index)
         self.index[pad_symbol]
@@ -68,7 +67,7 @@ class MidiEncoder:
     def encode_sequence(self, sequence: List[List[int]]) -> Tuple[torch.tensor, torch.tensor, int]:
         strings = [self.index['<START>']]
         for i, row in enumerate(sequence):
-            if i > 0 and i % self.beats == 0:
+            if i > 0 and i % self.q == 0:
                 strings.append(self.index['<BAR>'])
             strings.append(self.index[''.join(map(str, row))])
         strings.append(self.index['<END>'])
@@ -105,7 +104,7 @@ class MidiEncoder:
         time = 0
         tick = 60 / bpm / (self.q / 4)
         for i, encoding in enumerate(sequence, 1):
-            if encoding not in ('<START>', '<BAR>', '<END>'):
+            if encoding not in ('<START>', '<BAR>', '<END>', '<PAD>'):
                 encoding = self.encoder.decode(encoding)
                 if encoding: # empty means tick rest
                     for pitch in encoding:
@@ -133,11 +132,11 @@ class DrumData:
         self.train, self.dev = sklearn.model_selection.train_test_split(
             self.midi_files, test_size=0.1, shuffle=True)
 
-    def train_batches(self):
-        return self.get_batches(self.train)
+    def train_batches(self, batch_size=20):
+        return self.get_batches(self.train, batch_size=batch_size)
 
-    def dev_batches(self):
-        return self.get_batches(self.dev)
+    def dev_batches(self, batch_size=20):
+        return self.get_batches(self.dev, batch_size=batch_size)
 
     def get_batches(self, midi_files, batch_size=20):
         inputs, targets, lengths, i = [], [], [], 0
@@ -178,14 +177,16 @@ def sample_from_piano_rnn(rnn, sample_length=16, temperature=1, start=None):
 
 class LSTM(torch.nn.Module):
     def __init__(self, input_size: int, hidden_size: int, emb_dim:
-                 int, num_classes: int, n_layers: int = 2) -> None:
+                 int, num_classes: int, n_layers: int = 2, dropout: float = 0.5) -> None:
         super(LSTM, self).__init__()
         self.note_encoder = torch.nn.Embedding(num_classes, emb_dim, padding_idx=0)
         self.lstm = torch.nn.LSTM(emb_dim, hidden_size, n_layers, batch_first=True)
         self.projection_layer = torch.nn.Linear(hidden_size, num_classes)
+        self.dropout = dropout
 
     def forward(self, sequences, lengths, hidden=None):
         embs = self.note_encoder(sequences)
+        embs = torch.nn.functional.dropout(embs, p=self.dropout, training=self.training)
         packed = torch.nn.utils.rnn.pack_padded_sequence(embs, lengths, batch_first=True)
         outputs, hidden = self.lstm(packed, hidden)
         outputs, output_lengths = torch.nn.utils.rnn.pad_packed_sequence(outputs, batch_first=True)
@@ -193,16 +194,19 @@ class LSTM(torch.nn.Module):
         return logits, hidden
 
 if __name__ == '__main__':
-    midi_encoder = MidiEncoder()
+    midi_encoder = MidiEncoder(q=24)
     data = DrumData('midifiles', midi_encoder)
     rnn = LSTM(input_size=len(midi_encoder.index),
-               hidden_size=128,
+               hidden_size=512,
                emb_dim=32,
                num_classes=len(midi_encoder.index),
-               n_layers=3)
+               n_layers=3,
+               dropout=0.5)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     rnn.to(device)
     optimizer = torch.optim.Adam(rnn.parameters(), lr=0.001)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, 'min', verbose=True, patience=5)
 
     clip = 1.0
     epochs = 100
@@ -220,7 +224,7 @@ if __name__ == '__main__':
                 size_average=True, ignore_index=0)
             epoch_loss += loss.item()
             loss.backward()
-#            torch.nn.utils.clip_grad_norm(rnn.parameters(), clip)
+            torch.nn.utils.clip_grad_norm(rnn.parameters(), clip)
             optimizer.step()
             if i % 5 == 0:
                 print("Epoch {}, batch {}, Loss {}".format(epoch, i, epoch_loss / i))
@@ -240,10 +244,12 @@ if __name__ == '__main__':
                 n_batches += 1
             val_loss = val_loss / n_batches
             print("Validation loss: {}".format(val_loss))
+            scheduler.step(val_loss)
             if val_loss < best_val_loss:
                 torch.save(rnn.state_dict(), 'music_rnn.pth')
                 best_val_loss = val_loss
-            samples = sample_from_piano_rnn(rnn, sample_length=16, temperature=1)
-            midi_encoder.sequence_to_midi(
-                midi_encoder.decode_sequence(samples)).write(f'output-{epoch}.mid')
+            if epoch % 10 == 0:
+                samples = sample_from_piano_rnn(rnn, sample_length=24, temperature=1)
+                midi_encoder.sequence_to_midi(
+                    midi_encoder.decode_sequence(samples)).write(f'output-{epoch}.mid')
             rnn.train()

@@ -1,16 +1,16 @@
 import numpy as np
 
-from keras.layers import Input, Embedding, LSTM, Dense, Concatenate, Conv1D
+from keras.layers import Input, Embedding, LSTM, Dense, Concatenate, Dropout, TimeDistributed
 from keras.models import Model
 from keras.callbacks import ModelCheckpoint, Callback
-from keras.callbacks import LambdaCallback
+from keras.callbacks import LambdaCallback, ReduceLROnPlateau
 from keras.models import load_model
 from keras.optimizers import Adam
 
 from collections import OrderedDict
 
-def build_model(conditions, bptt, vectorizers,
-                syll_emb_dim, cond_emb_dim, lstm_dim):
+def build_model(conditions, bptt, vectorizers, dropout,
+                syll_emb_dim, cond_emb_dim, lstm_dim, lr):
     
     # inputs:
     input_dict = OrderedDict()
@@ -32,18 +32,17 @@ def build_model(conditions, bptt, vectorizers,
                                     input_length=bptt)(input_dict[c])
 
     concat_emb = Concatenate(axis=-1)([embed_dict[k] for k in embed_dict])
+    concat_emb = Dropout(dropout)(concat_emb)
 
-    #conv_out = Conv1D(lstm_dim, 3, strides=1)(concat_emb)
-    #lstm_out = LSTM(lstm_dim, activation='tanh', return_sequences=True)(conv_out)
-
-    lstm_out = LSTM(lstm_dim, return_sequences=False, activation='tanh')(concat_emb)
-    syll_pred = Dense(vectorizers['targets'].dim, activation='softmax',
-                      name='targets')(lstm_out)
+    lstm_out = LSTM(lstm_dim, recurrent_dropout=dropout,
+                    return_sequences=True, activation='tanh')(concat_emb)
+    syll_pred = TimeDistributed(Dense(vectorizers['syllables'].dim,
+                          activation='softmax'))(lstm_out)
 
     model = Model(inputs=[input_dict[k] for k in input_dict],
                   outputs=[syll_pred])
 
-    optim = Adam(lr=0.001)
+    optim = Adam(lr=lr)
     model.compile(optimizer=optim,
                   loss='categorical_crossentropy')
 
@@ -63,11 +62,15 @@ def fit_model(model, generator, nb_epochs, bptt,
                                              max_len=max_gen_len,
                                              gen_conditions=gen_conditions)
 
+    reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.3,
+                                  patience=1, min_lr=0.000001,
+                                  verbose=1)
+
     try:
         model.fit_generator(generator=generator.get_transformed_batches(vectorizers, endless=True),
                             steps_per_epoch=generator.num_batches,
                             epochs=nb_epochs,
-                            callbacks=[checkpoint, generation_callback])
+                            callbacks=[checkpoint, generation_callback, reduce_lr])
     except KeyboardInterrupt:
         return
 
@@ -106,17 +109,24 @@ class GenerationCallback(Callback):
                 continue
             batch_dict[k] = vectorizer.transform(batch[k])
 
-        for diversity in [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.2, 1.3, 1.4]:
+        for diversity in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
             print('\n-> diversity:', diversity)
+            preds = []
             for i in range(self.max_len):
-                pred_proba = self.model.predict(batch_dict, verbose=0)[0]
-                pred_idx = sample(pred_proba, diversity)
-                try:
-                    pred_syllab = self.vectorizers['targets'].idx2class[pred_idx]
-                    idx_new_syll = self.vectorizers['syllables'].syll2idx[pred_syllab]
-                except KeyError:
-                    pred_syllab = '<UNK>'
-                    idx_new_syll = self.vectorizers['syllables'].syll2idx[pred_syllab]
+                pred_proba = self.model.predict(batch_dict, verbose=0)[0][-1]
 
-                print(pred_syllab, end=' ')
-                batch_dict['syllables'][0] = batch_dict['syllables'][0][1:].tolist() + [idx_new_syll]
+                pred_syllab = '<UNK>'
+                patience = 20
+                while pred_syllab == '<UNK>':
+                    pred_idx = sample(pred_proba, diversity)
+                    pred_syllab = self.vectorizers['syllables'].idx2syll[pred_idx]
+                    patience -= 1
+                    if patience <= 0:
+                        break
+
+                preds.append(pred_syllab)
+
+                batch_dict['syllables'][0] = batch_dict['syllables'][0][1:].tolist() + [pred_idx]
+
+            print(' '.join(preds).replace('/ ', ''))
+            print()

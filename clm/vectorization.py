@@ -3,47 +3,16 @@ from itertools import chain
 import json
 import numpy as np
 
-from keras.utils import to_categorical
-
 from sklearn.preprocessing import LabelEncoder
 
-SYMBOLS = ['<PAD>', '<UNK>']
-
-
-class LabelVectorizer(object):
-    def __init__(self, min_cnt=0):
-        self.classes = Counter()
-        self.min_cnt = min_cnt
-
-    def partial_fit(self, batch):
-        self.classes.update(batch)
-
-    def finalize_fit(self):
-        self.class2idx = {}
-        for cl in sorted([k for k, v in self.classes.most_common() if v >= self.min_cnt]):
-            self.class2idx[cl] = len(self.class2idx)
-
-        self.idx2class = {i: s for s, i in self.class2idx.items()}
-        self.encoder = LabelEncoder().fit(list(self.class2idx.keys()) + ['<UNK>'])
-        self.dim = len(self.encoder.classes_)
-
-        self.fitted = True
-
-    def transform(self, labels):
-        if not self.fitted:
-            self.finalize_fit()
-
-        labels = [s if s in self.encoder.classes_ else '<UNK>' for s in labels]
-
-        return to_categorical(self.encoder.transform(labels),
-                              num_classes=self.dim)
+SYMBOLS = ['<PAD>', '<UNK>', '<BOS>']
 
 
 class SequenceVectorizer(object):
-    def __init__(self, min_cnt=0, max_len=None,
+    def __init__(self, min_cnt=0, bptt=15,
                  syll2idx=None, idx2syll=None):
         self.min_cnt = min_cnt
-        self.max_len = max_len
+        self.bptt = bptt
         self.syll2idx = syll2idx
         self.idx2syll = {}
         if idx2syll:
@@ -81,10 +50,10 @@ class SequenceVectorizer(object):
                 except KeyError:
                     x.append(self.syll2idx['<UNK>'])
                 # truncate longer tokens
-                if len(x) >= self.max_len:
+                if len(x) >= self.bptt:
                     break
             # left-pad shorter BPTT:
-            while len(x) < self.max_len:
+            while len(x) < self.bptt:
                 x = [self.syll2idx['<PAD>']] + x
             X.append(x)
 

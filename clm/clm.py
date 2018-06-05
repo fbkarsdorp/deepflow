@@ -1,6 +1,7 @@
 """
 CUDA_VISIBLE_DEVICES=1 python3 clm.py
 """
+import argparse
 
 import pandas as pd
 
@@ -8,42 +9,68 @@ from keras.models import load_model
 
 import modelling
 import data
-from vectorization import SequenceVectorizer, LabelVectorizer
+from vectorization import SequenceVectorizer
 
 
 def main():
-    bptt = 6
-    batch_size = 128
-    min_syll_cnt = 300
-    max_songs = None
-    random_shift = 6
-    syll_emb_dim = 300
-    cond_emb_dim = 10
-    lstm_dim = 512
-    nb_epochs = 200
-    max_gen_len = 20
-    min_artist_cnt = 50
-    model_path = 'clm_model'
-    conditions = {'artists',
-                  #'topics',
-                  }
-    json_path = '../data/lazy_ohhla.json'
-    gen_conditions = {'artists': 'eminem',
-                      #'topics': 't58',
-                      }
+    parser = argparse.ArgumentParser(description='Conditional Language Model')
+    parser.add_argument('--json_path', type=str, default='../data/lazy_ohhla-beatstress.json',
+                        help='path to data file (lazy json)')
+    parser.add_argument('--model_path', type=str, default='clm_model',
+                        help='path to store model')
+    parser.add_argument('--emsize', type=int, default=300,
+                        help='size of word embeddings')
+    parser.add_argument('--cond_emsize', type=int, default=16,
+                        help='size of condition embeddings')
+    parser.add_argument('--nhid', type=int, default=1024,
+                        help='number of hidden units per layer')
+    parser.add_argument('--nlayers', type=int, default=1,
+                        help='number of layers')
+    parser.add_argument('--lr', type=float, default=0.001,
+                        help='initial learning rate')
+    parser.add_argument('--clip', type=float, default=5.0, # 0.25
+                        help='gradient clipping')
+    parser.add_argument('--epochs', type=int, default=500,
+                        help='upper epoch limit')
+    parser.add_argument('--batch_size', type=int, default=128, metavar='N',
+                        help='batch size')
+    parser.add_argument('--bptt', type=int, default=15,
+                        help='sequence length')
+    parser.add_argument('--dropout', type=float, default=0.1,
+                        help='dropout applied to layers (0 = no dropout)')
+    parser.add_argument('--seed', type=int, default=1111,
+                        help='random seed')
+    parser.add_argument('--min_syll_cnt', type=int, default=300,
+                        help='minimum syllable frequency')
+    parser.add_argument('--max_songs', type=int, default=0,
+                        help='maximum number of songs to parse')
+    parser.add_argument('--max_gen_len', type=int, default=35,
+                        help='number of syllables to generate')
+    parser.add_argument('--min_artist_cnt', type=int, default=10,
+                        help='minimum number of songs for artist embeddings')
+    args = parser.parse_args()
 
-    clm_data = data.ClmData(batch_size=batch_size,
-                            bptt=bptt,
-                            shift=random_shift,
-                            max_songs=max_songs,
-                            json_path=json_path,
+    conditions = {'artists',
+                  'topics',
+                  }
+    gen_conditions = {'artists': 'eminem',
+                      'topics': 't7'}  # topic7: gun - kill - dead - shot - murder - guns - blood - street - son
+
+    clm_data = data.ClmData(batch_size=args.batch_size,
+                            bptt=args.bptt,
+                            max_songs=args.max_songs,
+                            json_path=args.json_path,
                             conditions=conditions)
 
-    vectorizers = {'syllables': SequenceVectorizer(min_cnt=min_syll_cnt,
-                                                   max_len=bptt),
-                   'targets': LabelVectorizer(min_cnt=min_syll_cnt)}
+    vectorizers = {'syllables': SequenceVectorizer(min_cnt=args.min_syll_cnt,
+                                                   bptt=args.bptt,
+                                                   )
+                   'stresses': SequenceVectorizer(min_cnt=0,
+                                                   bptt=args.bptt)
+                                                   }
     for c in conditions:
-        vectorizers[c] = SequenceVectorizer(max_len=bptt, min_cnt=min_artist_cnt)
+        vectorizers[c] = SequenceVectorizer(bptt=args.bptt,
+                                            min_cnt=args.min_artist_cnt)
 
     for batch in clm_data.get_batches():
         for k, vectorizer in vectorizers.items():
@@ -56,23 +83,28 @@ def main():
     #    for sylls, trgts, arts in zip(batch['syllables'], batch['targets'], batch['artists']):
     #        print(sylls, trgts)
 
+    #for batch in clm_data.get_transformed_batches(vectorizers=vectorizers):
+    #    X, Y = batch
+    
     model = modelling.build_model(conditions=clm_data.conditions,
                                   vectorizers=vectorizers,
-                                  bptt=bptt,
-                                  syll_emb_dim=syll_emb_dim,
-                                  cond_emb_dim=cond_emb_dim,
-                                  lstm_dim=lstm_dim)
+                                  bptt=args.bptt,
+                                  syll_emb_dim=args.emsize,
+                                  cond_emb_dim=args.cond_emsize,
+                                  lstm_dim=args.nhid,
+                                  lr=args.lr,
+                                  dropout=args.dropout)
 
     modelling.fit_model(model=model,
-                        bptt=bptt,
+                        bptt=args.bptt,
                         vectorizers=vectorizers,
                         gen_conditions=gen_conditions,
                         generator=clm_data,
-                        nb_epochs=nb_epochs,
-                        model_path=model_path,
-                        max_gen_len=max_gen_len)
+                        nb_epochs=args.epochs,
+                        model_path=args.model_path,
+                        max_gen_len=args.max_gen_len)
 
-    model = load_model(model_path)
+    model = load_model(args.model_path)
 
 
 if __name__ == '__main__':

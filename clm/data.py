@@ -3,22 +3,28 @@ from collections import OrderedDict
 import random
 random.seed(7676)
 
+import numpy as np
+
 import extraction
 
-extractors = {'artists': extraction.extract_artist,
-              'topics': extraction.extract_topic}
+def to_categorical(y, num_classes, bptt, batch_size):
+    y = np.array(y, dtype='int').ravel()
+    n = y.shape[0]
+    categorical = np.zeros((n, num_classes))
+    categorical[np.arange(n), y] = 1
+    return categorical.reshape((batch_size, bptt, num_classes))
 
 class ClmData(object):
 
     def __init__(self, batch_size, max_songs, json_path,
-                 conditions, bptt, shift):
+                 conditions, bptt):
         self.batch_size = batch_size
         self.bptt = bptt
-        self.shift = shift
         self.max_songs = max_songs
         self.json_path = json_path
         self.conditions = set(conditions)
         self.num_batches = None
+        self.extractor = extraction.Extractor(conditions)
 
     def get_batches(self, endless=False):
 
@@ -27,7 +33,7 @@ class ClmData(object):
 
             batch_cnt = 0
 
-            batch = {'syllables': [], 'targets': []}
+            batch = {'syllables': [], 'targets': [],}
             for c in self.conditions:
                 batch[c] = []
 
@@ -40,38 +46,35 @@ class ClmData(object):
                 features = {}
                 for cond in sorted(self.conditions):
                     song_data[cond] = []
-                    features[cond] = extractors[cond](song)
+                    features[cond] = self.extractor[cond](song)
 
                 for verse in song['text']:
                     for line in verse:
-                        syllables = ['<BR>']
+                        items = ['<BR>']
                         for word in line:
-                            #for syllable in word['syllables']:
-                            #    syllables.extend(syllable)
-                            #syllables.append(' ')
-
                             for i, s in enumerate(word['syllables']):
                                 if i < len(word['syllables']) - 1:
-                                    syllables.append(s + '/')
+                                    items.append(s + '/')
                                 else:
-                                    syllables.append(s)
+                                    items.append(s)
 
-                        song_data['syllables'].extend(syllables)
+                        song_data['syllables'].extend(items)
 
                         for k in self.conditions:
-                            song_data[k].extend([features[k]] * len(syllables))
+                            song_data[k].extend([features[k]] * len(items))
 
                 # shift start position randomly at beginning of song
-                shift_ = random.choice(range(self.shift))
-                si, ei = 0 + shift_, self.bptt + shift_
+                shift_ = random.choice(range(self.bptt))
+                song_data['syllables'] = (shift_ - 1) * ['<PAD>'] + ['<BOS>'] + song_data['syllables']
+                si, ei = 0, self.bptt
 
-                while ei < len(song_data['syllables']):
+                while ei + 1 < len(song_data['syllables']):
                     batch['syllables'].append(song_data['syllables'][si:ei])
 
                     for c in self.conditions:
                         batch[c].append(song_data[c][si:ei])
 
-                    batch['targets'].append(song_data['syllables'][ei])
+                    batch['targets'].append(song_data['syllables'][si + 1: ei + 1])
 
                     si += self.bptt
                     ei += self.bptt
@@ -100,4 +103,7 @@ class ClmData(object):
             for k, vectorizer in vectorizers.items():
                 batch_dict[k] = vectorizer.transform(batch[k])
             X = {k: batch_dict[k] for k in ['syllables'] + list(self.conditions)}
-            yield X, batch_dict['targets']
+            Y = vectorizers['syllables'].transform(batch['targets'])
+            Y = to_categorical(Y, num_classes=vectorizers['syllables'].dim,
+                               bptt=self.bptt, batch_size=self.batch_size)
+            yield X, Y

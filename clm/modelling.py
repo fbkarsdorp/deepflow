@@ -15,7 +15,6 @@ def build_model(conditions, bptt, vectorizers, dropout,
     # inputs:
     input_dict = OrderedDict()
     input_dict['syllables'] = Input(shape=(bptt,), dtype='int32', name='syllables')
-    input_dict['stresses'] = Input(shape=(bptt,), dtype='int32', name='stresses')
 
     for c in sorted(conditions):
         input_dict[c] = Input(shape=(bptt,), dtype='int32', name=c)
@@ -25,9 +24,6 @@ def build_model(conditions, bptt, vectorizers, dropout,
     embed_dict['syllables'] = Embedding(output_dim=syll_emb_dim,
                                         input_dim=vectorizers['syllables'].dim,
                                         input_length=bptt)(input_dict['syllables'])
-    embed_dict['stresses'] = Embedding(output_dim=cond_emb_dim,
-                                       input_dim=vectorizers['stresses'].dim,
-                                       input_length=bptt)(input_dict['stresses'])
 
     for c in sorted(conditions):
         embed_dict[c] = Embedding(output_dim=cond_emb_dim,
@@ -84,8 +80,6 @@ def sample(preds, temperature=1.0):
     exp_preds = np.exp(preds)
     preds = exp_preds / np.sum(exp_preds)
     preds = preds.ravel()
-    #probas = np.random.multinomial(1, preds, 1)
-    #return np.argmax(probas)
     return np.random.choice(range(len(preds)), p=preds)
 
 
@@ -106,14 +100,10 @@ class GenerationCallback(Callback):
         for diversity in [0.1, 0.3, 0.5, 0.7, 0.9]:
             print('\n-> diversity:', diversity)
 
-            # (as) i walk through the valley of the shadow of death
-            stress_pattern = ['0', '0', '1', '0', '0', '1', '0', '0', '0', '1', '0', '0', '1', '0', '0', '1', '<BR>']
-
-            batch = {'syllables' : [['<BOS>', '<BR>']],
-                     'stresses' :  [['<BOS>', '<BR>']]} # (as)
+            batch = {'syllables' : [['<BOS>', '<BR>']]} # (as)
 
             for c in self.vectorizers:
-                if c not in ('syllables', 'targets', 'stresses'):
+                if c not in ('syllables', 'targets'):
                     batch[c] = [[self.gen_conditions[c]] * self.bptt]
 
             batch_dict = {}
@@ -138,11 +128,7 @@ class GenerationCallback(Callback):
 
                 preds.append(pred_syllab)
 
-                if not stress_pattern:
-                    break
-
                 batch_dict['syllables'][0] = batch_dict['syllables'][0][1:].tolist() + [pred_idx]
-                batch_dict['stresses'][0] = batch_dict['stresses'][0][1:].tolist() + [self.vectorizers['stresses'].syll2idx[stress_pattern.pop(0)]]
 
 
             print(' '.join(preds).replace('/ ', '') + '\n')

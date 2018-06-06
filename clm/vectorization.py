@@ -72,7 +72,7 @@ class SequenceVectorizer(object):
     def dump(self, path):
         with open(path, 'w') as f:
             json.dump({'min_cnt': self.min_cnt,
-                       'max_len': self.max_len,
+                       'bptt': self.bptt,
                        'idx2syll': self.idx2syll,
                        'syll2idx': self.syll2idx}, f)
 
@@ -80,4 +80,4 @@ class SequenceVectorizer(object):
     def load(self, path):
         with open(path, 'r') as f:
             params = json.load(f)
-            return Vocabulary(**params)
+            return SequenceVectorizer(**params)

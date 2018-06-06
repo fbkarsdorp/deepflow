@@ -2,10 +2,8 @@
 CUDA_VISIBLE_DEVICES=1 python3 clm.py
 """
 import argparse
-
-import pandas as pd
-
-from keras.models import load_model
+import shutil
+import os
 
 import modelling
 import data
@@ -14,10 +12,12 @@ from vectorization import SequenceVectorizer
 
 def main():
     parser = argparse.ArgumentParser(description='Conditional Language Model')
-    parser.add_argument('--json_path', type=str, default='../data/lazy_ohhla-beatstress.json',
+    parser.add_argument('--json_path', type=str, default='../data/lazy_ohhla-beatfamilies.json',
                         help='path to data file (lazy json)')
     parser.add_argument('--model_path', type=str, default='clm_model',
                         help='path to store model')
+    parser.add_argument('--vectorizer_dir', type=str, default='vectorizers',
+                        help='path to dir where to store vectorizers')
     parser.add_argument('--emsize', type=int, default=512,
                         help='size of word embeddings')
     parser.add_argument('--cond_emsize', type=int, default=56,
@@ -52,9 +52,11 @@ def main():
 
     conditions = {'artists',
                   'topics',
+                  'rhythms'
                   }
     gen_conditions = {'artists': 'eminem',
-                      'topics': 't40'}  # topic7: gun - kill - dead - shot - murder - guns - blood - street - son
+                      'topics': 't40',   # topic7: gun - kill - dead - shot - murder - guns - blood - street - son
+                      'rhythms': 'r6'}
 
     clm_data = data.ClmData(batch_size=args.batch_size,
                             bptt=args.bptt,
@@ -64,10 +66,7 @@ def main():
 
     vectorizers = {'syllables': SequenceVectorizer(min_cnt=args.min_syll_cnt,
                                                    bptt=args.bptt,
-                                                   ),
-                   'stresses': SequenceVectorizer(min_cnt=0,
-                                                   bptt=args.bptt)
-                                                   }
+                                                   )}
     for c in conditions:
         vectorizers[c] = SequenceVectorizer(bptt=args.bptt,
                                             min_cnt=args.min_artist_cnt)
@@ -78,6 +77,16 @@ def main():
 
     for vectorizer in vectorizers.values():
         vectorizer.finalize_fit()
+
+    # save the vectorizers:
+    try:
+        shutil.rmtree(args.vectorizer_dir)
+    except FileNotFoundError:
+        pass
+    os.mkdir(args.vectorizer_dir)
+
+    for n in sorted(vectorizers.keys()):
+        vectorizers[n].dump(args.vectorizer_dir + '/' + n + '.json')
 
     #for batch in clm_data.get_batches():
     #    for sylls, trgts, arts in zip(batch['syllables'], batch['targets'], batch['artists']):
@@ -103,8 +112,6 @@ def main():
                         nb_epochs=args.epochs,
                         model_path=args.model_path,
                         max_gen_len=args.max_gen_len)
-
-    model = load_model(args.model_path)
 
 
 if __name__ == '__main__':

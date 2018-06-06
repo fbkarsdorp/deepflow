@@ -82,12 +82,12 @@ class BeatGenerator:
 
 def main():
     bptt = 30
-    max_songs = 2000
+    max_songs = None
     batch_size = 256
     hidden_dim = 10
     embed_dim = 5
-    n_neighbors = 25
-    n_clusters = 20
+    n_neighbors = 5
+    n_clusters = 15
     dropout = 0.2
     epochs = 30
     lr = 0.001
@@ -95,7 +95,6 @@ def main():
     output_file = '../data/lazy_ohhla-beatfamilies.json'
     model_path = 'beat_autoencoder'
 
-    cnt = 0
     vectorizer = SequenceVectorizer(min_cnt=0, bptt=bptt)
 
     generator = BeatGenerator(input_file, batch_size=batch_size,
@@ -144,7 +143,7 @@ def main():
     # get representations:
     lines, beats, reprs = [], [], []
     batch_lines, batch_beats = [], []
-    for line, beat in generator.get_lines(max_lines=10000):
+    for line, beat in generator.get_lines(max_lines=None):
         batch_lines.append(line)
         batch_beats.append(beat)
 
@@ -174,8 +173,6 @@ def main():
     km = MiniBatchKMeans(n_clusters=n_clusters)
     X_ = km.fit_predict(reprs)
 
-    print(X_)
-
     knn = NearestNeighbors(n_neighbors=n_neighbors, algorithm='brute')
     knn.fit(reprs)
 
@@ -200,13 +197,14 @@ def main():
                     verse += ['<EOS>']
                     beats.append(verse)
 
-            x = vectorizer.transform([beats])
+            x = vectorizer.transform(beats)
             pred = repr_fn.predict(x)
             cluster_idxs = list(km.predict(pred).ravel())
 
-            for verse in song['text']:
-                for line in verse:
-                    line['rhythm_type'] = 'r' + str(cluster_idxs.pop(0))
+            for idx1, verse in enumerate(song['text']):
+                for idx2, line in enumerate(verse):
+                    song['text'][idx1][idx2] = {'tokens': line, 'rhythm_type': 'r' + str(cluster_idxs.pop(0))}
+
             f.write(json.dumps(song) + '\n')
 
             if max_songs and song_idx >= max_songs:

@@ -33,7 +33,7 @@ class ClmData(object):
 
             batch_cnt = 0
 
-            batch = {'syllables': [], 'targets': [],}
+            batch = {'syllables': [], 'targets': [], 'stresses': []}
             for c in self.conditions:
                 batch[c] = []
 
@@ -42,6 +42,7 @@ class ClmData(object):
 
                 song_data = OrderedDict()
                 song_data['syllables'] = []  # always include syllables
+                song_data['stresses'] = []  # always include stresses
 
                 features = {}
                 for cond in sorted(self.conditions):
@@ -50,22 +51,27 @@ class ClmData(object):
 
                 for verse in song['text']:
                     for line in verse:
-                        items = ['<BR>']
+                        syllables, stresses = ['<BR>'], ['<BR>']
                         for word in line:
                             for i, s in enumerate(word['syllables']):
                                 if i < len(word['syllables']) - 1:
-                                    items.append(s + '/')
+                                    syllables.append(s + '/')
                                 else:
-                                    items.append(s)
+                                    syllables.append(s)
+                                stresses.append(str(word['beatstress'][i]))
 
-                        song_data['syllables'].extend(items)
+                        song_data['syllables'].extend(syllables)
+                        song_data['stresses'].extend(stresses)
 
                         for k in self.conditions:
-                            song_data[k].extend([features[k]] * len(items))
+                            song_data[k].extend([features[k]] * len(syllables))
 
                 # shift start position randomly at beginning of song
                 shift_ = random.choice(range(self.bptt))
+
                 song_data['syllables'] = (shift_ - 1) * ['<PAD>'] + ['<BOS>'] + song_data['syllables']
+                song_data['stresses'] = (shift_ - 1) * ['<PAD>'] + ['<BOS>'] + song_data['stresses']
+
                 si, ei = 0, self.bptt
 
                 while ei + 1 < len(song_data['syllables']):
@@ -75,6 +81,7 @@ class ClmData(object):
                         batch[c].append(song_data[c][si:ei])
 
                     batch['targets'].append(song_data['syllables'][si + 1: ei + 1])
+                    batch['stresses'].append(song_data['stresses'][si + 1: ei + 1])
 
                     si += self.bptt
                     ei += self.bptt
@@ -84,7 +91,7 @@ class ClmData(object):
 
                         yield batch
 
-                        batch = {'syllables': [], 'targets': []}
+                        batch = {'syllables': [], 'targets': [], 'stresses': []}
                         for c in self.conditions:
                             batch[c] = []
 
@@ -102,7 +109,8 @@ class ClmData(object):
             batch_dict = {}
             for k, vectorizer in vectorizers.items():
                 batch_dict[k] = vectorizer.transform(batch[k])
-            X = {k: batch_dict[k] for k in ['syllables'] + list(self.conditions)}
+            
+            X = {k: batch_dict[k] for k in ['syllables', 'stresses'] + list(self.conditions)}
             Y = vectorizers['syllables'].transform(batch['targets'])
             Y = to_categorical(Y, num_classes=vectorizers['syllables'].dim,
                                bptt=self.bptt, batch_size=self.batch_size)

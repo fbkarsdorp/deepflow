@@ -18,11 +18,11 @@ def main():
                         help='path to data file (lazy json)')
     parser.add_argument('--model_path', type=str, default='clm_model',
                         help='path to store model')
-    parser.add_argument('--emsize', type=int, default=300,
+    parser.add_argument('--emsize', type=int, default=512,
                         help='size of word embeddings')
-    parser.add_argument('--cond_emsize', type=int, default=16,
+    parser.add_argument('--cond_emsize', type=int, default=56,
                         help='size of condition embeddings')
-    parser.add_argument('--nhid', type=int, default=1024,
+    parser.add_argument('--nhid', type=int, default=2048,
                         help='number of hidden units per layer')
     parser.add_argument('--nlayers', type=int, default=1,
                         help='number of layers')
@@ -34,13 +34,13 @@ def main():
                         help='upper epoch limit')
     parser.add_argument('--batch_size', type=int, default=128, metavar='N',
                         help='batch size')
-    parser.add_argument('--bptt', type=int, default=15,
+    parser.add_argument('--bptt', type=int, default=20,
                         help='sequence length')
     parser.add_argument('--dropout', type=float, default=0.1,
                         help='dropout applied to layers (0 = no dropout)')
     parser.add_argument('--seed', type=int, default=1111,
                         help='random seed')
-    parser.add_argument('--min_syll_cnt', type=int, default=300,
+    parser.add_argument('--min_syll_cnt', type=int, default=100,
                         help='minimum syllable frequency')
     parser.add_argument('--max_songs', type=int, default=0,
                         help='maximum number of songs to parse')
@@ -54,7 +54,7 @@ def main():
                   'topics',
                   }
     gen_conditions = {'artists': 'eminem',
-                      'topics': 't7'}  # topic7: gun - kill - dead - shot - murder - guns - blood - street - son
+                      'topics': 't40'}  # topic7: gun - kill - dead - shot - murder - guns - blood - street - son
 
     clm_data = data.ClmData(batch_size=args.batch_size,
                             bptt=args.bptt,
@@ -64,7 +64,7 @@ def main():
 
     vectorizers = {'syllables': SequenceVectorizer(min_cnt=args.min_syll_cnt,
                                                    bptt=args.bptt,
-                                                   )
+                                                   ),
                    'stresses': SequenceVectorizer(min_cnt=0,
                                                    bptt=args.bptt)
                                                    }

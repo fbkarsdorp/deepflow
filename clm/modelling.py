@@ -1,6 +1,6 @@
 import numpy as np
 
-from keras.layers import Input, Embedding, LSTM, Dense, Concatenate, Dropout, TimeDistributed
+from keras.layers import Input, Embedding, LSTM, Dense, Concatenate, Dropout, TimeDistributed, Conv1D
 from keras.models import Model
 from keras.callbacks import ModelCheckpoint, Callback
 from keras.callbacks import LambdaCallback, ReduceLROnPlateau
@@ -15,6 +15,7 @@ def build_model(conditions, bptt, vectorizers, dropout,
     # inputs:
     input_dict = OrderedDict()
     input_dict['syllables'] = Input(shape=(bptt,), dtype='int32', name='syllables')
+    input_dict['stresses'] = Input(shape=(bptt,), dtype='int32', name='stresses')
 
     for c in sorted(conditions):
         input_dict[c] = Input(shape=(bptt,), dtype='int32', name=c)
@@ -22,14 +23,16 @@ def build_model(conditions, bptt, vectorizers, dropout,
     # embeddings:
     embed_dict = OrderedDict()
     embed_dict['syllables'] = Embedding(output_dim=syll_emb_dim,
-                             input_dim=vectorizers['syllables'].dim,
-                             #mask_zero=True,
-                             input_length=bptt)(input_dict['syllables'])
+                                        input_dim=vectorizers['syllables'].dim,
+                                        input_length=bptt)(input_dict['syllables'])
+    embed_dict['stresses'] = Embedding(output_dim=cond_emb_dim,
+                                       input_dim=vectorizers['stresses'].dim,
+                                       input_length=bptt)(input_dict['stresses'])
 
-    for c in input_dict:
+    for c in sorted(conditions):
         embed_dict[c] = Embedding(output_dim=cond_emb_dim,
-                                    input_dim=vectorizers[c].dim,
-                                    input_length=bptt)(input_dict[c])
+                                  input_dim=vectorizers[c].dim,
+                                  input_length=bptt)(input_dict[c])
 
     concat_emb = Concatenate(axis=-1)([embed_dict[k] for k in embed_dict])
     concat_emb = Dropout(dropout)(concat_emb)
@@ -64,7 +67,7 @@ def fit_model(model, generator, nb_epochs, bptt,
 
     reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.3,
                                   patience=1, min_lr=0.000001,
-                                  verbose=1)
+                                  verbose=1, epsilon=0.03)
 
     try:
         model.fit_generator(generator=generator.get_transformed_batches(vectorizers, endless=True),
@@ -98,21 +101,30 @@ class GenerationCallback(Callback):
 
     def on_epoch_end(self, epoch, logs):
         #batch = {'syllables' : [['<PAD>'] * (self.bptt - 1) + ['<BR>']]}
-        batch = {'syllables' : [['<BR>', 'beat', 'you', 'to', 'death', 'and', 'teach', 'you', 'a', 'le/']]}
-        for c in self.vectorizers:
-            if c not in ('syllables', 'targets'):
-                batch[c] = [[self.gen_conditions[c]] * self.bptt]
+        #batch = {'syllables' : [['<BR>', 'beat', 'you', 'to', 'death', 'and', 'teach', 'you', 'a', 'le/']]}
 
-        batch_dict = {}
-        for k, vectorizer in self.vectorizers.items():
-            if k == 'targets':
-                continue
-            batch_dict[k] = vectorizer.transform(batch[k])
-
-        for diversity in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
+        for diversity in [0.1, 0.3, 0.5, 0.7, 0.9]:
             print('\n-> diversity:', diversity)
+
+            # (as) i walk through the valley of the shadow of death
+            stress_pattern = ['0', '0', '1', '0', '0', '1', '0', '0', '0', '1', '0', '0', '1', '0', '0', '1', '<BR>']
+
+            batch = {'syllables' : [['<BOS>', '<BR>']],
+                     'stresses' :  [['<BOS>', '<BR>']]} # (as)
+
+            for c in self.vectorizers:
+                if c not in ('syllables', 'targets', 'stresses'):
+                    batch[c] = [[self.gen_conditions[c]] * self.bptt]
+
+            batch_dict = {}
+            for k, vectorizer in self.vectorizers.items():
+                if k == 'targets':
+                    continue
+                batch_dict[k] = vectorizer.transform(batch[k])
+
             preds = []
             for i in range(self.max_len):
+
                 pred_proba = self.model.predict(batch_dict, verbose=0)[0][-1]
 
                 pred_syllab = '<UNK>'
@@ -126,7 +138,11 @@ class GenerationCallback(Callback):
 
                 preds.append(pred_syllab)
 
-                batch_dict['syllables'][0] = batch_dict['syllables'][0][1:].tolist() + [pred_idx]
+                if not stress_pattern:
+                    break
 
-            print(' '.join(preds).replace('/ ', ''))
-            print()
+                batch_dict['syllables'][0] = batch_dict['syllables'][0][1:].tolist() + [pred_idx]
+                batch_dict['stresses'][0] = batch_dict['stresses'][0][1:].tolist() + [self.vectorizers['stresses'].syll2idx[stress_pattern.pop(0)]]
+
+
+            print(' '.join(preds).replace('/ ', '') + '\n')

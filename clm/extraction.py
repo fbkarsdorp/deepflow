@@ -40,19 +40,13 @@ class Extractor(object):
         artist = artist.replace(' ', '_')
         return artist
 
-    def extract_stress(self, song):
-        for verse in song['text']:
-            for line in verse:
-                syllables.append('<BR>')
-                for word in line:
-                    for i, s in enumerate(word['beatstress']):
-                        items.append(s)
-        return syllables
-
     def extract_topic(self, song):
         id_ = song['id']
         topic_scores = self.id2topic.loc[id_]
-        sampled_topic = list(self.id2topic.columns)[weighted_pick(topic_scores)]
-        #sampled_topic = np.random.choice(id2topic.columns, 1,
-        #                                 p=topic_scores)[0]
+        #print(topic_scores)
+        #sampled_topic = list(self.id2topic.columns)[weighted_pick(topic_scores)]
+        #print(sampled_topic)
+        #return np.argmax(topic_scores)
+        sampled_topic = np.random.choice(self.id2topic.columns, 1,
+                                         p=topic_scores)[0]
         return sampled_topic

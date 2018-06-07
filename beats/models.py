@@ -33,7 +33,6 @@ DEFAULT_DRUM_TYPE_PITCHES = [
     [51, 52, 53, 59, 82]
 ]
 
-
 class DrumEncoding:
     def __init__(self, drum_pitches=None, ignore_unknown_drums=True):
         if drum_pitches is None:
@@ -74,14 +73,20 @@ class MidiEncoder:
         return (torch.LongTensor(strings[:-1]), torch.LongTensor(strings[1:]), len(strings) - 1)
 
     def encode_midi(self, midi_file: str) -> Tuple[torch.tensor, torch.tensor, int]:
-        return self.encode_sequence(self.midi_to_sequence(midi_file))
+        sequence = self.midi_to_sequence(midi_file)
+        if sequence is not None:
+            return self.encode_sequence(sequence)
 
     def midi_to_sequence(self, midi_file: str) -> None:
         stream = pretty_midi.PrettyMIDI(midi_file)
         tempo = stream.get_tempo_changes()[1][0]
+        ts = stream.time_signature_changes[0]
+        if not (ts.numerator == 4 and ts.denominator == 4):
+            return None
         beats = np.arange(0, stream.get_end_time(), 60 / tempo / (self.q / 4))
         encoding = np.zeros(
             (int(math.ceil(beats.size / self.q)) * self.q, len(self.encoder)), dtype=int)
+        assert encoding.shape[0] % self.q == 0
         for instrument in stream.instruments:
             for note in instrument.notes:
                 idx = np.abs(note.start - beats).argmin()
@@ -97,7 +102,7 @@ class MidiEncoder:
         pm = pretty_midi.PrettyMIDI(initial_tempo=bpm)
         instrument = pretty_midi.Instrument(0)
         pm.instruments.append(instrument)
-        time_signature = pretty_midi.containers.TimeSignature(4, 4, 4)
+        time_signature = pretty_midi.containers.TimeSignature(4, 4, 0.0)
         pm.time_signature_changes.append(time_signature)
         instrument_events = collections.defaultdict(
             lambda: collections.defaultdict(list))
@@ -128,9 +133,10 @@ def perm_sort(x, index):
 
 class DrumData:
     def __init__(self, midi_dir: str, encoder: MidiEncoder) -> None:
-        self.midi_files = [encoder.encode_midi(f.path) for f in os.scandir(midi_dir)]
+        self.midi_files = list(filter(None, [encoder.encode_midi(f.path) for f in os.scandir(midi_dir)]))
         self.train, self.dev = sklearn.model_selection.train_test_split(
             self.midi_files, test_size=0.1, shuffle=True)
+        print(f"Train size: {len(self.train)}; dev size: {len(self.dev)}")
 
     def train_batches(self, batch_size=20):
         return self.get_batches(self.train, batch_size=batch_size)
@@ -159,18 +165,20 @@ class DrumData:
 
 
 def sample_from_piano_rnn(rnn, sample_length=16, temperature=1, start=None, device="cpu"):
+    rnn.eval()
     if start is None:
         current_input = torch.zeros(1, 1, dtype=torch.int).type(torch.LongTensor)
         current_input[0, 0] = 1
         current_input = current_input.to(device)
     hidden = None
     final_output = [current_input.data.squeeze(1)]
-    for i in range(sample_length):
-        output, hidden = rnn(current_input, [1], hidden)
-        probabilities = torch.nn.functional.log_softmax(output.div(temperature), dim=2).exp()
-        current_input = torch.multinomial(
-            probabilities.view(-1), 1).squeeze().unsqueeze(0).unsqueeze(1)
-        final_output.append(current_input.data.squeeze(1))
+    with torch.no_grad():
+        for i in range(sample_length):
+            output, hidden = rnn(current_input, [1], hidden)
+            probabilities = torch.nn.functional.log_softmax(output.div(temperature), dim=2).exp()
+            current_input = torch.multinomial(
+                probabilities.view(-1), 1).squeeze().unsqueeze(0).unsqueeze(1)
+            final_output.append(current_input.data.squeeze(1))
     sampled_sequence = torch.cat(final_output, dim=0).cpu().numpy()
     return sampled_sequence
 
@@ -189,7 +197,7 @@ class LSTM(torch.nn.Module):
         embs = torch.nn.functional.dropout(embs, p=self.dropout, training=self.training)
         packed = torch.nn.utils.rnn.pack_padded_sequence(embs, lengths, batch_first=True)
         outputs, hidden = self.lstm(packed, hidden)
-        outputs, output_lengths = torch.nn.utils.rnn.pad_packed_sequence(outputs, batch_first=True)
+        outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(outputs, batch_first=True)
         logits = self.projection_layer(outputs)
         return logits, hidden
 

@@ -51,13 +51,13 @@ class RhymeData:
 
     def post_batch(self, in0, in1, targets, max_len):
         targets = torch.FloatTensor(targets)
-        in0 = torch.LongTensor([x + [0] * (max_len - len(x)) for x in in0])
-        in1 = torch.LongTensor([x + [0] * (max_len - len(x)) for x in in1])
+        in0 = torch.LongTensor([[0] * (max_len - len(x)) + x for x in in0])
+        in1 = torch.LongTensor([[0] * (max_len - len(x)) + x for x in in1])
         return in0, in1, targets
         
     def _compile_data(self):
         pronouncing.init_cmu()
-        self.vocab = vocab = random.sample(sorted(pronouncing.lookup.keys()), 1000)
+        self.vocab = vocab = random.sample(sorted(pronouncing.lookup.keys()), 100)
         vectorizer = CountVectorizer(token_pattern=r'\w')
         D = vectorizer.fit_transform(vocab)
         DM = pairwise_distances(D, metric='cosine')

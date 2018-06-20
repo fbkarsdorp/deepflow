@@ -226,14 +226,16 @@ class BlockDataSet(DataSet):
 
 
 if __name__ == '__main__':
-    syllable_vocab, syllable_embeddings = load_gensim_embeddings(
-        '../data/syllable-embeddings/syllables.200.10.10.syllable.cbow.gensim')
     stress_encoder = Encoder('stress')
     beat_encoder = Encoder('beatstress')
-    syllable_encoder = Encoder('syllables', vocab=syllable_vocab)
+    syllable_encoder = Encoder('syllables', preprocessor=format_syllables)
     wb_encoder = Encoder('syllables', preprocessor=word_boundaries)
-    data = BlockDataSet('../data/ohhla-beatstress.json', batch_size=5,
+    data = BlockDataSet('../data/lyrics-corpora/ohhla-beatstress.json', batch_size=5,
                         syllables=syllable_encoder)
+    for batch in data.batches():
+        pass
+    print(syllable_encoder.size())
+    print(syllable_encoder.index)
 
     def reverse(*bs):
         for lines in zip(*[b['syllables'] for b in bs]):

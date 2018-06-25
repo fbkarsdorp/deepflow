@@ -32,6 +32,24 @@ def format_syllables(syllables):
                  for i, s in enumerate(syllables)]
     return syllables
 
+def format_syllables(syllables):
+    if len(syllables) == 1:
+        return syllables
+    return ['{}{}{}'.format('-' if i > 0 else '',
+                            s,
+                            '-' if (i < len(syllables) - 1) else '')
+            for i, s in enumerate(syllables)]
+
+
+def format_syllables(syllables):
+    if len(syllables) == 1:
+        return syllables
+    return ['{}{}{}'.format('-' if i > 0 else '',
+                            s,
+                            '-' if (i < len(syllables) - 1) else '')
+            for i, s in enumerate(syllables)]
+
+
 class Encoder:
     def __init__(self, name, pad_token=PAD, eos_token=EOS, bos_token=BOS, unk_token=UNK,
                  vocab=None, fixed_vocab=False, preprocessor=identity):
@@ -225,19 +243,21 @@ class BlockDataSet(DataSet):
 
 
 if __name__ == '__main__':
-    syllable_vocab, syllable_embeddings = load_gensim_embeddings(
-        '../data/syllable-embeddings/syllables.200.10.10.syllable.cbow.gensim')
     stress_encoder = Encoder('stress')
     beat_encoder = Encoder('beatstress')
-    syllable_encoder = Encoder('syllables', vocab=syllable_vocab)
+    syllable_encoder = Encoder('syllables', preprocessor=format_syllables)
     wb_encoder = Encoder('syllables', preprocessor=word_boundaries)
-    data = BlockDataSet('../data/mcflow/mcflow-primary-recip.json', batch_size=5,
+    data = BlockDataSet('../data/lyrics-corpora/ohhla-beatstress.json', batch_size=5,
                         syllables=syllable_encoder)
+    for batch in data.batches():
+        pass
+    print(syllable_encoder.size())
+    print(syllable_encoder.index)
 
     def reverse(*bs):
         for lines in zip(*[b['syllables'] for b in bs]):
             for idx, line in enumerate( lines):
-                print(idx, syllable_encoder.decode(line))
+                print(idx, ' '.join(syllable_encoder.decode(line)))
             print()
 
     bat = data.batches()

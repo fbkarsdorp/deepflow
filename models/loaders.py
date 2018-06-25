@@ -26,29 +26,10 @@ def normalize_stress(stress):
 def format_syllables(syllables):
     if len(syllables) == 1:
         return syllables
-    syllables = ['{}{}{}'.format('-' if i > 0 else '',
-                            s,
-                            '-' if (i < len(syllables) - 1) else '').lower()
-                 for i, s in enumerate(syllables)]
-    return syllables
-
-def format_syllables(syllables):
-    if len(syllables) == 1:
-        return syllables
     return ['{}{}{}'.format('-' if i > 0 else '',
                             s,
                             '-' if (i < len(syllables) - 1) else '')
             for i, s in enumerate(syllables)]
-
-
-def format_syllables(syllables):
-    if len(syllables) == 1:
-        return syllables
-    return ['{}{}{}'.format('-' if i > 0 else '',
-                            s,
-                            '-' if (i < len(syllables) - 1) else '')
-            for i, s in enumerate(syllables)]
-
 
 class Encoder:
     def __init__(self, name, pad_token=PAD, eos_token=EOS, bos_token=BOS, unk_token=UNK,

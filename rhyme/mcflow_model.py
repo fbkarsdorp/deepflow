@@ -32,11 +32,12 @@ def init_pretrained(path, encoder, weight):
 
 
 class Model(nn.Module):
-    def __init__(self, encoders, emb_dim, hid_dim, pretrained_emb=None,
-                 feats=['stress', 'onset', 'nucleus', 'coda']):
+    def __init__(self, encoders, emb_dim, hid_dim, layers=1, dropout=0.25,
+                 pretrained_emb=None, feats=['stress', 'onset', 'nucleus', 'coda']):
 
         self.encoders = encoders
         self.feats = feats
+        self.dropout = dropout
         super().__init__()
 
         # embedding layers
@@ -55,11 +56,13 @@ class Model(nn.Module):
         self.embs = embs
 
         # rnns
-        self.rnn = nn.GRU(rnn_inp, hid_dim, bidirectional=True)
+        self.rnn = nn.GRU(rnn_inp, hid_dim, num_layers=layers,
+                          bidirectional=True, dropout=self.dropout)
 
     def forward_single(self, inp, lengths):
         # inp: (seq_len x batch)
         emb = torch.cat([self.embs[name](inp[name]) for name in sorted(self.embs)], 2)
+        emb = nn.functional.dropout(emb, p=self.dropout, training=self.training)
         emb, unsort = pack_sort(emb, lengths)
         out, _ = self.rnn(emb)
         out, _ = unpack(out)
@@ -71,14 +74,15 @@ class Model(nn.Module):
         a_out, b_out = self.forward_single(a, alen), self.forward_single(b, blen)
         # compute attention matrix
         att = torch.einsum('sbm,tbm->bst', [a_out, b_out])
-        att = nn.functional.sigmoid(att)
 
         return att
 
-    def loss(self, att, alen, blen, alignment):
-        # att, alignment: (batch x aseq_len x bseq_len)
-        loss = (1 - (att * alignment)) + (((1 - alignment) * att) ** 2)
-        loss *= make_3d_mask(alen, blen, alignment)
+    def nll_loss(self, att, alen, blen, alignment):
+        pos = alignment * nn.functional.logsigmoid(att)
+        neg = (1-alignment) * torch.log((1-nn.functional.sigmoid(att)) + 1e-9)
+        loss = -(pos + neg)
+        # mask loss
+        loss = loss * make_3d_mask(alen, blen, alignment)
         # mean batch loss
         loss = loss.sum(dim=2).sum(dim=1).mean()
 
@@ -91,7 +95,7 @@ class Model(nn.Module):
 
         for idx, (a, alen, b, blen, alignment) in enumerate(batches):
             att = self(a, alen, b, blen)
-            loss = self.loss(att, alen, blen, alignment)
+            loss = self.nll_loss(att, alen, blen, alignment)
             opt.zero_grad()
             if self.training:
                 loss.backward()
@@ -124,7 +128,7 @@ class Model(nn.Module):
         with torch.no_grad():
             for a, alen, b, blen, alignment in dataset:
                 att = self(a, alen, b, blen)
-                tloss += self.loss(att, alen, blen, alignment).item()
+                tloss += self.nll_loss(att, alen, blen, alignment).item()
                 assert att.size() == alignment.size()
                 tacc += accuracy(att, alignment, alen, blen)
                 tlen += 1
@@ -149,8 +153,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--emb_dim', type=int, default=20)
     parser.add_argument('--hid_dim', type=int, default=50)
+    parser.add_argument('--layers', type=int, default=1)
+    parser.add_argument('--dropout', type=float, default=0.0)
     parser.add_argument('--batch_size', type=int, default=10)
     parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--device', default='cpu')
     parser.add_argument('--pretrained')
     args = parser.parse_args()
 
@@ -158,8 +165,9 @@ if __name__ == '__main__':
     print("Loading encoders")
     encoders = fit_encoders()
 
-    feats = ['syllable']
+    feats = ['nucleus', 'syllable']
     model = Model(encoders, args.emb_dim, args.hid_dim, feats=feats,
+                  dropout=args.dropout, layers=args.layers,
                   pretrained_emb=200 if args.pretrained else None)
     if args.pretrained and 'syllable' in feats:
         init_pretrained(args.pretrained,
@@ -168,6 +176,7 @@ if __name__ == '__main__':
 
     print(model)
     print(sum(p.nelement() for p in model.parameters()))
+    model.to(args.device)
 
     print("Loading dataset")    # for mcflow in-memory is fine
     train, dev = split_train_dev(get_dataset(encoders), 0.1)
@@ -176,5 +185,7 @@ if __name__ == '__main__':
     opt = torch.optim.Adam(list(model.parameters()), lr=0.01)
     for epoch in range(args.epochs):
         print("epoch", epoch)
-        model.train_model(opt, get_iterator(train, args.batch_size, 0))
-        model.runeval(get_iterator(dev, args.batch_size, 0))
+        model.train_model(opt, get_iterator(train, args.batch_size, 0, args.device))
+        model.runeval(get_iterator(dev, args.batch_size, 0, args.device))
+        print("-- train test --")
+        model.runeval(get_iterator(train[:100], args.batch_size, 0, args.device))

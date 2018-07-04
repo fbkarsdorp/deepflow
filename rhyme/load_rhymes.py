@@ -250,15 +250,17 @@ def get_rhyme_mask(sources, targets, slen, tlen):
     return mat
 
 
-def make_batch(a, alen, b, blen, alignment, pad):
+def make_batch(a, alen, b, blen, alignment, pad, device):
     alen_max, blen_max, batch = max(alen), max(blen), len(alignment)
 
     alignment_b = torch.zeros(batch, alen_max, blen_max).fill_(pad)
 
     a_b, b_b = {}, {}
     for field in a[0]:
-        a_b[field] = torch.zeros(alen_max, batch, dtype=torch.int64).fill_(pad)
-        b_b[field] = torch.zeros(blen_max, batch, dtype=torch.int64).fill_(pad)
+        a_b[field] = torch.zeros(
+            alen_max, batch, dtype=torch.int64).fill_(pad)
+        b_b[field] = torch.zeros(
+            blen_max, batch, dtype=torch.int64).fill_(pad)
 
     for i in range(batch):
         alen_i, blen_i = alen[i], blen[i]
@@ -266,6 +268,11 @@ def make_batch(a, alen, b, blen, alignment, pad):
         for field in a[0]:
             a_b[field][0:alen_i, i].copy_(a[i][field])
             b_b[field][0:blen_i, i].copy_(b[i][field])
+
+    alignment_b = alignment_b.to(device)
+    for field in a_b:
+        a_b[field] = a_b[field].to(device)
+        b_b[field] = b_b[field].to(device)
 
     return a_b, list(alen), b_b, list(blen), alignment_b
 
@@ -283,12 +290,12 @@ def get_verse_data(verse, encoders):
         yield tverse[i], lens[i], tverse[j], lens[j], alignment
 
 
-def get_iterator(dataset, batch_size, pad):
+def get_iterator(dataset, batch_size, pad, device='cpu'):
     import random
     random.shuffle(dataset)
     for i in range(0, len(dataset), batch_size):
         a, alen, b, blen, alignment = zip(*dataset[i: i+batch_size])
-        yield make_batch(a, alen, b, blen, alignment, pad)
+        yield make_batch(a, alen, b, blen, alignment, pad, device)
 
 
 def get_dataset(encoders, **kwargs):

@@ -249,7 +249,7 @@ if __name__ == '__main__':
     beat_encoder = Encoder('beatstress')
     syllable_encoder = Encoder('syllables')
     wb_encoder = Encoder('syllables', preprocessor=word_boundaries)
-    data = BlockDataSet('../data/mcflow.train.json', batch_size=5,
+    data = BlockDataSet('./data/mcflow.train.json', batch_size=5,
                         syllables=syllable_encoder)
 
     # fit encoder
@@ -258,7 +258,7 @@ if __name__ == '__main__':
 
     def reverse(*bs):
         for lines in zip(*[b['syllables'] for b in bs]):
-            for idx, line in enumerate( lines):
+            for idx, line in enumerate(lines):
                 print(idx, ' '.join(syllable_encoder.decode(line)))
             print()
 

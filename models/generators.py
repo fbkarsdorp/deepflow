@@ -39,8 +39,11 @@ def pad_sequence(batch, lengths, padding_idx=0, batch_first=False):
 
 
 class LM(nn.Module):
+    """
+    conds: list of condition encoders
+    """
     def __init__(self, vocab, emb_dim, hid_dim, num_layers=1, dropout=0.0,
-                 padding_idx=None):
+                 padding_idx=None, conds=None, cond_emb_dim=None):
         self.dropout = dropout
         super().__init__()
 
@@ -51,9 +54,23 @@ class LM(nn.Module):
         else:
             self.nll_weight = None
 
+        # input emb
         self.embs = nn.Embedding(vocab, emb_dim, padding_idx=padding_idx)
-        self.rnn = nn.LSTM(emb_dim, hid_dim, num_layers,
+        # conds emb
+        rnn_inp = emb_dim
+        self.conds = None
+        if conds is not None:
+            self.conds = {}
+            for cond in conds:
+                emb = nn.Embedding(len(cond), cond_emb_dim or emb_dim)
+                self.conds[cond.name] = emb
+                self.add_module(cond.name, emb)
+                rnn_inp += cond_emb_dim or emb_dim
+        # rnn
+        self.rnn = nn.LSTM(rnn_inp, hid_dim, num_layers,
                            dropout=dropout, batch_first=True)
+
+        # output
         self.proj = nn.Linear(hid_dim, vocab)
 
         if emb_dim == hid_dim:
@@ -71,9 +88,18 @@ class LM(nn.Module):
         nn.init.constant_(self.proj.bias, 0.)
         nn.init.uniform_(self.proj.weight, -initrange, initrange)
 
-    def forward(self, inp, lengths, hidden=None):
+    def forward(self, inp, lengths, hidden=None, conds=None):
+        if conds is not None and self.conds is not None:
+            raise ValueError("conds needs conds")
+
         embs = self.embs(inp)
         embs = F.dropout(embs, p=self.dropout, training=self.training)
+        if conds is not None:
+            batch, seq_len = inp.size()
+            conds = [self.conds[cond](conds[cond]).expand(batch, seq_len, -1)
+                     for cond in conds]
+            embs = torch.cat([embs, *conds], dim=2)
+            
         embs, unsort = torch_utils.pack_sort(embs, lengths, batch_first=True)
         output, hidden = self.rnn(embs, hidden)
         output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
@@ -96,20 +122,28 @@ class LM(nn.Module):
 
         return loss
 
+    def prepare_batch(self, batch):
+        lengths = torch.LongTensor(batch['length'])
+        syllables = batch['syllables']
+        syllables = pad_sequence(syllables, lengths, batch_first=True).to(device)
+        lengths = lengths.to(device)
+
+        # TODO: add conditions, should be a list of 1D tensors (only batch dim)
+        conds = None
+
+        return syllables, lengths, conds
+
     def evaluate(self, dataset, device):
         hidden = None
         total_loss, total_batches = 0, 0
 
         for batch in dataset.batches():
             # prepare data
-            lengths = torch.LongTensor(batch['length'])
-            syllables = batch['syllables']
-            syllables = pad_sequence(syllables, lengths, batch_first=True).to(device)
-            lengths = lengths.to(device)
+            syllables, lengths, conds = self.prepare_batch(batch)
 
             # get loss
             hidden = trim_hidden(hidden, lengths)
-            logits, hidden = self(syllables, lengths, hidden)
+            logits, hidden = self(syllables, lengths, hidden, conds)
             loss = self.loss(logits[:, :-1], syllables[:, 1:], lengths-1)
             total_loss += loss.exp().item()
             total_batches += 1
@@ -126,15 +160,11 @@ class LM(nn.Module):
             total_loss, total_batches = 0, 0
 
             for batch_num, batch in enumerate(dataset.batches()):
-                # prepare data
-                lengths = torch.LongTensor(batch['length'])
-                syllables = batch['syllables']
-                syllables = pad_sequence(syllables, lengths, batch_first=True).to(device)
-                lengths = lengths.to(device)
+                syllables, lengths, conds = self.prepare_batch(batch)
 
                 # get loss
                 hidden = trim_hidden(hidden, lengths)
-                logits, hidden = self(syllables, lengths, hidden)
+                logits, hidden = self(syllables, lengths, hidden, conds)
                 loss = self.loss(logits[:, :-1], syllables[:, 1:], lengths-1)
 
                 # optimize
@@ -183,7 +213,7 @@ class LM(nn.Module):
                     self.train()
                 print("Dev loss: {:.3f}".format(dev_loss))
 
-    def generate(self, encoder, nlines=5, maxlen=25, sample=True, temp=1.0):
+    def generate(self, encoder, conds=None, nlines=5, maxlen=25, sample=True, temp=1.0):
         # input variables
         inp = torch.tensor([encoder.bos_index] * nlines).to(self.device())
         lengths = torch.ones(nlines, dtype=torch.int64).to(self.device())
@@ -199,7 +229,7 @@ class LM(nn.Module):
 
             # run forward
             inp = inp.unsqueeze(1)  # add seq_len dim
-            preds, hidden = self(inp, lengths, hidden)
+            preds, hidden = self(inp, lengths, hidden, conds=conds)
             preds = preds.squeeze(1)  # remove seq_len dim
 
             # sample

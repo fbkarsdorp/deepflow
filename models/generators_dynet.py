@@ -12,7 +12,7 @@ BOS, EOS, UNK = '<s>', '</s>', '<unk>'
 
 
 def bucket_length(length, buckets=(5, 10, 15, 20)):
-    for i in buckets:
+    for i in sorted(buckets, reverse=True):
         if length >= i:
             return i
     return max(buckets)
@@ -68,7 +68,8 @@ class CorpusEncoder:
 
     @classmethod
     def from_corpus(cls, corpus, most_common=25000):
-        w2i, conds_w2i = collections.Counter(), {}
+        w2i = collections.Counter()
+        conds_w2i = collections.defaultdict(collections.Counter)
         for sent, conds, _ in corpus:
             for cond in conds:
                 conds_w2i[cond][conds[cond]] += 1
@@ -114,6 +115,7 @@ class CorpusReader:
         sent = [syl for w in line for syl in format_syllables(w['syllables'])]
         # TODO: fill this with other conditions
         conds = {'length': bucket_length(len(sent))}
+        # conds = {}
 
         return sent, conds
 
@@ -199,12 +201,14 @@ class RNNLanguageModel:
             self.wembeds = model.add_parameters((wvocab, input_dim))
         else:
             self.wembeds = model.add_lookup_parameters((wvocab, input_dim))
+
         # - char-level
         if use_chars:
             self.cembeds = model.add_lookup_parameters((cvocab, cemb_dim))
             self.fchars = builder(1, cemb_dim, cemb_dim, model)
             self.bchars = builder(1, cemb_dim, cemb_dim, model)
             input_dim += (2 * cemb_dim)
+
         # - conditions
         self.conds = {cond: model.add_lookup_parameters((enc.size(), cond_dim))
                       for cond, enc in encoder.conds.items()}
@@ -349,6 +353,10 @@ class RNNLanguageModel:
         output = []
         # parameters
         state = self.builder.initial_state()
+        for c in self.conds:
+            # sample conds
+            if c not in conds:
+                conds[c] = random.choice(list(encoder.conds[c].w2i.values()))
         cs = [self.conds[c][conds[c]] for c in sorted(self.conds)]
         # bias, W = dynet.parameter(self.bias), dynet.parameter(self.W)
         bias, W = self.bias, self.W
@@ -382,7 +390,10 @@ class RNNLanguageModel:
             if nchars and len(output) > nchars:
                 break
 
-        return ' '.join([encoder.word.i2w[i] for i in output])
+        conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
+        output = ' '.join([encoder.word.i2w[i] for i in output])
+
+        return output, conds
 
     def dev(self, corpus, encoder, best_loss, fails):
         """
@@ -410,8 +421,8 @@ class RNNLanguageModel:
             fails += 1
             print("Failed {} time to improve best dev loss: {}".format(fails, best_loss))
 
+        print()
         for _ in range(5):
-            print()
             print(self.sample(encoder))
         print()
 
@@ -523,6 +534,7 @@ if __name__ == '__main__':
     parser.add_argument('--dynet-autobatch')
     parser.add_argument('--dynet-gpus')
     parser.add_argument('--dynet-mem')
+    parser.add_argument('--dynet-seed')
     # extra
     parser.add_argument('--penn', action='store_true')
 

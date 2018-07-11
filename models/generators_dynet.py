@@ -113,9 +113,11 @@ class CorpusReader:
             return output
 
         sent = [syl for w in line for syl in format_syllables(w['syllables'])]
-        # TODO: fill this with other conditions
+        # TODO: fill this with other conditions such as:
+        # - rhyme (encode last rhyming sequence of syllables if they are found in
+        #          the dictionary of rhymes---see load_rhymes.py from master, or
+        #          just the last word otherwise)
         conds = {'length': bucket_length(len(sent))}
-        # conds = {}
 
         return sent, conds
 
@@ -225,8 +227,14 @@ class RNNLanguageModel:
         else:
             self.W = model.add_parameters((wvocab, hidden_dim))
 
+        # # for char-level loss the following needs to be added
+        # self.char_builder = builder(1, cemb_dim + hidden_dim, hidden_dim, model)
+        # self.W_char = model.add_parameters((cvocab, hidden_dim))
+        # self.b_char = model.add_parameters((cvocab))
+
         # persistence
         self.model = model
+        # add all params to the following list in expected order (& modify from_spec)
         self.spec = (encoder, layers, input_dim, cemb_dim, hidden_dim, cond_dim,
                      builder, use_chars, dropout, tie_weights)
 
@@ -343,9 +351,9 @@ class RNNLanguageModel:
 
         return dynet.esum(losses), state
 
-    def sample(self, encoder, nchars=100, conds={}):
+    def sample(self, encoder, nchars=100, conds=None):
         """
-        Generate a number of characters
+        Generate a number of syllables
         """
         dynet.renew_cg()
         # data
@@ -353,6 +361,8 @@ class RNNLanguageModel:
         output = []
         # parameters
         state = self.builder.initial_state()
+        # sample conditions if needed
+        conds = conds or {}
         for c in self.conds:
             # sample conds
             if c not in conds:
@@ -383,12 +393,110 @@ class RNNLanguageModel:
                 rand -= prob
                 if rand <= 0:
                     break
-            output.append(inp)
 
             if inp == encoder.word.eos:
                 break
             if nchars and len(output) > nchars:
                 break
+
+            output.append(inp)
+
+        conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
+        output = ' '.join([encoder.word.i2w[i] for i in output])
+
+        return output, conds
+
+    # TODO: char-level loss needs implementing:
+    #   - self.char_builder (RNN with )
+    #   - char-level embs for the loss RNN (or reuse from self.cembeds input embs?)
+    #   - self.char_W, self.char_b (output layer for char-level loss)
+    def char_level_loss(self, words, chars, conds, test=False):
+        # embeddings
+        embs = self.embed_sequence(words[:-1], chars[:-1], conds)
+        if not test:
+            embs = [dynet.dropout(emb, self.dropout) for emb in embs]
+            self.builder.set_dropout(self.dropout)
+            self.char_builder.set_dropout(self.dropout)
+        else:
+            self.builder.disable_dropout()
+            self.char_builder.disable_dropout()
+
+        W_char, b_char = self.W_char, b_char
+
+        losses, cstate = [], self.char_builder.initial_state()
+        for i, wstate in enumerate(state.add_inputs(embs)):
+            wout, loss = wstate.output(), []
+            for j, cinp in enumerate(chars[i+1][:-1]):
+                cstate = cstate.add_input(dynet.concatenate([self.cembeds[cinp], wout]))
+                logits = b_char + (W_char * cstate.output())
+                loss.append(dynet.pickneglogsoftmax(logits, chars[i+1][j+1]))
+            losses.append(dynet.esum(loss) / (len(chars[i+1]) - 1))
+
+        return dynet.esum(losses)
+
+    def sample_char_level(self, encoder, nwords=20, conds=None):
+        """
+        Generate a number of characters
+        """
+        dynet.renew_cg()
+        # data
+        inp = encoder.word.bos
+        output = []
+        # parameters
+        state = self.builder.initial_state()
+        # sample conditions if needed
+        conds = conds or {}
+        for c in self.conds:
+            # sample conds
+            if c not in conds:
+                conds[c] = random.choice(list(encoder.conds[c].w2i.values()))
+        cs = [self.conds[c][conds[c]] for c in sorted(self.conds)]
+        # bias, W = dynet.parameter(self.bias), dynet.parameter(self.W)
+        bias, W = self.bias, self.W
+        b_char, W_char = self.b_char, self.W_char
+
+        while True:
+            # embedding
+            emb = self.word_embed(inp)
+            if self.use_chars:
+                if inp == encoder.word.bos or inp == encoder.word.eos:
+                    cinp = encoder.char_dummy
+                else:
+                    cinp = encoder.char.transform(encoder.word.i2w[inp])
+                emb = dynet.concatenate([emb, self.char_embed(cinp)])
+            if conds:
+                emb = dynet.concatenate([emb, *cs])
+
+            # rnn
+            state = state.add_input(emb)
+
+            # char-level
+            cinp = encoder.char.bos
+            cstate = self.char_builder.initial_state()
+            coutput = []
+            while True:
+                cemb = dynet.concatenate([self.cembeds[cinp], state.output()])
+                cstate = cstate.add_input(cemb)
+                probs = dynet.softmax(b_char + (W_char * cstate.output())).vec_value()
+                rand = random.random()
+                for cinp, prob in enumerate(probs):
+                    rand -= prob
+                    if rand <= 0:
+                        break
+                if cinp == encoder.char.eos:
+                    break
+                coutput.append(cinp)
+
+            # prepare next word input
+            inp = encoder.word.transform_item(
+                ''.join(encoder.char.w2i[c] for c in coutput))
+
+            # slighly inefficient that we learn to generate <eos> character by character
+            if inp == encoder.word.eos:
+                break
+            if nwords and len(output) > nwords:
+                break
+            output.append(inp)
 
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
         output = ' '.join([encoder.word.i2w[i] for i in output])
@@ -504,6 +612,7 @@ class RNNLanguageModel:
 
                 if dev and checkfreq and idx and idx % checkfreq == 0:
                     best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                    bloss = []
 
             if dev and not checkfreq:
                 best_loss, fails = self.dev(dev, encoder, best_loss, fails)
@@ -520,6 +629,7 @@ if __name__ == '__main__':
     parser.add_argument('--hidden_dim', type=int, default=250)
     parser.add_argument('--layers', type=int, default=1)
     parser.add_argument('--tie_weights', action='store_true')
+    parser.add_argument('--maxsize', type=int, default=10000)
     # train
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--trainer', default='Adam')
@@ -549,7 +659,7 @@ if __name__ == '__main__':
         train = CorpusReader(args.train)
         dev = CorpusReader(args.dev)
 
-    encoder = CorpusEncoder.from_corpus(train)
+    encoder = CorpusEncoder.from_corpus(train, most_common=args.maxsize)
     print("... took {} secs".format(time.time() - start))
 
     print("Building model")

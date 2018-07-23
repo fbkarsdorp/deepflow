@@ -15,7 +15,7 @@ def bucket_length(length, buckets=(5, 10, 15, 20)):
     for i in sorted(buckets, reverse=True):
         if length >= i:
             return i
-    return max(buckets)
+    return min(buckets) 
 
 
 class Vocab:

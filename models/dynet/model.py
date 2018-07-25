@@ -66,12 +66,20 @@ class RNNLanguageModel:
 
         # persistence
         self.model = model
+        self.modelname = self.get_modelname()
         # add all params to the following list in expected order (& modify from_spec)
         self.spec = (encoder, layers, input_dim, cemb_dim, hidden_dim, cond_dim,
                      builder, use_chars, dropout, tie_weights)
 
         # training
         self.prev_hidden = None
+
+    def get_modelname(self):
+        from datetime import datetime
+
+        return "{}.{}".format(
+            type(self).__name__,
+            datetime.now().strftime("%Y-%m-%d+%H:%M:%S"))
 
     def param_collection(self):
         """
@@ -260,13 +268,13 @@ class RNNLanguageModel:
             print("New best dev loss: {:g}".format(tloss))
             best_loss = tloss
             fails = 0
-            self.save("generator")
+            self.save(self.modelname)
         else:
             fails += 1
             print("Failed {} time to improve best dev loss: {}".format(fails, best_loss))
 
         print()
-        for _ in range(5):
+        for _ in range(20):
             print(self.sample(encoder))
         print()
 
@@ -321,7 +329,7 @@ class RNNLanguageModel:
                     print("Early stopping after {} steps".format(fails))
                     print("Best dev loss {:g}".format(best_loss))
                     return
-                
+
                 (word, char), conds = encoder.transform(sent, conds)
                 losses, state = self.loss(word, char, conds)
                 # never store hidden when shuffling

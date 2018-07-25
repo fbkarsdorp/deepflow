@@ -1,9 +1,8 @@
 
-import math
+
 import time
 import random
 
-import tqdm
 import dynet
 
 from model import RNNLanguageModel
@@ -50,6 +49,7 @@ class HybridLanguageModel(RNNLanguageModel):
 
         # persistence
         self.model = model
+        self.modelname = self.get_modelname()
         # add all params to the following list in expected order (& modify from_spec)
         self.spec = (encoder, layers, input_dim, cemb_dim, hidden_dim, cond_dim,
                      builder, dropout)

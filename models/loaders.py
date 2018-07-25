@@ -64,6 +64,25 @@ class Encoder:
     def size(self):
         return len(self)
 
+    def load_vocab(self, fpath):
+        # reset dictionary
+        self.index = collections.defaultdict()
+        self.index.default_factory = lambda: len(self.index)
+
+        with open(fpath) as f:
+            for line in f:
+                self.index[line.strip()]
+
+        for sym in self.reserved_tokens:
+            if sym not in self.index:
+                print("Expected reserved {} to be in vocab: {}".format(sym, fpath))
+
+    def save_vocab(self, fpath):
+        with open(fpath, 'w') as f:
+            for sym, idx in sorted(self.index.items(), key=lambda x: x[1]):
+                f.write(sym)
+                f.write('\n')
+
     @property
     def pad_index(self):
         return self.index[self.pad_token]
@@ -153,7 +172,7 @@ class DataSet:
         return self.batches()
 
     def batches(self):
-        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='stress')
+        batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='syllables')
 
         with open(self.fpath) as f:
             for song in ijson.items(f, 'item'):
@@ -228,18 +247,22 @@ class BlockDataSet(DataSet):
 if __name__ == '__main__':
     stress_encoder = Encoder('stress')
     beat_encoder = Encoder('beatstress')
-    syllable_encoder = Encoder('syllables', preprocessor=format_syllables)
+    syllable_encoder = Encoder('syllables')
     wb_encoder = Encoder('syllables', preprocessor=word_boundaries)
-    data = BlockDataSet('../data/lyrics-corpora/ohhla-beatstress.json', batch_size=5,
+    data = BlockDataSet('./data/mcflow.train.json', batch_size=5,
                         syllables=syllable_encoder)
     for batch in data.batches():
         pass
     print(syllable_encoder.size())
     print(syllable_encoder.index)
 
+    # fit encoder
+    for _ in data:
+        pass
+
     def reverse(*bs):
         for lines in zip(*[b['syllables'] for b in bs]):
-            for idx, line in enumerate( lines):
+            for idx, line in enumerate(lines):
                 print(idx, ' '.join(syllable_encoder.decode(line)))
             print()
 

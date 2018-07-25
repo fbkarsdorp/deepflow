@@ -39,8 +39,11 @@ def pad_sequence(batch, lengths, padding_idx=0, batch_first=False):
 
 
 class LM(nn.Module):
+    """
+    conds: list of condition encoders
+    """
     def __init__(self, vocab, emb_dim, hid_dim, num_layers=1, dropout=0.0,
-                 padding_idx=None):
+                 padding_idx=None, conds=None, cond_emb_dim=None):
         self.dropout = dropout
         super().__init__()
 
@@ -51,9 +54,23 @@ class LM(nn.Module):
         else:
             self.nll_weight = None
 
+        # input emb
         self.embs = nn.Embedding(vocab, emb_dim, padding_idx=padding_idx)
-        self.rnn = nn.LSTM(emb_dim, hid_dim, num_layers,
+        # conds emb
+        rnn_inp = emb_dim
+        self.conds = None
+        if conds is not None:
+            self.conds = {}
+            for cond in conds:
+                emb = nn.Embedding(len(cond), cond_emb_dim or emb_dim)
+                self.conds[cond.name] = emb
+                self.add_module(cond.name, emb)
+                rnn_inp += cond_emb_dim or emb_dim
+        # rnn
+        self.rnn = nn.LSTM(rnn_inp, hid_dim, num_layers,
                            dropout=dropout, batch_first=True)
+
+        # output
         self.proj = nn.Linear(hid_dim, vocab)
 
         if emb_dim == hid_dim:
@@ -71,9 +88,18 @@ class LM(nn.Module):
         nn.init.constant_(self.proj.bias, 0.)
         nn.init.uniform_(self.proj.weight, -initrange, initrange)
 
-    def forward(self, inp, lengths, hidden=None):
+    def forward(self, inp, lengths, hidden=None, conds=None):
+        if conds is not None and self.conds is not None:
+            raise ValueError("conds needs conds")
+
         embs = self.embs(inp)
         embs = F.dropout(embs, p=self.dropout, training=self.training)
+        if conds is not None:
+            batch, seq_len = inp.size()
+            conds = [self.conds[cond](conds[cond]).expand(batch, seq_len, -1)
+                     for cond in conds]
+            embs = torch.cat([embs, *conds], dim=2)
+            
         embs, unsort = torch_utils.pack_sort(embs, lengths, batch_first=True)
         output, hidden = self.rnn(embs, hidden)
         output, _ = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)
@@ -96,20 +122,28 @@ class LM(nn.Module):
 
         return loss
 
+    def prepare_batch(self, batch):
+        lengths = torch.LongTensor(batch['length'])
+        syllables = batch['syllables']
+        syllables = pad_sequence(syllables, lengths, batch_first=True).to(device)
+        lengths = lengths.to(device)
+
+        # TODO: add conditions, should be a list of 1D tensors (only batch dim)
+        conds = None
+
+        return syllables, lengths, conds
+
     def evaluate(self, dataset, device):
         hidden = None
         total_loss, total_batches = 0, 0
 
         for batch in dataset.batches():
             # prepare data
-            lengths = torch.LongTensor(batch['length'])
-            syllables = batch['syllables']
-            syllables = pad_sequence(syllables, lengths, batch_first=True).to(device)
-            lengths = lengths.to(device)
+            syllables, lengths, conds = self.prepare_batch(batch)
 
             # get loss
             hidden = trim_hidden(hidden, lengths)
-            logits, hidden = self(syllables, lengths, hidden)
+            logits, hidden = self(syllables, lengths, hidden, conds)
             loss = self.loss(logits[:, :-1], syllables[:, 1:], lengths-1)
             total_loss += loss.exp().item()
             total_batches += 1
@@ -126,25 +160,24 @@ class LM(nn.Module):
             total_loss, total_batches = 0, 0
 
             for batch_num, batch in enumerate(dataset.batches()):
-                # prepare data
-                lengths = torch.LongTensor(batch['length'])
-                syllables = batch['syllables']
-                syllables = pad_sequence(syllables, lengths, batch_first=True).to(device)
-                lengths = lengths.to(device)
+                syllables, lengths, conds = self.prepare_batch(batch)
 
                 # get loss
                 hidden = trim_hidden(hidden, lengths)
-                logits, hidden = self(syllables, lengths, hidden)
-                # detach hidden from previous
-                hidden = hidden[0].detach(), hidden[1].detach()
+                logits, hidden = self(syllables, lengths, hidden, conds)
                 loss = self.loss(logits[:, :-1], syllables[:, 1:], lengths-1)
 
                 # optimize
-                optim.zero_grad()
-                loss.backward()
-                if max_norm is not None:
-                    nn.utils.clip_grad_norm_(self.parameters(), max_norm)
-                optim.step()
+                loss.backward(retain_graph=True)
+
+                # bptt (4 lines)
+                if batch_num % 4 == 0:
+                    if max_norm is not None:
+                        nn.utils.clip_grad_norm_(self.parameters(), max_norm)
+                    optim.step()
+                    optim.zero_grad()
+                    # detach hidden from previous
+                    hidden = hidden[0].detach(), hidden[1].detach()
 
                 total_loss += loss.exp().item()
                 epoch_loss += loss.exp().item()
@@ -180,7 +213,7 @@ class LM(nn.Module):
                     self.train()
                 print("Dev loss: {:.3f}".format(dev_loss))
 
-    def generate(self, encoder, nlines=5, maxlen=25, sample=True, temp=1.0):
+    def generate(self, encoder, conds=None, nlines=5, maxlen=25, sample=True, temp=1.0):
         # input variables
         inp = torch.tensor([encoder.bos_index] * nlines).to(self.device())
         lengths = torch.ones(nlines, dtype=torch.int64).to(self.device())
@@ -196,7 +229,7 @@ class LM(nn.Module):
 
             # run forward
             inp = inp.unsqueeze(1)  # add seq_len dim
-            preds, hidden = self(inp, lengths, hidden)
+            preds, hidden = self(inp, lengths, hidden, conds=conds)
             preds = preds.squeeze(1)  # remove seq_len dim
 
             # sample
@@ -229,7 +262,7 @@ class LM(nn.Module):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_layers', default=1, type=int)
+    parser.add_argument('--num_layers', default=2, type=int)
     parser.add_argument('--emb_dim', default=200, type=int)
     parser.add_argument('--hid_dim', default=200, type=int)
     parser.add_argument('--dropout', default=0.5, type=float)
@@ -237,21 +270,28 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', default=50, type=int)
     parser.add_argument('--train_file', required=True, type=str)
     parser.add_argument('--dev_file', required=True, type=str)
-    parser.add_argument('--pretrained_embeddings', required=True, type=str)
-    parser.add_argument('--learning_rate', default=0.0003, type=float)
+    parser.add_argument('--learning_rate', default=0.001, type=float)
     parser.add_argument('--max_norm', default=5, type=float)
     parser.add_argument('--lr_patience', type=int, default=5)
     args = parser.parse_args()
 
     # data loading
-    eos, bos = '<EOS>', '<BOS>'
-    syllable_vocab, syllable_vectors = loaders.load_gensim_embeddings(
-        args.pretrained_embeddings)
-    syllable_encoder = loaders.Encoder(
-        'syllables', vocab=syllable_vocab, fixed_vocab=True,
-        eos_token=eos, bos_token=bos)
+    syllable_encoder = loaders.Encoder('syllables', preprocessor=loaders.format_syllables)
+
+    # fit label encoder on quicker dataset type
+    print("Fitting dataset")
+    import time
+    start = time.time()
+    for _ in loaders.DataSet(
+            args.train_file, batch_size=args.batch_size, syllables=syllable_encoder):
+        pass
+    print("Took {:g} secs".format(time.time()-start))
+    syllable_encoder.save_vocab('syllable_encoder.txt')
+    syllable_encoder.fixed_vocab = True
+
     trainset = loaders.BlockDataSet(
         args.train_file, batch_size=args.batch_size, syllables=syllable_encoder)
+
     devset = loaders.BlockDataSet(
         args.dev_file, batch_size=args.batch_size, syllables=syllable_encoder)
 
@@ -259,13 +299,6 @@ if __name__ == '__main__':
     model = LM(len(syllable_encoder), args.emb_dim, args.hid_dim, args.num_layers,
                dropout=args.dropout, padding_idx=syllable_encoder.pad_index)
     print(model)
-
-    # initialize embeddings
-    syllable_embs = embedding_layer(
-        syllable_vectors, n_padding_vectors=len(syllable_encoder.reserved_tokens),
-        padding_idx=syllable_encoder.pad_index, trainable=True)
-    if syllable_embs.weight.size() == model.embs.weight.size():
-        model.embs.weight = syllable_embs.weight
 
     # training
     optim = torch.optim.Adam(model.parameters(), lr=args.learning_rate)

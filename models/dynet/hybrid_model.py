@@ -99,17 +99,18 @@ class HybridLanguageModel(RNNLanguageModel):
         cstate = self.char_builder.initial_state()
 
         losses = []
+        tlogits, ttargets = [], []
         for i, wstate in enumerate(state.add_inputs(embs)):
-            wout, loss = wstate.output(), []
-            for j, cinp in enumerate(chars[i+1][:-1]):
+            wout = wstate.output()
+            ctarget = chars[i+1]
+            for j, cinp in enumerate(ctarget[:-1]):
                 cstate = cstate.add_input(dynet.concatenate([self.cembeds[cinp], wout]))
                 logits = b_char + (W_char * cstate.output())
-                loss.append(dynet.pickneglogsoftmax(logits, chars[i+1][j+1]))
-            losses.append(dynet.esum(loss) / (len(chars[i+1]) - 1))
+                losses.append(dynet.pickneglogsoftmax(logits, ctarget[j + 1]))
 
         return losses, wstate
 
-    def sample(self, encoder, nwords=20, conds=None, inital_state=None):
+    def sample(self, encoder, nwords=20, conds=None, initial_state=None):
         """
         Generate a number of characters
         """
@@ -127,6 +128,7 @@ class HybridLanguageModel(RNNLanguageModel):
             if c not in conds:
                 conds[c] = random.choice(list(encoder.conds[c].w2i.values()))
         cs = [self.conds[c][conds[c]] for c in sorted(self.conds)]
+        # output
         b_char, W_char = self.b_char, self.W_char
 
         while True:
@@ -165,14 +167,14 @@ class HybridLanguageModel(RNNLanguageModel):
             # slighly inefficient that we learn to generate <eos> character by character
             if inp == encoder.word.eos:
                 break
-            if nwords and len(output) > nwords:
+            if nwords and len(output) >= nwords:
                 break
-            output.append(inp)
+
+            output.append(''.join(coutput))
 
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
-        output = ' '.join([encoder.word.i2w[i] for i in output])
 
-        return output, conds
+        return ' '.join(output), conds
 
 
 if __name__ == '__main__':

@@ -209,7 +209,7 @@ class RNNLanguageModel:
             # sample conds
             if c not in conds:
                 conds[c] = random.choice(list(encoder.conds[c].w2i.values()))
-        cs = [self.conds[c][conds[c]] for c in sorted(self.conds)]
+        conds = [self.conds[c][conds[c]] for c in sorted(self.conds)]
         # bias, W = dynet.parameter(self.bias), dynet.parameter(self.W)
         bias, W = self.bias, self.W
 
@@ -223,7 +223,7 @@ class RNNLanguageModel:
                     cinp = encoder.char.transform(encoder.word.i2w[inp])
                 emb = dynet.concatenate([emb, self.char_embed(cinp)])
             if conds:
-                emb = dynet.concatenate([emb, *cs])
+                emb = dynet.concatenate([emb, *conds])
 
             # rnn
             state = state.add_input(emb)
@@ -419,6 +419,8 @@ if __name__ == '__main__':
                           args.hidden_dim, args.cond_dim,
                           use_chars=not args.disable_chars,
                           dropout=args.dropout, tie_weights=args.tie_weights)
+
+    print("Storing model to path {}".format(lm.modelname))
 
     print("Training model")
     lm.train(train, encoder, epochs=args.epochs, dev=list(dev), lr=args.lr,

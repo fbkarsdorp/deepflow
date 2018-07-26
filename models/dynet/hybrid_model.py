@@ -227,6 +227,8 @@ if __name__ == '__main__':
     lm = HybridLanguageModel(encoder, args.layers, args.input_dim, args.cemb_dim,
                              args.hidden_dim, args.cond_dim, dropout=args.dropout)
 
+    print("Storing model to path {}".format(lm.modelname))
+
     print("Training model")
     lm.train(train, encoder, epochs=args.epochs, dev=list(dev), lr=args.lr,
              trainer=args.trainer, clipping=args.clipping, minibatch=args.minibatch,

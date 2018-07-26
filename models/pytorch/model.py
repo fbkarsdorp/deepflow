@@ -40,7 +40,7 @@ class RNNLanguageModel(nn.Module):
         # embeddings
         self.wembs = nn.Embedding(wvocab, wemb_dim, padding_idx=encoder.word.pad)
         self.cembs = nn.Embedding(cvocab, cemb_dim, padding_idx=encoder.char.pad)
-        self.crnn = nn.LSTM(cemb_dim, cemb_dim//2, bidirectional=True, dropout=dropout)
+        self.cembs_rnn = nn.LSTM(cemb_dim, cemb_dim//2, bidirectional=True)
         input_dim = wemb_dim + cemb_dim
 
         # conds
@@ -89,7 +89,7 @@ class RNNLanguageModel(nn.Module):
     def embed_chars(self, char, nchars, nwords):
         cembs = self.cembs(char)
         cembs, unsort = utils.pack_sort(cembs, nchars)
-        _, hidden = self.crnn(cembs)
+        _, hidden = self.cembs_rnn(cembs)
         if isinstance(hidden, tuple):
             hidden = hidden[0]
         cembs = hidden[:, unsort, :].transpose(0, 1).contiguous().view(sum(nwords), -1)
@@ -112,6 +112,8 @@ class RNNLanguageModel(nn.Module):
             conds = [c.expand(seq, batch, -1) for c in conds]
             # concatenate
             embs = torch.cat([embs, *conds], -1)
+
+        embs = F.dropout(embs, p=self.dropout, training=self.training)
 
         embs, unsort = utils.pack_sort(embs, nwords)
         outs, hidden = self.rnn(embs, hidden)
@@ -142,8 +144,6 @@ class RNNLanguageModel(nn.Module):
         """
         Generate stuff
         """
-        self.eval()
-
         # TODO: batch sampling
         batch = 1
 
@@ -207,10 +207,10 @@ class RNNLanguageModel(nn.Module):
         return output, conds
 
     def dev(self, corpus, encoder, best_loss, fails):
+        self.eval()
+
         hidden = None
         tloss = tinsts = 0
-
-        self.eval()
 
         with torch.no_grad():
             for sents, conds in tqdm.tqdm(corpus.get_batches(1)):
@@ -220,8 +220,6 @@ class RNNLanguageModel(nn.Module):
                 loss, insts = self.loss(logits[:-1], words[1:], nwords)
                 tinsts += insts
                 tloss += loss.item()
-
-        self.train()
 
         tloss = math.exp(tloss / tinsts)
         print("Dev loss: {:g}".format(tloss))
@@ -239,6 +237,8 @@ class RNNLanguageModel(nn.Module):
         for _ in range(20):
             print(self.sample(encoder))
         print()
+
+        self.train()
 
         return best_loss, fails
 

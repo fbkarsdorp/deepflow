@@ -2,14 +2,12 @@
 import random
 import math
 import time
-import collections
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_packed_sequence as unpack
 
-import pronouncing
 import tqdm
 
 import utils
@@ -32,7 +30,7 @@ class RNNLanguageModel(nn.Module):
         cvocab = encoder.char.size()
 
         nll_weight = torch.ones(wvocab)
-        nll_weight[encoder.word.pad] = 0 
+        nll_weight[encoder.word.pad] = 0
         self.register_buffer('nll_weight', nll_weight)
         # TODO: pick one of those depending on loss level
         # cnll_weight = torch.ones(wvocab)
@@ -72,7 +70,7 @@ class RNNLanguageModel(nn.Module):
         self.eval()
         old_device = self.device
         self.to('cpu')
-        with open(fpath, 'w') as f:
+        with open(fpath + ".pt", 'wb') as f:
             torch.save({'model': self, 'encoder': encoder}, f)
         self.train()
         self.to(old_device)
@@ -140,7 +138,7 @@ class RNNLanguageModel(nn.Module):
 
         return loss, insts
 
-    def sample(self, encoder, nchars=100, conds=None, hidden=None):
+    def sample(self, encoder, nsyms=100, conds=None, hidden=None):
         """
         Generate stuff
         """
@@ -150,33 +148,35 @@ class RNNLanguageModel(nn.Module):
         batch = 1
 
         # sample conditions if needed
-        conds = conds or {}
-        for c in self.conds:
+        conds, bconds = conds or {}, []
+        for c in sorted(self.conds):
             # sample conds
             if c not in conds:
-                bcond = random.choice(list(encoder.conds[c].w2i.values()))
-                bcond = torch.tensor([bcond] * batch, dtype=torch.int64)
-                conds[c] = bcond.to(self.device)
+                conds[c] = random.choice(list(encoder.conds[c].w2i.values()))
+            # compute embedding
+            bcond = torch.tensor([conds[c]] * batch, dtype=torch.int64).to(self.device)
+            bcond = self.conds[c](bcond)
+            bconds.append(bcond.expand(1, batch, -1))
 
         word = [encoder.word.bos] * batch  # (batch)
         word = torch.tensor(word, dtype=torch.int64).to(self.device)
-        char, nchars = [[encoder.char.bol] * batch], 1  # (1 x nwords)
+        char, nchars = [[encoder.char.bol] * batch], [1] * batch  # (1 x nwords)
         char = torch.tensor(char, dtype=torch.int64).to(self.device)
 
-        output, scores = [], 0.0
+        output = []
 
         with torch.no_grad():
-            while True:
+            for _ in range(nsyms):
+
+                if word[0].item() == encoder.word.eos:
+                    break
+
                 # embeddings
                 wemb = self.wembs(word.unsqueeze(0))
                 cemb = self.embed_chars(char, nchars, [1] * batch)
-                emb = torch.cat([wemb, cemb], -1)
+                embs = torch.cat([wemb, cemb], -1)
                 if conds:
-                    conds = [self.conds[c](conds[c]) for c in sorted(conds)]
-                    # expand
-                    conds = [c.expand(1, batch, -1) for c in conds]
-                    # concatenate
-                    emb = torch.cat([emb, *conds], -1)
+                    embs = torch.cat([embs, *bconds], -1)
 
                 outs, hidden = self.rnn(embs, hidden)
                 # (1 x 1 x vocab)
@@ -186,13 +186,25 @@ class RNNLanguageModel(nn.Module):
 
                 preds = F.log_softmax(logits, dim=-1)
                 word = (preds / 1).exp().multinomial(1)
-                score = preds.gather(1, word)
-                word, score = word.squeeze(0), score.squeeze(0)
+                word = word.squeeze(0)
 
                 # accumulate
-                scores += score.cpu()
+                output.append(word.tolist())
 
-                # sampled word to characters
+                # get character-level input
+                char, nchars = [], []
+                for w in output[-1]:
+                    w = encoder.word.i2w[w]
+                    c = encoder.char.transform(w)
+                    char.append(c)
+                    nchars.append(len(c))
+                char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
+
+        conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
+        output = [step[0] for step in output]  # single-batch for now
+        output = ' '.join([encoder.word.i2w[step] for step in output])
+
+        return output, conds
 
     def dev(self, corpus, encoder, best_loss, fails):
         hidden = None
@@ -201,19 +213,19 @@ class RNNLanguageModel(nn.Module):
         self.eval()
 
         with torch.no_grad():
-            for sents, conds in tqdm.tqdm(corpus.get_batches(50)):
+            for sents, conds in tqdm.tqdm(corpus.get_batches(1)):
                 (words, nwords), (chars, nchars), conds = encoder.transform_batch(
                     sents, conds, self.device)
                 logits, hidden = self(words, nwords, chars, nchars, conds, hidden)
                 loss, insts = self.loss(logits[:-1], words[1:], nwords)
-                tloss += loss.item()
                 tinsts += insts
+                tloss += loss.item()
 
         self.train()
 
-        tloss = math.exp(tloss / insts)
+        tloss = math.exp(tloss / tinsts)
         print("Dev loss: {:g}".format(tloss))
-        
+
         if tloss < best_loss:
             print("New best dev loss: {:g}".format(tloss))
             best_loss = tloss
@@ -241,6 +253,7 @@ class RNNLanguageModel(nn.Module):
             trainer = torch.optim.SGD(self.parameters(), lr=lr)
         else:
             raise ValueError("Unknown trainer: {}".format(trainer))
+        print(trainer)
 
         # local variables
         hidden = None
@@ -254,6 +267,12 @@ class RNNLanguageModel(nn.Module):
             for idx, (sents, conds) in enumerate(corpus.get_batches(minibatch)):
                 (words, nwords), (chars, nchars), conds = encoder.transform_batch(
                     sents, conds, self.device)
+
+                # early stopping
+                if fails >= patience:
+                    print("Early stopping after {} steps".format(fails))
+                    print("Best dev loss {:g}".format(best_loss))
+                    return
 
                 # forward
                 logits, hidden = self(words, nwords, chars, nchars, conds, hidden)
@@ -276,7 +295,7 @@ class RNNLanguageModel(nn.Module):
 
                 tinsts, tloss = tinsts + insts, tloss + loss.item()
 
-                if idx and idx % (repfreq//minibatch) == 0:
+                if idx and idx % (repfreq // minibatch) == 0:
                     speed = int(tinsts / (time.time() - start))
                     print("Epoch {:<3} items={:<10} loss={:<10g} items/sec={}"
                           .format(e, idx, math.exp(min(tloss/tinsts, 100)), speed))
@@ -285,11 +304,11 @@ class RNNLanguageModel(nn.Module):
 
                 if dev and checkfreq and idx and idx % (checkfreq // minibatch) == 0:
                     best_loss, fails = self.dev(dev, encoder, best_loss, fails)
-
                     # update lr
                     if fails > 0:
                         for pgroup in trainer.param_groups:
                             pgroup['lr'] = pgroup['lr'] * lr_weight
+                        print(trainer)
 
             if dev and not checkfreq:
                 best_loss, fails = self.dev(dev, encoder, best_loss, fails)
@@ -297,69 +316,7 @@ class RNNLanguageModel(nn.Module):
                 if fails > 0:
                     for pgroup in trainer.param_groups:
                         pgroup['lr'] = pgroup['lr'] * lr_weight
-
-
-def sample(model, encoder, nchars=100, conds=None, hidden=None):
-    """
-    Generate stuff
-    """
-    model.eval()
-
-    # TODO: batch sampling
-    batch = 1
-
-    # sample conditions if needed
-    conds = conds or {}
-    for c in model.conds:
-        # sample conds
-        if c not in conds:
-            bcond = random.choice(list(encoder.conds[c].w2i.values()))
-            bcond = torch.tensor([bcond] * batch, dtype=torch.int64)
-            conds[c] = bcond.to(model.device)
-
-    word = [encoder.word.bos] * batch  # (batch)
-    word = torch.tensor(word, dtype=torch.int64).to(model.device)
-    char, nchars = [[encoder.char.bol] * batch], [1] * batch  # (1 x nwords)
-    char = torch.tensor(char, dtype=torch.int64).to(model.device)
-
-    output, scores = [], 0.0
-
-    with torch.no_grad():
-        while True:
-            # embeddings
-            wemb = model.wembs(word.unsqueeze(0))
-            cemb = model.embed_chars(char, nchars, [1] * batch)
-            embs = torch.cat([wemb, cemb], -1)
-            if conds:
-                conds = [model.conds[c](conds[c]) for c in sorted(conds)]
-                # expand
-                conds = [c.expand(1, batch, -1) for c in conds]
-                # concatenate
-                embs = torch.cat([embs, *conds], -1)
-
-            outs, hidden = model.rnn(embs, hidden)
-            # (1 x 1 x vocab)
-            logits = model.proj(outs)
-            # (1 x 1 x vocab) -> (1 x vocab)
-            logits = logits.squeeze(0)
-
-            preds = F.log_softmax(logits, dim=-1)
-            word = (preds / 1).exp().multinomial(1)
-            score = preds.gather(1, word)
-            word, score = word.squeeze(0), score.squeeze(0)
-            print(word.size())
-
-            # accumulate
-            scores += score.cpu()
-            return
-
-
-# from utils import CorpusEncoder, CorpusReader
-# reader = CorpusReader('./data/ohhla-beatstress.dev.jsonl')
-# encoder = CorpusEncoder.from_corpus(reader)
-# model = RNNLanguageModel(encoder, 1, 100, 100, 250, 50)
-
-sample(model, encoder)
+                    print(trainer)
 
 
 if __name__ == '__main__':
@@ -414,4 +371,4 @@ if __name__ == '__main__':
     lm.train_model(train, encoder, epochs=args.epochs, minibatch=args.minibatch,
                    dev=dev, lr=args.lr, trainer=args.trainer, clipping=args.clipping,
                    repfreq=args.repfreq, checkfreq=args.checkfreq,
-                   lr_weight=args.lr_weight)
+                   lr_weight=args.lr_weight, bptt=1)

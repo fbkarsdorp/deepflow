@@ -3,6 +3,7 @@ import json
 import collections
 
 import torch
+import pronouncing
 
 
 BOS, EOS, BOL, EOL, UNK, PAD = '<s>', '</s>', '<l>', '</l>', '<unk>', '<pad>'

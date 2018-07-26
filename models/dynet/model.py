@@ -193,7 +193,7 @@ class RNNLanguageModel:
 
         return losses, state
 
-    def sample(self, encoder, nchars=100, conds=None, initial_state=None):
+    def sample(self, encoder, nsyms=100, conds=None, initial_state=None):
         """
         Generate a number of syllables
         """
@@ -238,7 +238,7 @@ class RNNLanguageModel:
 
             if inp == encoder.word.eos:
                 break
-            if nchars and len(output) > nchars:
+            if nsyms and len(output) >= nsyms:
                 break
 
             output.append(inp)

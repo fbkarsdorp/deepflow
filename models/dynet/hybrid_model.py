@@ -99,7 +99,6 @@ class HybridLanguageModel(RNNLanguageModel):
         cstate = self.char_builder.initial_state()
 
         losses = []
-        tlogits, ttargets = [], []
         for i, wstate in enumerate(state.add_inputs(embs)):
             wout = wstate.output()
             ctarget = chars[i+1]

@@ -99,7 +99,8 @@ class CorpusEncoder:
         chars = []
         for sent in sents:
             sent = [self.char.transform(w) for w in sent]
-            sent = [[self.char.bol]] + sent + [[self.char.eol]]
+            sent = [[self.char.bos, self.char.bol, self.char.eos]] + sent
+            sent = sent + [[self.char.bos, self.char.eol, self.char.eos]]
             chars.extend(sent)
         chars, nchars = get_batch(chars, self.char.pad, device)
 

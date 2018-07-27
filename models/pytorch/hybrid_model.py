@@ -23,14 +23,15 @@ class HybridLanguageModel(RNNLanguageModel):
         self.cond_dim = cond_dim
         self.dropout = dropout
         self.modelname = self.get_modelname()
-        super().__init__()
+        super().__init__(encoder, layers, wemb_dim, cemb_dim, hidden_dim, cond_dim,
+                         dropout=dropout)
 
         wvocab = encoder.word.size()
         cvocab = encoder.char.size()
 
-        cnll_weight = torch.ones(wvocab)
-        cnll_weight[encoder.char.pad] = 0
-        self.register_buffer('cnll_weight', cnll_weight)
+        nll_weight = torch.ones(cvocab)
+        nll_weight[encoder.char.pad] = 0
+        self.register_buffer('nll_weight', nll_weight)
 
         # embeddings
         self.wembs = nn.Embedding(wvocab, wemb_dim, padding_idx=encoder.word.pad)
@@ -91,11 +92,11 @@ class HybridLanguageModel(RNNLanguageModel):
         # (nwords x hidden_dim)
         outs = utils.flatten_padded_batch(outs, nwords)
         # (nchars x nwords x cemb_dim + hidden_dim)
-        cinp = torch.concatenate([self.cembs(char), outs.expand(len(char), -1, -1)], -1)
+        cemb = torch.cat([self.cembs(char), outs.expand(len(char), -1, -1)], -1)
         # run rnn
-        cinp, unsort = utils.pack_sort(cinp, nchars)
+        cemb, unsort = utils.pack_sort(cemb, nchars)
         # (nchars x nwords x hidden_dim)
-        couts, _ = self.cout_rnn(cinp)
+        couts, _ = self.cout_rnn(cemb)
         couts, _ = unpack(couts)
         couts = couts[:, unsort]
         # logits: (nchars x nwords x vocab)
@@ -106,30 +107,31 @@ class HybridLanguageModel(RNNLanguageModel):
     def loss(self, logits, word, nwords, char, nchars):
         # - remove <l> tokens from targets and </l> tokens from inputs
         breaks = list(itertools.accumulate(nwords))
-        # indices to remove <l> tokens from targets
-        index = [i for i in range(sum(nwords)) if i not in breaks][1:]
+        # indices to remove </l> from the logits
+        index = [i for i in range(sum(nwords)) if i+1 not in breaks]
         index = torch.tensor(index).to(self.device)
         # (nchars x nwords - batch x vocab)
-        nchars, _, vocab = logits.size()
-        logits = logits.gather(1, index[:, None, :].expand(nchars, len(index), vocab))
-        # indices to remove </l> from the input
-        index = [i for i in range(sum(nwords)) if i+1 not in breaks]
+        seq, _, vocab = logits.size()
+        logits = logits.gather(1, index[None, :, None].expand(seq, len(index), vocab))
+        # indices to remove <l> tokens from targets
+        index = [i for i in range(sum(nwords)) if i not in breaks][1:]
         index = torch.tensor(index).to(self.device)
         # (nchars x nwords - batch)
         targets = char.gather(1, index.repeat(len(char), 1))
 
         # - remove </w> from char logits and <w> from char targets
         logits, targets = logits[:-1], targets[1:]
+
         loss = F.cross_entropy(
             logits.view(-1, vocab), targets.view(-1),
             weight=self.nll_weight, size_average=False)
 
-        # remove 1 char per word instance and 1 char per sentence (<l> tokens)
-        insts = sum(nchars) - len(nchars) - len(nwords)
+        # remove 1 char per word instance and 2 char per sentence (<l> tokens)
+        insts = sum(nchars) - len(nchars) - (2 * len(nwords))
 
         return loss, insts
 
-    def sample(self, encoder, nsyms=100, conds=None, hidden=None):
+    def sample(self, encoder, nsyms=50, max_sym_len=10, conds=None, hidden=None):
         """
         Generate stuff
         """
@@ -149,17 +151,15 @@ class HybridLanguageModel(RNNLanguageModel):
 
         word = [encoder.word.bos] * batch  # (batch)
         word = torch.tensor(word, dtype=torch.int64).to(self.device)
-        char, nchars = [[encoder.char.bol] * batch], [1] * batch  # (1 x nwords)
-        char = torch.tensor(char, dtype=torch.int64).to(self.device)
+        # (3 x batch)
+        char = [[encoder.char.bos, encoder.char.bol, encoder.char.eos]] * batch
+        char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
+        nchars = [3] * batch
 
         output = []
 
         with torch.no_grad():
             for _ in range(nsyms):
-
-                if word[0].item() == encoder.word.eos:
-                    break
-
                 # embeddings
                 wemb = self.wembs(word.unsqueeze(0))
                 cemb = self.embed_chars(char, nchars, [1] * batch)
@@ -167,42 +167,62 @@ class HybridLanguageModel(RNNLanguageModel):
                 if conds:
                     embs = torch.cat([embs, *bconds], -1)
 
+                # rnn
                 outs, hidden = self.rnn(embs, hidden)
-                # (1 x 1 x vocab)
-                logits = self.proj(outs)
-                # (1 x 1 x vocab) -> (1 x vocab)
-                logits = logits.squeeze(0)
 
-                preds = F.log_softmax(logits, dim=-1)
-                word = (preds / 1).exp().multinomial(1)
-                word = word.squeeze(0)
+                # char-level
+                cinp = torch.tensor([encoder.char.bos] * batch)  # (batch)
+                coutput = []
+                for _ in range(max_sym_len):
+                    # (1 x batch x cemb_dim + hidden_dim)
+                    cemb = torch.cat([self.cembs(cinp.unsqueeze(0)), outs], -1)
+                    # (1 x batch x hidden_dim)
+                    couts, _ = self.cout_rnn(cemb)
+                    # (1 x batch x vocab)
+                    logits = self.proj(couts)
+                    # (1 x batch x vocab) -> (batch x vocab)
+                    logits = logits.squeeze(0)
+                    # sample
+                    preds = F.log_softmax(logits, dim=-1)
+                    cinp = (preds / 1).exp().multinomial(1).squeeze(0)
 
-                # accumulate
-                output.append(word.tolist())
+                    # break
+                    if cinp[0].item() == encoder.char.eos:
+                        coutput = coutput or [[encoder.char.unk] * batch]
+                        break
 
-                # get character-level input
-                char, nchars = [], []
-                for w in output[-1]:
-                    w = encoder.word.i2w[w]
+                    if cinp[0].item() == encoder.char.eol:
+                        break
+
+                    # accumulate
+                    coutput.append(cinp.tolist())
+
+                # break from generation
+                if cinp[0].item() == encoder.char.eol:
+                    break
+
+                # get word-level and character-level input
+                word, char, nchars, toutput = [], [], [], []
+                for w in zip(*coutput):  # iterate over words in batch
+                    w = ''.join([encoder.char.i2w[i] for i in w])
+                    word.append(encoder.word.transform_item(w))
                     c = encoder.char.transform(w)
                     char.append(c)
                     nchars.append(len(c))
-                char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
+                    toutput.append(w)  # append to global output
+                # (batch)
+                word = torch.tensor(word, dtype=torch.int64).to(self.device)
+                # (nchars x batch)
+                char, _ = utils.get_batch(char, encoder.char.pad, self.device)
+
+                # accumulate
+                output.append(toutput)
 
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
-        output = [step[0] for step in output]  # single-batch for now
-        output = ' '.join([encoder.word.i2w[step] for step in output])
+        # single-batch for now
+        output = ' '.join([step[0] for step in output])
 
         return output, conds
-
-from utils import CorpusEncoder, CorpusReader
-import utils
-reader = CorpusReader('./data/mcflow/mcflow-train.jsonl')
-encoder = CorpusEncoder.from_corpus(reader)
-batches = reader.get_batches(5)
-sents, conds = next(batches)
-(w,nw),(c,nc),cs=encoder.transform_batch(sents, conds)
-
 
 
 if __name__ == '__main__':
@@ -241,7 +261,7 @@ if __name__ == '__main__':
     print("Encoding corpus")
     start = time.time()
     train = CorpusReader(args.train)
-    dev = CorpusReader(args.dev)
+    dev = CorpusReader(args.dev) if args.dev else None
 
     encoder = CorpusEncoder.from_corpus(train, most_common=args.maxsize)
     print("... took {} secs".format(time.time() - start))
@@ -250,6 +270,7 @@ if __name__ == '__main__':
     lm = HybridLanguageModel(encoder, args.layers, args.wemb_dim, args.cemb_dim,
                              args.hidden_dim, args.cond_dim, dropout=args.dropout)
     print(lm)
+    print("Model parameters: {}".format(sum(p.nelement() for p in lm.parameters())))
     print("Storing model to path {}".format(lm.modelname))
     lm.to(args.device)
 

@@ -129,10 +129,11 @@ class RNNLanguageModel(nn.Module):
         return logits, hidden
 
     def loss(self, logits, word, nwords, char, nchars):
-        seq, batch, vocab = logits.size()
+        logits, targets = logits[:-1], word[1:]
+        _, _, vocab = logits.size()
 
         loss = F.cross_entropy(
-            logits.view(batch * seq, vocab), word.view(-1),
+            logits.view(-1, vocab), targets.view(-1),
             weight=self.nll_weight, size_average=False)
 
         # remove 1 per batch instance
@@ -167,10 +168,6 @@ class RNNLanguageModel(nn.Module):
 
         with torch.no_grad():
             for _ in range(nsyms):
-
-                if word[0].item() == encoder.word.eos:
-                    break
-
                 # embeddings
                 wemb = self.wembs(word.unsqueeze(0))
                 cemb = self.embed_chars(char, nchars, [1] * batch)
@@ -185,24 +182,27 @@ class RNNLanguageModel(nn.Module):
                 logits = logits.squeeze(0)
 
                 preds = F.log_softmax(logits, dim=-1)
-                word = (preds / 1).exp().multinomial(1)
-                word = word.squeeze(0)
+                word = (preds / 1).exp().multinomial(1).squeeze(0)
 
-                # accumulate
-                output.append(word.tolist())
+                # break
+                if word[0].item() == encoder.word.eos:
+                    break
 
                 # get character-level input
                 char, nchars = [], []
-                for w in output[-1]:
+                for w in output[-1]:  # iterate over batch
                     w = encoder.word.i2w[w]
                     c = encoder.char.transform(w)
                     char.append(c)
                     nchars.append(len(c))
                 char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
 
+                # accumulate
+                output.append(word.tolist())
+
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
-        output = [step[0] for step in output]  # single-batch for now
-        output = ' '.join([encoder.word.i2w[step] for step in output])
+        # single-batch for now
+        output = ' '.join([encoder.word.i2w[step[0]] for step in output])
 
         return output, conds
 
@@ -217,7 +217,7 @@ class RNNLanguageModel(nn.Module):
                 (words, nwords), (chars, nchars), conds = encoder.transform_batch(
                     sents, conds, self.device)
                 logits, hidden = self(words, nwords, chars, nchars, conds, hidden)
-                loss, insts = self(logits[:-1], words[1:], nwords, chars, nchars)
+                loss, insts = self.loss(logits, words, nwords, chars, nchars)
                 tinsts += insts
                 tloss += loss.item()
 
@@ -278,7 +278,7 @@ class RNNLanguageModel(nn.Module):
                 logits, hidden = self(words, nwords, chars, nchars, conds, hidden)
 
                 # loss
-                loss, insts = self.loss(logits[:-1], words[1:], nwords, chars, nchars)
+                loss, insts = self.loss(logits, words, nwords, chars, nchars)
                 (loss/insts).backward(retain_graph=bptt > 1)
 
                 # bptt
@@ -364,6 +364,7 @@ if __name__ == '__main__':
     lm = RNNLanguageModel(encoder, args.layers, args.wemb_dim, args.cemb_dim,
                           args.hidden_dim, args.cond_dim, dropout=args.dropout)
     print(lm)
+    print("Model parameters: {}".format(sum(p.nelement() for p in lm.parameters())))
     print("Storing model to path {}".format(lm.modelname))
     lm.to(args.device)
 

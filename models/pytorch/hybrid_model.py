@@ -1,19 +1,18 @@
 
 import random
-import math
 import time
+import itertools
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_packed_sequence as unpack
 
-import tqdm
-
 import utils
+from model import RNNLanguageModel
 
 
-class RNNLanguageModel(nn.Module):
+class HybridLanguageModel(RNNLanguageModel):
     def __init__(self, encoder, layers, wemb_dim, cemb_dim, hidden_dim, cond_dim,
                  dropout=0.0):
 
@@ -29,13 +28,9 @@ class RNNLanguageModel(nn.Module):
         wvocab = encoder.word.size()
         cvocab = encoder.char.size()
 
-        nll_weight = torch.ones(wvocab)
-        nll_weight[encoder.word.pad] = 0
-        self.register_buffer('nll_weight', nll_weight)
-        # TODO: pick one of those depending on loss level
-        # cnll_weight = torch.ones(wvocab)
-        # cnll_weight[encoder.char.pad] = 0
-        # self.register_buffer('cnll_weight', cnll_weight)
+        cnll_weight = torch.ones(wvocab)
+        cnll_weight[encoder.char.pad] = 0
+        self.register_buffer('cnll_weight', cnll_weight)
 
         # embeddings
         self.wembs = nn.Embedding(wvocab, wemb_dim, padding_idx=encoder.word.pad)
@@ -55,56 +50,23 @@ class RNNLanguageModel(nn.Module):
         self.rnn = nn.LSTM(input_dim, hidden_dim, layers, dropout=dropout)
 
         # output
-        self.proj = nn.Linear(hidden_dim, wvocab)
-
-        if wemb_dim == hidden_dim:
-            print("Tying embedding and projection weights")
-            self.proj.weight = self.wembs.weight
+        self.cout_rnn = nn.LSTM(cemb_dim + hidden_dim, hidden_dim)
+        self.proj = nn.Linear(hidden_dim, cvocab)
 
         self.init()
 
     def init(self):
         pass
 
-    def save(self, fpath, encoder):
-        self.eval()
-        old_device = self.device
-        self.to('cpu')
-        with open(fpath + ".pt", 'wb') as f:
-            torch.save({'model': self, 'encoder': encoder}, f)
-        self.train()
-        self.to(old_device)
-
-    def get_modelname(self):
-        from datetime import datetime
-
-        return "{}.{}".format(
-            type(self).__name__,
-            datetime.now().strftime("%Y-%m-%d+%H:%M:%S"))
-
-    @property
-    def device(self):
-        return next(self.parameters()).device
-
-    def embed_chars(self, char, nchars, nwords):
-        cembs = self.cembs(char)
-        cembs, unsort = utils.pack_sort(cembs, nchars)
-        _, hidden = self.cembs_rnn(cembs)
-        if isinstance(hidden, tuple):
-            hidden = hidden[0]
-        cembs = hidden[:, unsort, :].transpose(0, 1).contiguous().view(sum(nwords), -1)
-        cembs = utils.pad_flat_batch(cembs, nwords, max(nwords))
-
-        return cembs
-
     def forward(self, word, nwords, char, nchars, conds, hidden=None):
+        # - embeddings
         # (seq x batch x wemb_dim)
         wembs = self.wembs(word)
         # (seq x batch x cemb_dim)
         cembs = self.embed_chars(char, nchars, nwords)
-
         embs = torch.cat([wembs, cembs], -1)
 
+        # - conditions
         if conds:
             conds = [self.conds[c](conds[c]) for c in sorted(conds)]
             # expand
@@ -115,6 +77,7 @@ class RNNLanguageModel(nn.Module):
 
         embs = F.dropout(embs, p=self.dropout, training=self.training)
 
+        # - rnn
         embs, unsort = utils.pack_sort(embs, nwords)
         outs, hidden = self.rnn(embs, hidden)
         outs, _ = unpack(outs)
@@ -124,19 +87,45 @@ class RNNLanguageModel(nn.Module):
         else:
             hidden = hidden[:, unsort]
 
-        logits = self.proj(outs)
+        # - compute char-level logits
+        # (nwords x hidden_dim)
+        outs = utils.flatten_padded_batch(outs, nwords)
+        # (nchars x nwords x cemb_dim + hidden_dim)
+        cinp = torch.concatenate([self.cembs(char), outs.expand(len(char), -1, -1)], -1)
+        # run rnn
+        cinp, unsort = utils.pack_sort(cinp, nchars)
+        # (nchars x nwords x hidden_dim)
+        couts, _ = self.cout_rnn(cinp)
+        couts, _ = unpack(couts)
+        couts = couts[:, unsort]
+        # logits: (nchars x nwords x vocab)
+        logits = self.proj(couts)
 
         return logits, hidden
 
     def loss(self, logits, word, nwords, char, nchars):
-        seq, batch, vocab = logits.size()
+        # - remove <l> tokens from targets and </l> tokens from inputs
+        breaks = list(itertools.accumulate(nwords))
+        # indices to remove <l> tokens from targets
+        index = [i for i in range(sum(nwords)) if i not in breaks][1:]
+        index = torch.tensor(index).to(self.device)
+        # (nchars x nwords - batch x vocab)
+        nchars, _, vocab = logits.size()
+        logits = logits.gather(1, index[:, None, :].expand(nchars, len(index), vocab))
+        # indices to remove </l> from the input
+        index = [i for i in range(sum(nwords)) if i+1 not in breaks]
+        index = torch.tensor(index).to(self.device)
+        # (nchars x nwords - batch)
+        targets = char.gather(1, index.repeat(len(char), 1))
 
+        # - remove </w> from char logits and <w> from char targets
+        logits, targets = logits[:-1], targets[1:]
         loss = F.cross_entropy(
-            logits.view(batch * seq, vocab), word.view(-1),
+            logits.view(-1, vocab), targets.view(-1),
             weight=self.nll_weight, size_average=False)
 
-        # remove 1 per batch instance
-        insts = sum(nwords) - len(nwords)
+        # remove 1 char per word instance and 1 char per sentence (<l> tokens)
+        insts = sum(nchars) - len(nchars) - len(nwords)
 
         return loss, insts
 
@@ -206,117 +195,14 @@ class RNNLanguageModel(nn.Module):
 
         return output, conds
 
-    def dev(self, corpus, encoder, best_loss, fails):
-        self.eval()
+from utils import CorpusEncoder, CorpusReader
+import utils
+reader = CorpusReader('./data/mcflow/mcflow-train.jsonl')
+encoder = CorpusEncoder.from_corpus(reader)
+batches = reader.get_batches(5)
+sents, conds = next(batches)
+(w,nw),(c,nc),cs=encoder.transform_batch(sents, conds)
 
-        hidden = None
-        tloss = tinsts = 0
-
-        with torch.no_grad():
-            for sents, conds in tqdm.tqdm(corpus.get_batches(1)):
-                (words, nwords), (chars, nchars), conds = encoder.transform_batch(
-                    sents, conds, self.device)
-                logits, hidden = self(words, nwords, chars, nchars, conds, hidden)
-                loss, insts = self(logits[:-1], words[1:], nwords, chars, nchars)
-                tinsts += insts
-                tloss += loss.item()
-
-        tloss = math.exp(tloss / tinsts)
-        print("Dev loss: {:g}".format(tloss))
-
-        if tloss < best_loss:
-            print("New best dev loss: {:g}".format(tloss))
-            best_loss = tloss
-            fails = 0
-            self.save(self.modelname, encoder)
-        else:
-            fails += 1
-            print("Failed {} time to improve best dev loss: {}".format(fails, best_loss))
-
-        print()
-        for _ in range(20):
-            print(self.sample(encoder))
-        print()
-
-        self.train()
-
-        return best_loss, fails
-
-    def train_model(self, corpus, encoder, epochs=5, lr=0.001, clipping=5, dev=None,
-                    patience=3, minibatch=15, trainer='Adam', repfreq=1000, checkfreq=0,
-                    lr_weight=1, bptt=1):
-
-        # get trainer
-        if trainer.lower() == 'adam':
-            trainer = torch.optim.Adam(self.parameters(), lr=lr)
-        elif trainer.lower() == 'sgd':
-            trainer = torch.optim.SGD(self.parameters(), lr=lr)
-        else:
-            raise ValueError("Unknown trainer: {}".format(trainer))
-        print(trainer)
-
-        # local variables
-        hidden = None
-        best_loss, fails = float('inf'), 0
-
-        for e in range(epochs):
-
-            tinsts = tloss = 0.0
-            start = time.time()
-
-            for idx, (sents, conds) in enumerate(corpus.get_batches(minibatch)):
-                (words, nwords), (chars, nchars), conds = encoder.transform_batch(
-                    sents, conds, self.device)
-
-                # early stopping
-                if fails >= patience:
-                    print("Early stopping after {} steps".format(fails))
-                    print("Best dev loss {:g}".format(best_loss))
-                    return
-
-                # forward
-                logits, hidden = self(words, nwords, chars, nchars, conds, hidden)
-
-                # loss
-                loss, insts = self.loss(logits[:-1], words[1:], nwords, chars, nchars)
-                (loss/insts).backward(retain_graph=bptt > 1)
-
-                # bptt
-                if idx % bptt == 0:
-                    # step
-                    nn.utils.clip_grad_norm_(self.parameters(), clipping)
-                    trainer.step()
-                    trainer.zero_grad()
-                    # detach
-                    if isinstance(hidden, torch.Tensor):
-                        hidden = hidden.detach()
-                    else:
-                        hidden = tuple(h.detach() for h in hidden)
-
-                tinsts, tloss = tinsts + insts, tloss + loss.item()
-
-                if idx and idx % (repfreq // minibatch) == 0:
-                    speed = int(tinsts / (time.time() - start))
-                    print("Epoch {:<3} items={:<10} loss={:<10g} items/sec={}"
-                          .format(e, idx, math.exp(min(tloss/tinsts, 100)), speed))
-                    tinsts = tloss = 0.0
-                    start = time.time()
-
-                if dev and checkfreq and idx and idx % (checkfreq // minibatch) == 0:
-                    best_loss, fails = self.dev(dev, encoder, best_loss, fails)
-                    # update lr
-                    if fails > 0:
-                        for pgroup in trainer.param_groups:
-                            pgroup['lr'] = pgroup['lr'] * lr_weight
-                        print(trainer)
-
-            if dev and not checkfreq:
-                best_loss, fails = self.dev(dev, encoder, best_loss, fails)
-                # update lr
-                if fails > 0:
-                    for pgroup in trainer.param_groups:
-                        pgroup['lr'] = pgroup['lr'] * lr_weight
-                    print(trainer)
 
 
 if __name__ == '__main__':
@@ -361,8 +247,8 @@ if __name__ == '__main__':
     print("... took {} secs".format(time.time() - start))
 
     print("Building model")
-    lm = RNNLanguageModel(encoder, args.layers, args.wemb_dim, args.cemb_dim,
-                          args.hidden_dim, args.cond_dim, dropout=args.dropout)
+    lm = HybridLanguageModel(encoder, args.layers, args.wemb_dim, args.cemb_dim,
+                             args.hidden_dim, args.cond_dim, dropout=args.dropout)
     print(lm)
     print("Storing model to path {}".format(lm.modelname))
     lm.to(args.device)

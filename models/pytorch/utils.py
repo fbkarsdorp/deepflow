@@ -264,6 +264,31 @@ def pad_flat_batch(emb, nwords, maxlen):
     return output
 
 
+def flatten_padded_batch(batch, nwords):
+    """
+    Inverse of pad_flat_batch
+
+    Parameters
+    ===========
+    batch : tensor(seq_len, batch, encoding_size), output of the encoder
+    nwords : tensor(batch), lengths of the sequence (without padding)
+
+    Returns
+    ========
+    tensor(nwords, encoding_size)
+
+    >>> batch = [[[0], [3], [4]], [[1], [0], [5]], [[2], [0], [0]]]
+    >>> nwords = [3, 1, 2]
+    >>> flatten_padded_batch(torch.tensor(batch), torch.tensor(nwords)).tolist()
+    [[0], [1], [2], [3], [4], [5]]
+    """
+    output = []
+    for sent, sentlen in zip(batch.t(), nwords):
+        output.extend(list(sent[:sentlen].chunk(sentlen)))
+
+    return torch.cat(output, dim=0)
+
+
 def lines_from_jsonl(path):
     """
     lines = []

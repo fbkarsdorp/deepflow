@@ -176,10 +176,8 @@ class RNNLanguageModel(nn.Module):
                     embs = torch.cat([embs, *bconds], -1)
 
                 outs, hidden = self.rnn(embs, hidden)
-                # (1 x 1 x vocab)
-                logits = self.proj(outs)
                 # (1 x 1 x vocab) -> (1 x vocab)
-                logits = logits.squeeze(0)
+                logits = self.proj(outs).squeeze(0)
 
                 preds = F.log_softmax(logits, dim=-1)
                 word = (preds / 1).exp().multinomial(1).squeeze(0)
@@ -190,7 +188,7 @@ class RNNLanguageModel(nn.Module):
 
                 # get character-level input
                 char, nchars = [], []
-                for w in output[-1]:  # iterate over batch
+                for w in word.tolist():  # iterate over batch
                     w = encoder.word.i2w[w]
                     c = encoder.char.transform(w)
                     char.append(c)
@@ -198,11 +196,11 @@ class RNNLanguageModel(nn.Module):
                 char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
 
                 # accumulate
-                output.append(word.tolist())
+                output.append([encoder.word.i2w[w] for w in word.tolist()])
 
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
         # single-batch for now
-        output = ' '.join([encoder.word.i2w[step[0]] for step in output])
+        output = ' '.join([step[0] for step in output])
 
         return output, conds
 

@@ -171,17 +171,15 @@ class HybridLanguageModel(RNNLanguageModel):
                 outs, hidden = self.rnn(embs, hidden)
 
                 # char-level
-                cinp = torch.tensor([encoder.char.bos] * batch)  # (batch)
+                cinp = torch.tensor([encoder.char.bos] * batch).to(self.device)  # (batch)
                 coutput = []
                 for _ in range(max_sym_len):
                     # (1 x batch x cemb_dim + hidden_dim)
                     cemb = torch.cat([self.cembs(cinp.unsqueeze(0)), outs], -1)
                     # (1 x batch x hidden_dim)
                     couts, _ = self.cout_rnn(cemb)
-                    # (1 x batch x vocab)
-                    logits = self.proj(couts)
                     # (1 x batch x vocab) -> (batch x vocab)
-                    logits = logits.squeeze(0)
+                    logits = self.proj(couts).squeeze(0)
                     # sample
                     preds = F.log_softmax(logits, dim=-1)
                     cinp = (preds / 1).exp().multinomial(1).squeeze(0)

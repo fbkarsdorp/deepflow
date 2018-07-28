@@ -227,7 +227,7 @@ class RNNLanguageModel(nn.Module):
                 tinsts += insts
                 tloss += loss.item()
 
-        tloss = self.loss_formater(tloss / tinsts)
+        tloss = self.loss_formatter(tloss / tinsts)
         print("Dev loss: {:g}".format(tloss))
 
         if tloss < best_loss:

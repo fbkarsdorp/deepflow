@@ -1,4 +1,5 @@
 
+import math
 import random
 import time
 import itertools
@@ -132,7 +133,7 @@ class HybridLanguageModel(RNNLanguageModel):
 
         return loss, insts
 
-    def loss_formater(self, loss):
+    def loss_formatter(self, loss):
         """
         BPC for loss monitoring
         """

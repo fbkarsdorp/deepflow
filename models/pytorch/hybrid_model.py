@@ -89,47 +89,54 @@ class HybridLanguageModel(RNNLanguageModel):
             hidden = hidden[:, unsort]
 
         # - compute char-level logits
+        breaks = list(itertools.accumulate(nwords))
         # (nwords x hidden_dim)
         outs = utils.flatten_padded_batch(outs, nwords)
-        # (nchars x nwords x cemb_dim + hidden_dim)
+        # indices to remove </l> from outs
+        index = [i for i in range(sum(nwords)) if i+1 not in breaks]
+        # (nwords - batch x hidden_dim)
+        outs = outs[torch.tensor(index).to(self.device)]
+        # indices to remove <l> tokens from character targets
+        index = [i for i in range(sum(nwords)) if i not in breaks][1:]
+        # (nchars x nwords - batch)
+        char = char[:, torch.tensor(index).to(self.device)]
+        # (nchars x nwords - batch x cemb_dim + hidden_dim)
         cemb = torch.cat([self.cembs(char), outs.expand(len(char), -1, -1)], -1)
         # run rnn
-        cemb, unsort = utils.pack_sort(cemb, nchars)
-        # (nchars x nwords x hidden_dim)
+        cemb, unsort = utils.pack_sort(cemb, [nchars[i] for i in index])
+        # (nchars x nwords - batch x hidden_dim)
         couts, _ = self.cout_rnn(cemb)
         couts, _ = unpack(couts)
         couts = couts[:, unsort]
-        # logits: (nchars x nwords x vocab)
+        # logits: (nchars x nwords - batch x vocab)
         logits = self.proj(couts)
 
         return logits, hidden
 
     def loss(self, logits, word, nwords, char, nchars):
-        # - remove <l> tokens from targets and </l> tokens from inputs
         breaks = list(itertools.accumulate(nwords))
-        # indices to remove </l> from the logits
-        index = [i for i in range(sum(nwords)) if i+1 not in breaks]
-        index = torch.tensor(index).to(self.device)
-        # (nchars x nwords - batch x vocab)
-        seq, _, vocab = logits.size()
-        logits = logits.gather(1, index[None, :, None].expand(seq, len(index), vocab))
         # indices to remove <l> tokens from targets
         index = [i for i in range(sum(nwords)) if i not in breaks][1:]
-        index = torch.tensor(index).to(self.device)
         # (nchars x nwords - batch)
-        targets = char.gather(1, index.repeat(len(char), 1))
+        targets = char[:, torch.tensor(index).to(self.device)]
 
         # - remove </w> from char logits and <w> from char targets
         logits, targets = logits[:-1], targets[1:]
 
         loss = F.cross_entropy(
-            logits.view(-1, vocab), targets.view(-1),
+            logits.view(-1, logits.size(-1)), targets.view(-1),
             weight=self.nll_weight, size_average=False)
 
         # remove 1 char per word instance and 2 char per sentence (<l> tokens)
         insts = sum(nchars) - len(nchars) - (2 * len(nwords))
 
         return loss, insts
+
+    def loss_formater(self, loss):
+        """
+        BPC for loss monitoring
+        """
+        return math.log2(math.e) * loss
 
     def sample(self, encoder, nsyms=50, max_sym_len=10, conds=None, hidden=None):
         """
@@ -182,36 +189,41 @@ class HybridLanguageModel(RNNLanguageModel):
                     logits = self.proj(couts).squeeze(0)
                     # sample
                     preds = F.log_softmax(logits, dim=-1)
-                    cinp = (preds / 1).exp().multinomial(1).squeeze(0)
+                    # (1 x batch) -> (batch)
+                    cinp = (preds / 1).exp().multinomial(1).squeeze(1)
+                    # _, cinp = torch.max(preds, dim=-1)
 
-                    # break
+                    # break from word generation
                     if cinp[0].item() == encoder.char.eos:
                         coutput = coutput or [[encoder.char.unk] * batch]
                         break
 
+                    # break from sentence generation
                     if cinp[0].item() == encoder.char.eol:
                         break
 
                     # accumulate
                     coutput.append(cinp.tolist())
 
-                # break from generation
+                # break from sentence generation
                 if cinp[0].item() == encoder.char.eol:
                     break
 
                 # get word-level and character-level input
-                word, char, nchars, toutput = [], [], [], []
+                word, char, toutput = [], [], []
                 for w in zip(*coutput):  # iterate over words in batch
-                    w = ''.join([encoder.char.i2w[i] for i in w])
+                    w = ''.join([encoder.char.i2w[i] for i in w])  # to string
+                    # get word input
                     word.append(encoder.word.transform_item(w))
+                    # get character input
                     c = encoder.char.transform(w)
                     char.append(c)
-                    nchars.append(len(c))
-                    toutput.append(w)  # append to global output
+                    # append to global output
+                    toutput.append(w)
                 # (batch)
                 word = torch.tensor(word, dtype=torch.int64).to(self.device)
                 # (nchars x batch)
-                char, _ = utils.get_batch(char, encoder.char.pad, self.device)
+                char, nchars = utils.get_batch(char, encoder.char.pad, self.device)
 
                 # accumulate
                 output.append(toutput)
@@ -254,12 +266,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    from utils import CorpusEncoder, CorpusReader
+    from utils import CorpusEncoder, CorpusReader, PennReader
+    reader = PennReader if args.penn else CorpusReader
 
     print("Encoding corpus")
     start = time.time()
-    train = CorpusReader(args.train)
-    dev = CorpusReader(args.dev) if args.dev else None
+    train = reader(args.train)
+    dev = reader(args.dev) if args.dev else None
 
     encoder = CorpusEncoder.from_corpus(train, most_common=args.maxsize)
     print("... took {} secs".format(time.time() - start))
@@ -277,3 +290,4 @@ if __name__ == '__main__':
                    dev=dev, lr=args.lr, trainer=args.trainer, clipping=args.clipping,
                    repfreq=args.repfreq, checkfreq=args.checkfreq,
                    lr_weight=args.lr_weight, bptt=1)
+

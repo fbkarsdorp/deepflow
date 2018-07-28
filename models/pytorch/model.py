@@ -141,6 +141,12 @@ class RNNLanguageModel(nn.Module):
 
         return loss, insts
 
+    def loss_formatter(self, loss):
+        """
+        Transform loss into a proper metric (ppl/bpc). Default to ppl.
+        """
+        return math.exp(min(loss, 100))
+
     def sample(self, encoder, nsyms=100, conds=None, hidden=None):
         """
         Generate stuff
@@ -161,8 +167,10 @@ class RNNLanguageModel(nn.Module):
 
         word = [encoder.word.bos] * batch  # (batch)
         word = torch.tensor(word, dtype=torch.int64).to(self.device)
-        char, nchars = [[encoder.char.bol] * batch], [1] * batch  # (1 x nwords)
-        char = torch.tensor(char, dtype=torch.int64).to(self.device)
+        # (3 x batch)
+        char = [[encoder.char.bos, encoder.char.bol, encoder.char.eos]] * batch
+        char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
+        nchars = [3] * batch
 
         output = []
 
@@ -180,7 +188,7 @@ class RNNLanguageModel(nn.Module):
                 logits = self.proj(outs).squeeze(0)
 
                 preds = F.log_softmax(logits, dim=-1)
-                word = (preds / 1).exp().multinomial(1).squeeze(0)
+                word = (preds / 1).exp().multinomial(1).squeeze(1)
 
                 # break
                 if word[0].item() == encoder.word.eos:
@@ -219,7 +227,7 @@ class RNNLanguageModel(nn.Module):
                 tinsts += insts
                 tloss += loss.item()
 
-        tloss = math.exp(tloss / tinsts)
+        tloss = self.loss_formater(tloss / tinsts)
         print("Dev loss: {:g}".format(tloss))
 
         if tloss < best_loss:
@@ -246,7 +254,7 @@ class RNNLanguageModel(nn.Module):
 
         # get trainer
         if trainer.lower() == 'adam':
-            trainer = torch.optim.Adam(self.parameters(), lr=lr)
+            trainer = torch.optim.Adam(self.parameters(), lr=lr, amsgrad=True)
         elif trainer.lower() == 'sgd':
             trainer = torch.optim.SGD(self.parameters(), lr=lr)
         else:
@@ -296,7 +304,7 @@ class RNNLanguageModel(nn.Module):
                 if idx and idx % (repfreq // minibatch) == 0:
                     speed = int(tinsts / (time.time() - start))
                     print("Epoch {:<3} items={:<10} loss={:<10g} items/sec={}"
-                          .format(e, idx, math.exp(min(tloss/tinsts, 100)), speed))
+                          .format(e, idx, self.loss_formatter(tloss/tinsts), speed))
                     tinsts = tloss = 0.0
                     start = time.time()
 

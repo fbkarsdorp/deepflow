@@ -176,6 +176,20 @@ class CorpusReader:
                     print("Couldn't read song #{}".format(idx+1))
 
 
+def chunks(it, size):
+    """
+    Chunk a generator into a given size (last chunk might be smaller)
+    """
+    buf = []
+    for s in it:
+        buf.append(s)
+        if len(buf) == size:
+            yield buf
+            buf = []
+    if len(buf) > 0:
+        yield buf
+
+
 class PennReader:
     def __init__(self, fpath):
         self.fpath = fpath
@@ -185,7 +199,22 @@ class PennReader:
             for line in f:
                 line = line.strip()
                 if line:
-                    yield line.split(), {}, False
+                    yield line.split(), {}
+
+    def get_batches(self, batch_size):
+        data = chunks(iter(self), batch_size)
+        while True:
+            try:
+                # [[(line1, {}), (line2, {}), ...], ...]
+                batches = [next(data) for _ in range(batch_size)]
+                # [((line1, {}), (line3, {}), ...), ...]
+                batches = list(zip(*batches))
+                for batch in batches:
+                    sents, conds = zip(*batch)
+                    yield sents, conds
+
+            except StopIteration:
+                return
 
 
 def pack_sort(inp, lengths, batch_first=False):

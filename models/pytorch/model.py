@@ -167,6 +167,7 @@ class RNNLanguageModel(nn.Module):
 
         word = [encoder.word.bos] * batch  # (batch)
         word = torch.tensor(word, dtype=torch.int64).to(self.device)
+        nwords = [1] * batch    # same nwords per step
         # (3 x batch)
         char = [[encoder.char.bos, encoder.char.bol, encoder.char.eos]] * batch
         char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
@@ -178,7 +179,7 @@ class RNNLanguageModel(nn.Module):
             for _ in range(nsyms):
                 # embeddings
                 wemb = self.wembs(word.unsqueeze(0))
-                cemb = self.embed_chars(char, nchars, [1] * batch)
+                cemb = self.embed_chars(char, nchars, nwords)
                 embs = torch.cat([wemb, cemb], -1)
                 if conds:
                     embs = torch.cat([embs, *bconds], -1)
@@ -212,7 +213,7 @@ class RNNLanguageModel(nn.Module):
 
         return output, conds
 
-    def dev(self, corpus, encoder, best_loss, fails):
+    def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
         self.eval()
 
         hidden = None
@@ -240,7 +241,7 @@ class RNNLanguageModel(nn.Module):
             print("Failed {} time to improve best dev loss: {}".format(fails, best_loss))
 
         print()
-        for _ in range(20):
+        for _ in range(nsamples):
             print(self.sample(encoder))
         print()
 
@@ -344,6 +345,7 @@ if __name__ == '__main__':
     parser.add_argument('--trainer', default='Adam')
     parser.add_argument('--clipping', type=float, default=5.0)
     parser.add_argument('--epochs', type=int, default=20)
+    parser.add_argument('--bptt', type=int, default=1)
     parser.add_argument('--dropout', type=float, default=0.2)
     parser.add_argument('--word_dropout', type=float, default=0.2)
     parser.add_argument('--minibatch', type=int, default=20)
@@ -378,4 +380,4 @@ if __name__ == '__main__':
     lm.train_model(train, encoder, epochs=args.epochs, minibatch=args.minibatch,
                    dev=dev, lr=args.lr, trainer=args.trainer, clipping=args.clipping,
                    repfreq=args.repfreq, checkfreq=args.checkfreq,
-                   lr_weight=args.lr_weight, bptt=1)
+                   lr_weight=args.lr_weight, bptt=args.bptt)

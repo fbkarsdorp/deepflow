@@ -9,6 +9,22 @@ import pronouncing
 BOS, EOS, BOL, EOL, UNK, PAD = '<s>', '</s>', '<l>', '</l>', '<unk>', '<pad>'
 
 
+def format_syllables(syllables):
+    if len(syllables) == 1:
+        return syllables
+
+    output = []
+    for idx, syl in enumerate(syllables):
+        if idx == 0:
+            output.append(syl + '-')
+        elif idx == (len(syllables) - 1):
+            output.append('-' + syl)
+        else:
+            output.append('-' + syl + '-')
+
+    return output
+
+
 def bucket_length(length, buckets=(5, 10, 15, 20)):
     for i in sorted(buckets, reverse=True):
         if length >= i:
@@ -115,31 +131,33 @@ class CorpusEncoder:
 
 
 class CorpusReader:
-    def __init__(self, fpath):
+    def __init__(self, fpath, dpath=None, reverse=False):
         self.fpath = fpath
+        self.d = None
+        if dpath is not None:
+            with open(dpath) as f:
+                self.d = json.loads(f.read())
+        self.reverse = reverse
 
-    def prepare_line(self, line):
-        def format_syllables(syllables):
-            if len(syllables) == 1:
-                return syllables
-
-            output = []
-            for idx, syl in enumerate(syllables):
-                if idx == 0:
-                    output.append(syl + '-')
-                elif idx == (len(syllables) - 1):
-                    output.append('-' + syl)
-                else:
-                    output.append('-' + syl + '-')
-
-            return output
-
+    def prepare_line(self, line, prev):
+        # prepare line
         sent = [syl for w in line for syl in format_syllables(w['syllables'])]
-        # TODO: fill this with other conditions such as:
-        # - rhyme (encode last rhyming sequence of syllables if they are found in
-        #          the dictionary of rhymes---see load_rhymes.py from master, or
-        #          just the last word otherwise)
-        conds = {'length': bucket_length(len(sent))}
+        conds = {}
+
+        # get rhyme
+        if self.d:
+            if prev:
+                rhyme = get_rhyme(prev, line, self.d)
+                if rhyme:
+                    _, rhyme = zip(*rhyme)  # get only second verse rhyme
+                    rhyme = ' '.join(rhyme[-3:])
+                conds['rhyme'] = rhyme or UNK
+
+        # get length
+        conds['length'] = bucket_length(len(sent))
+
+        if self.reverse:
+            sent = sent[::-1]
 
         return sent, conds
 
@@ -148,10 +166,12 @@ class CorpusReader:
             for idx, line in enumerate(f):
                 try:
                     for verse in json.loads(line)['text']:
+                        prev = None
                         for line in verse:
-                            sent, conds = self.prepare_line(line)
+                            sent, conds = self.prepare_line(line, prev)
                             if len(sent) >= 2:  # avoid too short sentences for LM
                                 yield sent, conds
+                            prev = line
                 except json.decoder.JSONDecodeError:
                     print("Couldn't read song #{}".format(idx+1))
 
@@ -344,9 +364,9 @@ def lines_from_jsonl(path):
                 print("Couldn't read song #{}".format(idx+1))
 
 
-def get_consecutive_rhyme_pairs(path):
+def get_consecutive_rhyme_pairs_pronouncing(path):
     """
-    rhymes=list(get_consecutive_rhyme_pairs('./data/ohhla-beatstress.jsonl'))
+    rhymes=list(get_consecutive_rhyme_pairs_pronouncing('./data/ohhla-beatstress.jsonl'))
     Couldn't read song #21768
     Couldn't read song #32470
     Couldn't read song #38108
@@ -366,6 +386,76 @@ def get_consecutive_rhyme_pairs(path):
                 yield 1
             else:
                 yield 0
+        else:
+            yield 0
+
+        prev = line
+
+
+def get_rhyme(line1, line2, d, return_lines=False):
+
+    def get_vowels(line):
+        output = []
+        for token in line[::-1]:
+            try:
+                phon = d[token['token'].lower()]
+                phon = list(filter(lambda ph: ph[-1].isnumeric(), phon.split()))
+                output.extend(phon[::-1])
+            except KeyError:
+                break
+
+        return output[::-1]
+
+    vow1, vow2 = get_vowels(line1), get_vowels(line2)
+    if not vow1 or not vow2:
+        return
+
+    prematch = True  # have we found the first stressed matching syllable?
+    match = []
+    for i in range(min(len(vow1), len(vow2))):
+        s1, s2 = vow1[-(i+1)], vow2[-(i+1)]
+        if s1 == s2:
+            if s1[-1] == '1':
+                prematch = False
+        else:
+            if not prematch and (s1[-1] == '0' and s2[-1] == '0'):
+                pass
+            else:
+                return match
+
+        match.append((s1, s2))
+
+    if return_lines:
+        return [i['token'] for i in line1], [i['token'] for i in line2], match[::-1]
+    else:
+        return match[::-1]
+
+
+def get_consecutive_rhyme_pairs_dict(path, dictpath, return_lines=True):
+    """
+    rhymes = get_consecutive_rhyme_pairs_dict(
+        './data/ohhla-beatstress.jsonl', './data/ohhla.vocab.phon.json')
+    rhymes = list(rhymes)
+
+    sum(1 for i in rhymes if i)/len(rhymes)
+    import collections
+    counts=collections.Counter(len(i[-1]) for i in rhymes if i)
+    longer=[rhyme for rhyme in rhymes if rhyme and len(rhyme[-1])>25]
+
+    typecount=collections.defaultdict(collections.Counter)
+    for rhyme in rhymes:
+        if rhyme:
+            _,_,rhyme=rhyme
+            _,rhyme=zip(*rhyme)
+            typecount[len(rhyme)][rhyme]+=1
+    """
+    with open(dictpath) as f:
+        d = json.loads(f.read())
+
+    prev = None
+    for line, reset in lines_from_jsonl(path):
+        if prev is not None and not reset:
+            yield get_rhyme(line, prev, d, return_lines)
         else:
             yield 0
 

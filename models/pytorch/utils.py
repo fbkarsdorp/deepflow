@@ -1,4 +1,5 @@
 
+import re
 import json
 import collections
 import torch
@@ -7,6 +8,7 @@ import tqdm
 
 
 BOS, EOS, BOL, EOL, UNK, PAD = '<s>', '</s>', '<l>', '</l>', '<unk>', '<pad>'
+PUNCT = re.compile(r'[^\w\s]+$')
 
 
 def format_syllables(syllables):
@@ -141,7 +143,14 @@ class CorpusReader:
 
     def prepare_line(self, line, prev):
         # prepare line
-        sent = [syl for w in line for syl in format_syllables(w.get('syllables', []))]
+        sent = []
+        for w in line:
+            if len(w.get('syllables', [])) == 0:
+                if re.match(PUNCT, w['token']):  # this actually always applies
+                    sent.append(w['token'])
+            else:
+                sent.extend(format_syllables(w['syllables']))
+
         conds = {}
 
         # get rhyme

@@ -15,7 +15,7 @@ import sklearn.metrics
 import torch
 from torch.nn.utils.rnn import pad_sequence
 
-from allennlp.modules import ConditionalRandomField
+from allennlp.modules import ConditionalRandomField, TimeDistributed
 
 import loaders
 import torch_utils
@@ -37,17 +37,13 @@ def embedding_layer(
     ) -> torch.nn.Embedding:
     """Create an embedding layer from pre-trained gensim embeddings."""
     weights = np.vstack((np.zeros((n_padding_vectors, weights.shape[1])), weights))
-    embedding_weights = torch.tensor(weights, dtype=torch.float32)
-    embedding = torch.nn.Embedding(*embedding_weights.shape, padding_idx=padding_idx)
-    embedding.weight = torch.nn.Parameter(embedding_weights, requires_grad=trainable)
-    return embedding
-
+    return torch.nn.Embedding.from_pretrained(torch.FloatTensor(weights), freeze=not trainable)
 
 class Tagger(torch.nn.Module):
     def __init__(self, embedding_dim: int, hidden_dim: int,
                  syllable_encoder: torch.nn.Embedding,
                  embedding_dropout_p: float,
-                 stress_size: int, wb_size: int, tagset_size: int,
+                 stress_size: int, wb_size: int, 
                  sequence_encoder) -> None:
         super(Tagger, self).__init__()
 
@@ -86,7 +82,7 @@ class LSTMTagger(Tagger):
 
         super(LSTMTagger, self).__init__(
             embedding_dim, hidden_dim, syllable_encoder, embedding_dropout_p,
-            stress_size, wb_size, tagset_size, sequence_encoder)
+            stress_size, wb_size, sequence_encoder)
         
         self.tag_projection_layer = torch.nn.Linear(hidden_dim, tagset_size)
         
@@ -121,31 +117,31 @@ class CRFTagger(Tagger):
         
         super(CRFTagger, self).__init__(
             embedding_dim, hidden_dim, syllable_encoder, embedding_dropout_p,
-            stress_size, wb_size, tagset_size, sequence_encoder)
+            stress_size, wb_size, sequence_encoder)
         
         self.crf = ConditionalRandomField(
             num_tags=tagset_size, constraints=constraints,
             include_start_end_transitions=include_start_end_transitions
         )
 
-        self.tag_projection_layer = torch.nn.Linear(hidden_dim, tagset_size)
+        self.tag_projection_layer = TimeDistributed(torch.nn.Linear(hidden_dim, tagset_size))
 
     def forward(self, stress: torch.Tensor, wb: torch.Tensor, syllables: torch.Tensor,
                 lengths: torch.Tensor, targets: torch.Tensor = None) -> Dict[str, torch.Tensor]:
         encoder_out, _ = self.sequence_encoder(self.pack(stress, wb, syllables, lengths))
         tag_space = self.tag_projection_layer(self.unpack(encoder_out))
         # TODO: do we need to log_softmax?
-        # tag_space = torch.nn.functional.log_softmax(tag_space, dim=2)
+        #tag_space = torch.nn.functional.log_softmax(tag_space, dim=2)
         mask = torch_utils.make_length_mask(
-            lengths, maxlen=tag_space.size(1), device=tag_space.device).float()     
-        preds = self.crf.viterbi_tags(tag_space, mask) if not self.training else []
+            lengths, maxlen=tag_space.size(1), device=tag_space.device)
+        preds = [tag for tag, _ in self.crf.viterbi_tags(tag_space, mask)] if not self.training else []
         output = {"tag_space": tag_space, "mask": mask, "tags": preds}
         if targets is not None:
             # Add negative log-likelihood as loss
             log_likelihood = self.crf(tag_space, targets, mask)
             output["loss"] = -log_likelihood
         return output
-    
+
 
 class Trainer:
     def __init__(self, model: LSTMTagger, train_data: loaders.DataSet,
@@ -174,14 +170,14 @@ class Trainer:
                 with torch.no_grad():
                     self.model.eval() # set all trainable attributes to False
                     self._validate(self.dev_data)
-                    self.model.train() # set all trainable attributes back to True
+                self.model.train() # set all trainable attributes back to True
 
     def get_batch(self, batch: Dict[str, List[torch.LongTensor]]) -> Tuple[torch.Tensor]:
         lengths, perm_index = torch.LongTensor(batch['length']).sort(0, descending=True)
         stress = utils.perm_sort(batch['stress'], perm_index)
         wb = utils.perm_sort(batch['wb'], perm_index)
         syllables = utils.perm_sort(batch['syllables'], perm_index)
-        targets = utils.perm_sort(batch['beatstress'], perm_index)
+        targets = utils.perm_sort(batch['targets'], perm_index)
         
         stress = pad_sequence(stress, batch_first=True).to(self.device)
         wb = pad_sequence(wb, batch_first=True).to(self.device)
@@ -215,7 +211,7 @@ class Trainer:
     
     def _validate(self, data: loaders.DataSet, test: bool = False) -> None:
         self.logger.info('Validating model')
-        y_true, y_pred, accuracy, baccuracy = [], [], 0, 0
+        y_true, y_pred, accuracy, seq_accuracy = [], [], 0, []
         run_loss, example_print = 0, 0
         n_batches = 0
         for i, batch in enumerate(data.batches()):
@@ -228,7 +224,10 @@ class Trainer:
             y_true.append(true)
             y_pred.append(pred)
             accuracy += utils.accuracy_score(pred, true)
+            seq_accuracy += utils.seq_accuracy_score(pred, true)
             n_batches += 1
+            for i in random.sample(range(len(true)), 2):
+                self.decoder.decode(syllables[i].cpu().numpy(), true[i], pred[i])
         if not test:
             logging.info('Validation Loss: {}'.format(run_loss / n_batches))
             closs = run_loss / n_batches
@@ -241,7 +240,8 @@ class Trainer:
         for i in range(p.shape[0]):
             logging.info('Validation Scores: c={} p={:.3f}, r={:.3f}, f={:.3f}, s={}'.format(
                 i, p[i], r[i], f[i], s[i]))
-        logging.info('Accuracy score: {:.3f}'.format(accuracy / n_batches))
+        logging.info('Accuracy score:          {:.3f}'.format(accuracy / n_batches))
+        logging.info('Sequence Accuracy score: {:.3f}'.format(sum(seq_accuracy) / len(seq_accuracy)))
 
     def save_checkpoint(self, is_best: bool, filename: str = 'checkpoint.pth.tar') -> None:
         checkpoint = {

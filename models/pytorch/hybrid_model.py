@@ -7,10 +7,10 @@ import itertools
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils.rnn import pad_packed_sequence as unpack
 
 import utils
-from model import RNNLanguageModel, sequential_dropout
+import torch_utils
+from model import RNNLanguageModel
 
 
 class HybridLanguageModel(RNNLanguageModel):
@@ -84,7 +84,7 @@ class HybridLanguageModel(RNNLanguageModel):
         embs = F.dropout(embs, p=self.dropout, training=self.training)
 
         # - rnn
-        embs, unsort = utils.pack_sort(embs, nwords)
+        embs, unsort = torch_utils.pack_sort(embs, nwords)
         outs = embs
         hidden_ = []
         hidden = hidden or [None] * len(self.rnn)
@@ -92,10 +92,11 @@ class HybridLanguageModel(RNNLanguageModel):
             outs, h_ = rnn(outs, hidden[l])
             if l != len(self.rnn) - 1:
                 outs, lengths = nn.utils.rnn.pad_packed_sequence(outs)
-                outs = sequential_dropout(outs, self.dropout, self.training)
+                outs = torch_utils.sequential_dropout(
+                    outs, self.dropout, self.training)
                 outs = nn.utils.rnn.pack_padded_sequence(outs, lengths)
             hidden_.append(h_)
-        outs, _ = unpack(outs)
+        outs, _ = nn.utils.rnn.pad_packed_sequence(outs)
         outs = outs[:, unsort]
         hidden = hidden_
         for l, h in enumerate(hidden):
@@ -107,7 +108,7 @@ class HybridLanguageModel(RNNLanguageModel):
         # - compute char-level logits
         breaks = list(itertools.accumulate(nwords))
         # (nwords x hidden_dim)
-        outs = utils.flatten_padded_batch(outs, nwords)
+        outs = torch_utils.flatten_padded_batch(outs, nwords)
         # indices to remove </l> from outs
         index = [i for i in range(sum(nwords)) if i+1 not in breaks]
         # (nwords - batch x hidden_dim)
@@ -119,10 +120,10 @@ class HybridLanguageModel(RNNLanguageModel):
         # (nchars x nwords - batch x cemb_dim + hidden_dim)
         cemb = torch.cat([self.cembs(char), outs.expand(len(char), -1, -1)], -1)
         # run rnn
-        cemb, unsort = utils.pack_sort(cemb, [nchars[i] for i in index])
+        cemb, unsort = torch_utils.pack_sort(cemb, [nchars[i] for i in index])
         # (nchars x nwords - batch x hidden_dim)
         couts, _ = self.cout_rnn(cemb)
-        couts, _ = unpack(couts)
+        couts, _ = nn.utils.rnn.pad_packed_sequence(couts)
         couts = couts[:, unsort]
         # logits: (nchars x nwords - batch x vocab)
         logits = self.proj(couts)

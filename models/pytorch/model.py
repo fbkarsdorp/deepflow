@@ -6,21 +6,11 @@ import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils.rnn import pad_packed_sequence as unpack
 
 import tqdm
 
 import utils
-
-
-def sequential_dropout(inp, p, training):
-    if not training or not p:
-        return inp
-
-    mask = inp.new(1, inp.size(1), inp.size(2)).bernoulli_(1 - p)
-    mask = mask / (1 - p)
-
-    return inp * mask.expand_as(inp)
+import torch_utils
 
 
 class RNNLanguageModel(nn.Module):
@@ -109,16 +99,17 @@ class RNNLanguageModel(nn.Module):
 
     def embed_chars(self, char, nchars, nwords):
         cembs = self.cembs(char)
-        cembs, unsort = utils.pack_sort(cembs, nchars)
+        cembs, unsort = torch_utils.pack_sort(cembs, nchars)
         _, hidden = self.cembs_rnn(cembs)
         if isinstance(hidden, tuple):
             hidden = hidden[0]
         cembs = hidden[:, unsort, :].transpose(0, 1).contiguous().view(sum(nwords), -1)
-        cembs = utils.pad_flat_batch(cembs, nwords, max(nwords))
+        cembs = torch_utils.pad_flat_batch(cembs, nwords, max(nwords))
 
         return cembs
 
     def forward(self, word, nwords, char, nchars, conds, hidden=None):
+        # dropout!: embedding dropout (dropoute), not implemented
         # (seq x batch x wemb_dim)
         wembs = self.wembs(word)
         # (seq x batch x cemb_dim)
@@ -134,9 +125,11 @@ class RNNLanguageModel(nn.Module):
             # concatenate
             embs = torch.cat([embs, *conds], -1)
 
-        embs = sequential_dropout(embs, p=self.dropout, training=self.training)
+        # dropout!: input dropout (dropouti)
+        embs = torch_utils.sequential_dropout(
+            embs, p=self.dropout, training=self.training)
 
-        embs, unsort = utils.pack_sort(embs, nwords)
+        embs, unsort = torch_utils.pack_sort(embs, nwords)
         outs = embs
         hidden_ = []
         hidden = hidden or [None] * len(self.rnn)
@@ -144,10 +137,12 @@ class RNNLanguageModel(nn.Module):
             outs, h_ = rnn(outs, hidden[l])
             if l != len(self.rnn) - 1:
                 outs, lengths = nn.utils.rnn.pad_packed_sequence(outs)
-                outs = sequential_dropout(outs, self.dropout, self.training)
+                # dropout!: hidden dropout (dropouth)
+                outs = torch_utils.sequential_dropout(
+                    outs, self.dropout, self.training)
                 outs = nn.utils.rnn.pack_padded_sequence(outs, lengths)
             hidden_.append(h_)
-        outs, _ = unpack(outs)
+        outs, _ = nn.utils.rnn.pad_packed_sequence(outs)
         outs = outs[:, unsort]
         hidden = hidden_
         for l, h in enumerate(hidden):
@@ -155,6 +150,9 @@ class RNNLanguageModel(nn.Module):
                 hidden[l] = h[0][:, unsort], h[1][:, unsort]
             else:
                 hidden[l] = h[:, unsort]
+
+        # dropout!: output dropout (dropouto)
+        outs = torch_utils.sequential_dropout(outs, self.dropout, self.training)
 
         logits = self.proj(outs)
 
@@ -394,7 +392,6 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=20)
     parser.add_argument('--bptt', type=int, default=1)
     parser.add_argument('--dropout', type=float, default=0.2)
-    parser.add_argument('--word_dropout', type=float, default=0.2)
     parser.add_argument('--minibatch', type=int, default=20)
     parser.add_argument('--repfreq', type=int, default=1000)
     parser.add_argument('--checkfreq', type=int, default=0)

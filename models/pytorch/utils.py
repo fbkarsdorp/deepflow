@@ -141,7 +141,7 @@ class CorpusReader:
 
     def prepare_line(self, line, prev):
         # prepare line
-        sent = [syl for w in line for syl in format_syllables(w['syllables'])]
+        sent = [syl for w in line for syl in format_syllables(w.get('syllables', []))]
         conds = {}
 
         # get rhyme

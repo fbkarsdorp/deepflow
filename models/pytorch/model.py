@@ -13,9 +13,19 @@ import tqdm
 import utils
 
 
+def sequential_dropout(inp, p, training):
+    if not training or not p:
+        return inp
+
+    mask = inp.new(1, inp.size(1), inp.size(2)).bernoulli_(1 - p)
+    mask = mask / (1 - p)
+
+    return inp * mask.expand_as(inp)
+
+
 class RNNLanguageModel(nn.Module):
     def __init__(self, encoder, layers, wemb_dim, cemb_dim, hidden_dim, cond_dim,
-                 dropout=0.0):
+                 dropout=0.0, tie_weights=False):
 
         self.layers = layers
         self.wemb_dim = wemb_dim
@@ -23,6 +33,7 @@ class RNNLanguageModel(nn.Module):
         self.hidden_dim = hidden_dim
         self.cond_dim = cond_dim
         self.dropout = dropout
+        self.tie_weights = tie_weights
         self.modelname = self.get_modelname()
         super().__init__()
 
@@ -32,10 +43,6 @@ class RNNLanguageModel(nn.Module):
         nll_weight = torch.ones(wvocab)
         nll_weight[encoder.word.pad] = 0
         self.register_buffer('nll_weight', nll_weight)
-        # TODO: pick one of those depending on loss level
-        # cnll_weight = torch.ones(wvocab)
-        # cnll_weight[encoder.char.pad] = 0
-        # self.register_buffer('cnll_weight', cnll_weight)
 
         # embeddings
         self.wembs = nn.Embedding(wvocab, wemb_dim, padding_idx=encoder.word.pad)
@@ -52,18 +59,32 @@ class RNNLanguageModel(nn.Module):
             input_dim += cond_dim
 
         # rnn
-        self.rnn = nn.LSTM(input_dim, hidden_dim, layers, dropout=dropout)
+        rnn = []
+        for layer in range(layers):
+            rnn_inp = input_dim if layer == 0 else hidden_dim
+            rnn_hid = hidden_dim
+            if layer == layers-1 and tie_weights:
+                rnn_hid = wemb_dim
+            rnn.append(nn.LSTM(rnn_inp, rnn_hid))
+        self.rnn = nn.ModuleList(rnn)
 
         # output
-        self.proj = nn.Linear(hidden_dim, wvocab)
+        if tie_weights:
+            self.proj = nn.Linear(wemb_dim, wvocab)
+        else:
+            self.proj = nn.Linear(hidden_dim, wvocab)
 
-        if wemb_dim == hidden_dim:
-            print("Tying embedding and projection weights")
+        if tie_weights:
             self.proj.weight = self.wembs.weight
 
         self.init()
 
     def init(self):
+        # init_range = 0.1
+        # self.wembs.weight.uniform_(-init_range, init_range)
+        # self.cembs.weight.uniform_(-init_range, init_range)
+        # self.proj.weight.uniform_(-init_range, init_range)
+        # self.proj.bias.zero_()
         pass
 
     def save(self, fpath, encoder):
@@ -113,16 +134,27 @@ class RNNLanguageModel(nn.Module):
             # concatenate
             embs = torch.cat([embs, *conds], -1)
 
-        embs = F.dropout(embs, p=self.dropout, training=self.training)
+        embs = sequential_dropout(embs, p=self.dropout, training=self.training)
 
         embs, unsort = utils.pack_sort(embs, nwords)
-        outs, hidden = self.rnn(embs, hidden)
+        outs = embs
+        hidden_ = []
+        hidden = hidden or [None] * len(self.rnn)
+        for l, rnn in enumerate(self.rnn):
+            outs, h_ = rnn(outs, hidden[l])
+            if l != len(self.rnn) - 1:
+                outs, lengths = nn.utils.rnn.pad_packed_sequence(outs)
+                outs = sequential_dropout(outs, self.dropout, self.training)
+                outs = nn.utils.rnn.pack_padded_sequence(outs, lengths)
+            hidden_.append(h_)
         outs, _ = unpack(outs)
         outs = outs[:, unsort]
-        if isinstance(hidden, tuple):
-            hidden = hidden[0][:, unsort], hidden[1][:, unsort]
-        else:
-            hidden = hidden[:, unsort]
+        hidden = hidden_
+        for l, h in enumerate(hidden):
+            if isinstance(h, tuple):
+                hidden[l] = h[0][:, unsort], h[1][:, unsort]
+            else:
+                hidden[l] = h[:, unsort]
 
         logits = self.proj(outs)
 
@@ -147,7 +179,7 @@ class RNNLanguageModel(nn.Module):
         """
         return math.exp(min(loss, 100))
 
-    def sample(self, encoder, nsyms=100, conds=None, hidden=None):
+    def sample(self, encoder, nsyms=100, conds=None, hidden=None, reverse=False):
         """
         Generate stuff
         """
@@ -184,7 +216,13 @@ class RNNLanguageModel(nn.Module):
                 if conds:
                     embs = torch.cat([embs, *bconds], -1)
 
-                outs, hidden = self.rnn(embs, hidden)
+                outs = embs
+                hidden_ = []
+                hidden = hidden or [None] * len(self.rnn)
+                for l, rnn in enumerate(self.rnn):
+                    outs, h_ = rnn(outs, hidden[l])
+                    hidden_.append(h_)
+                hidden = hidden_
                 # (1 x 1 x vocab) -> (1 x vocab)
                 logits = self.proj(outs).squeeze(0)
 
@@ -209,11 +247,13 @@ class RNNLanguageModel(nn.Module):
 
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
         # single-batch for now
-        output = ' '.join([step[0] for step in output])
+        output = [step[0] for step in output]
+        # maybe reverse
+        output = ' '.join(output[::-1] if reverse else output)
 
         return output, conds
 
-    def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
+    def dev(self, corpus, encoder, best_loss, fails, nsamples=20, reverse=False):
         self.eval()
 
         hidden = None
@@ -242,7 +282,7 @@ class RNNLanguageModel(nn.Module):
 
         print()
         for _ in range(nsamples):
-            print(self.sample(encoder))
+            print(self.sample(encoder, reverse=reverse))
         print()
 
         self.train()
@@ -251,7 +291,7 @@ class RNNLanguageModel(nn.Module):
 
     def train_model(self, corpus, encoder, epochs=5, lr=0.001, clipping=5, dev=None,
                     patience=3, minibatch=15, trainer='Adam', repfreq=1000, checkfreq=0,
-                    lr_weight=1, bptt=1):
+                    lr_weight=1, bptt=1, reverse=False):
 
         # get trainer
         if trainer.lower() == 'adam':
@@ -295,10 +335,11 @@ class RNNLanguageModel(nn.Module):
                     trainer.step()
                     trainer.zero_grad()
                     # detach
-                    if isinstance(hidden, torch.Tensor):
-                        hidden = hidden.detach()
-                    else:
-                        hidden = tuple(h.detach() for h in hidden)
+                    for l, h in enumerate(hidden):
+                        if isinstance(hidden, torch.Tensor):
+                            hidden[l] = h.detach()
+                        else:
+                            hidden[l] = tuple(hh.detach() for hh in h)
 
                 tinsts, tloss = tinsts + insts, tloss + loss.item()
 
@@ -310,7 +351,7 @@ class RNNLanguageModel(nn.Module):
                     start = time.time()
 
                 if dev and checkfreq and idx and idx % (checkfreq // minibatch) == 0:
-                    best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                    best_loss, fails = self.dev(dev, encoder, best_loss, fails, reverse)
                     # update lr
                     if fails > 0:
                         for pgroup in trainer.param_groups:
@@ -318,7 +359,7 @@ class RNNLanguageModel(nn.Module):
                         print(trainer)
 
             if dev and not checkfreq:
-                best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                best_loss, fails = self.dev(dev, encoder, best_loss, fails, reverse)
                 # update lr
                 if fails > 0:
                     for pgroup in trainer.param_groups:
@@ -331,6 +372,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--train')
     parser.add_argument('--dev')
+    parser.add_argument('--dpath', help='path to rhyme dictionary')
+    parser.add_argument('--reverse', action='store_true', help='whether to reverse input')
     parser.add_argument('--wemb_dim', type=int, default=100)
     parser.add_argument('--cemb_dim', type=int, default=100)
     parser.add_argument('--cond_dim', type=int, default=50)
@@ -362,15 +405,16 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = CorpusReader(args.train)
-    dev = CorpusReader(args.dev)
+    train = CorpusReader(args.train, dpath=args.dpath, reverse=args.reverse)
+    dev = CorpusReader(args.dev, dpath=args.dpath, reverse=args.reverse)
 
-    encoder = CorpusEncoder.from_corpus(train, most_common=args.maxsize)
+    encoder = CorpusEncoder.from_corpus(train, dev, most_common=args.maxsize)
     print("... took {} secs".format(time.time() - start))
 
     print("Building model")
     lm = RNNLanguageModel(encoder, args.layers, args.wemb_dim, args.cemb_dim,
-                          args.hidden_dim, args.cond_dim, dropout=args.dropout)
+                          args.hidden_dim, args.cond_dim, dropout=args.dropout,
+                          tie_weights=args.tie_weights)
     print(lm)
     print("Model parameters: {}".format(sum(p.nelement() for p in lm.parameters())))
     print("Storing model to path {}".format(lm.modelname))
@@ -380,4 +424,4 @@ if __name__ == '__main__':
     lm.train_model(train, encoder, epochs=args.epochs, minibatch=args.minibatch,
                    dev=dev, lr=args.lr, trainer=args.trainer, clipping=args.clipping,
                    repfreq=args.repfreq, checkfreq=args.checkfreq,
-                   lr_weight=args.lr_weight, bptt=args.bptt)
+                   lr_weight=args.lr_weight, bptt=args.bptt, reverse=args.reverse)

@@ -91,15 +91,16 @@ class CorpusEncoder:
         self.conds = conds
 
     @classmethod
-    def from_corpus(cls, corpus, most_common=25000):
+    def from_corpus(cls, *corpora, most_common=25000):
         w2i = collections.Counter()
         conds_w2i = collections.defaultdict(collections.Counter)
-        for sent, conds, *_ in corpus:
-            for cond in conds:
-                conds_w2i[cond][conds[cond]] += 1
-
-            for word in sent:
-                w2i[word] += 1
+        for corpus in corpora:
+            for sent, conds, *_ in corpus:
+                for cond in conds:
+                    conds_w2i[cond][conds[cond]] += 1
+    
+                for word in sent:
+                    w2i[word] += 1
 
         word = Vocab(w2i, bos=BOS, eos=EOS, unk=UNK, pad=PAD, most_common=most_common)
         conds = {c: Vocab(cond_w2i) for c, cond_w2i in conds_w2i.items()}
@@ -146,12 +147,13 @@ class CorpusReader:
 
         # get rhyme
         if self.d:
+            rhyme = None
             if prev:
                 rhyme = get_rhyme(prev, line, self.d)
                 if rhyme:
                     _, rhyme = zip(*rhyme)  # get only second verse rhyme
                     rhyme = ' '.join(rhyme[-3:])
-                conds['rhyme'] = rhyme or UNK
+            conds['rhyme'] = rhyme or UNK
 
         # get length
         conds['length'] = bucket_length(len(sent))
@@ -191,7 +193,15 @@ class CorpusReader:
                     songs = []
                 try:
                     song = json.loads(line)['text']
-                    songs.append([self.prepare_line(l) for verse in song for l in verse])
+                    lines = []
+                    for verse in song:
+                        prev = None
+                        for line in verse:
+                            sent, conds = self.prepare_line(line, prev)
+                            if len(sent) >= 2:
+                                lines.append((sent, conds))
+                            prev = line
+                    songs.append(lines)
                 except json.decoder.JSONDecodeError:
                     print("Couldn't read song #{}".format(idx+1))
 
@@ -424,6 +434,10 @@ def get_rhyme(line1, line2, d, return_lines=False):
                 return match
 
         match.append((s1, s2))
+
+    if prematch:
+        # didn't find main stress
+        return
 
     if return_lines:
         return [i['token'] for i in line1], [i['token'] for i in line2], match[::-1]

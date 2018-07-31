@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_packed_sequence as unpack
 
 import utils
-from model import RNNLanguageModel
+from model import RNNLanguageModel, sequential_dropout
 
 
 class HybridLanguageModel(RNNLanguageModel):
@@ -24,8 +24,7 @@ class HybridLanguageModel(RNNLanguageModel):
         self.cond_dim = cond_dim
         self.dropout = dropout
         self.modelname = self.get_modelname()
-        super().__init__(encoder, layers, wemb_dim, cemb_dim, hidden_dim, cond_dim,
-                         dropout=dropout)
+        super(RNNLanguageModel, self).__init__()
 
         wvocab = encoder.word.size()
         cvocab = encoder.char.size()
@@ -49,7 +48,12 @@ class HybridLanguageModel(RNNLanguageModel):
             input_dim += cond_dim
 
         # rnn
-        self.rnn = nn.LSTM(input_dim, hidden_dim, layers, dropout=dropout)
+        rnn = []
+        for layer in range(layers):
+            rnn_inp = input_dim if layer == 0 else hidden_dim
+            rnn_hid = hidden_dim
+            rnn.append(nn.LSTM(rnn_inp, rnn_hid))
+        self.rnn = nn.ModuleList(rnn)
 
         # output
         self.cout_rnn = nn.LSTM(cemb_dim + hidden_dim, hidden_dim)
@@ -81,13 +85,24 @@ class HybridLanguageModel(RNNLanguageModel):
 
         # - rnn
         embs, unsort = utils.pack_sort(embs, nwords)
-        outs, hidden = self.rnn(embs, hidden)
+        outs = embs
+        hidden_ = []
+        hidden = hidden or [None] * len(self.rnn)
+        for l, rnn in enumerate(self.rnn):
+            outs, h_ = rnn(outs, hidden[l])
+            if l != len(self.rnn) - 1:
+                outs, lengths = nn.utils.rnn.pad_packed_sequence(outs)
+                outs = sequential_dropout(outs, self.dropout, self.training)
+                outs = nn.utils.rnn.pack_padded_sequence(outs, lengths)
+            hidden_.append(h_)
         outs, _ = unpack(outs)
         outs = outs[:, unsort]
-        if isinstance(hidden, tuple):
-            hidden = hidden[0][:, unsort], hidden[1][:, unsort]
-        else:
-            hidden = hidden[:, unsort]
+        hidden = hidden_
+        for l, h in enumerate(hidden):
+            if isinstance(h, tuple):
+                hidden[l] = h[0][:, unsort], h[1][:, unsort]
+            else:
+                hidden[l] = h[:, unsort]
 
         # - compute char-level logits
         breaks = list(itertools.accumulate(nwords))
@@ -177,8 +192,13 @@ class HybridLanguageModel(RNNLanguageModel):
                 if conds:
                     embs = torch.cat([embs, *bconds], -1)
 
-                # rnn
-                outs, hidden = self.rnn(embs, hidden)
+                outs = embs
+                hidden_ = []
+                hidden = hidden or [None] * len(self.rnn)
+                for l, rnn in enumerate(self.rnn):
+                    outs, h_ = rnn(outs, hidden[l])
+                    hidden_.append(h_)
+                hidden = hidden_
 
                 # char-level
                 cinp = torch.tensor([encoder.char.bos] * batch).to(self.device)  # (batch)
@@ -245,6 +265,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--train')
     parser.add_argument('--dev')
+    parser.add_argument('--dpath', help='path to rhyme dictionary')
+    parser.add_argument('--reverse', action='store_true',
+                        help='whether to reverse input')
     parser.add_argument('--wemb_dim', type=int, default=100)
     parser.add_argument('--cemb_dim', type=int, default=100)
     parser.add_argument('--cond_dim', type=int, default=50)
@@ -277,10 +300,10 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = reader(args.train)
-    dev = reader(args.dev) if args.dev else None
+    train = reader(args.train, dpath=args.dpath, reverse=args.reverse)
+    dev = reader(args.dev, dpath=args.dpath, reverse=args.reverse)
 
-    encoder = CorpusEncoder.from_corpus(train, most_common=args.maxsize)
+    encoder = CorpusEncoder.from_corpus(train, dev, most_common=args.maxsize)
     print("... took {} secs".format(time.time() - start))
 
     print("Building model")

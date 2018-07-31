@@ -4,6 +4,7 @@ import collections
 
 import torch
 import pronouncing
+import tqdm
 
 
 BOS, EOS, BOL, EOL, UNK, PAD = '<s>', '</s>', '<l>', '</l>', '<unk>', '<pad>'
@@ -94,13 +95,12 @@ class CorpusEncoder:
     def from_corpus(cls, *corpora, most_common=25000):
         w2i = collections.Counter()
         conds_w2i = collections.defaultdict(collections.Counter)
-        for corpus in corpora:
-            for sent, conds, *_ in corpus:
-                for cond in conds:
-                    conds_w2i[cond][conds[cond]] += 1
+        for sent, conds, *_ in tqdm.tqdm(it for corpus in corpora for it in corpus):
+            for cond in conds:
+                conds_w2i[cond][conds[cond]] += 1
     
-                for word in sent:
-                    w2i[word] += 1
+            for word in sent:
+                w2i[word] += 1
 
         word = Vocab(w2i, bos=BOS, eos=EOS, unk=UNK, pad=PAD, most_common=most_common)
         conds = {c: Vocab(cond_w2i) for c, cond_w2i in conds_w2i.items()}
@@ -152,7 +152,8 @@ class CorpusReader:
                 rhyme = get_rhyme(prev, line, self.d)
                 if rhyme:
                     _, rhyme = zip(*rhyme)  # get only second verse rhyme
-                    rhyme = ' '.join(rhyme[-3:])
+                    rhyme = '-'.join(rhyme)
+
             conds['rhyme'] = rhyme or UNK
 
         # get length
@@ -420,22 +421,16 @@ def get_rhyme(line1, line2, d, return_lines=False):
     if not vow1 or not vow2:
         return
 
-    prematch = True  # have we found the first stressed matching syllable?
-    match = []
-    for i in range(min(len(vow1), len(vow2))):
+    match, done = [], False
+    for i in range(min(len(vow1), len(vow2), 3)):
         s1, s2 = vow1[-(i+1)], vow2[-(i+1)]
-        if s1 == s2:
-            if s1[-1] == '1':
-                prematch = False
-        else:
-            if not prematch and (s1[-1] == '0' and s2[-1] == '0'):
-                pass
-            else:
-                return match
-
         match.append((s1, s2))
+        if s1.endswith('1') or s2.endswith('1'):
+            if s1 == s2:
+                done = True
+            break
 
-    if prematch:
+    if not done:
         # didn't find main stress
         return
 

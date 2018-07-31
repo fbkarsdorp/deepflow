@@ -216,6 +216,7 @@ class RNNLanguageModel(nn.Module):
                 if conds:
                     embs = torch.cat([embs, *bconds], -1)
 
+                # rnn
                 outs = embs
                 hidden_ = []
                 hidden = hidden or [None] * len(self.rnn)
@@ -280,7 +281,7 @@ class RNNLanguageModel(nn.Module):
             fails += 1
             print("Failed {} time to improve best dev loss: {}".format(fails, best_loss))
 
-        print()
+        print("Sampling #{} examples".format(nsamples))
         for _ in range(nsamples):
             print(self.sample(encoder, reverse=reverse))
         print()
@@ -351,7 +352,8 @@ class RNNLanguageModel(nn.Module):
                     start = time.time()
 
                 if dev and checkfreq and idx and idx % (checkfreq // minibatch) == 0:
-                    best_loss, fails = self.dev(dev, encoder, best_loss, fails, reverse)
+                    best_loss, fails = self.dev(
+                        dev, encoder, best_loss, fails, reverse=reverse)
                     # update lr
                     if fails > 0:
                         for pgroup in trainer.param_groups:
@@ -359,7 +361,8 @@ class RNNLanguageModel(nn.Module):
                         print(trainer)
 
             if dev and not checkfreq:
-                best_loss, fails = self.dev(dev, encoder, best_loss, fails, reverse)
+                best_loss, fails = self.dev(
+                    dev, encoder, best_loss, fails, reverse=reverse)
                 # update lr
                 if fails > 0:
                     for pgroup in trainer.param_groups:
@@ -373,7 +376,8 @@ if __name__ == '__main__':
     parser.add_argument('--train')
     parser.add_argument('--dev')
     parser.add_argument('--dpath', help='path to rhyme dictionary')
-    parser.add_argument('--reverse', action='store_true', help='whether to reverse input')
+    parser.add_argument('--reverse', action='store_true',
+                        help='whether to reverse input')
     parser.add_argument('--wemb_dim', type=int, default=100)
     parser.add_argument('--cemb_dim', type=int, default=100)
     parser.add_argument('--cond_dim', type=int, default=50)

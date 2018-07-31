@@ -1,4 +1,5 @@
 
+import collections
 import random
 import math
 import time
@@ -177,12 +178,14 @@ class RNNLanguageModel(nn.Module):
         """
         return math.exp(min(loss, 100))
 
-    def sample(self, encoder, nsyms=100, conds=None, hidden=None, reverse=False):
+    def sample(self, encoder, nsyms=100, conds=None, batch=1, hidden=None, reverse=False):
         """
         Generate stuff
         """
-        # TODO: batch sampling
-        batch = 1
+        # batch
+        if hidden is not None:
+            batch = hidden[0].size(0)
+        hidden = hidden or [None] * len(self.rnn)
 
         # sample conditions if needed
         conds, bconds = conds or {}, []
@@ -203,10 +206,16 @@ class RNNLanguageModel(nn.Module):
         char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
         nchars = [3] * batch
 
-        output = []
+        output = collections.defaultdict(list)
+        mask = torch.ones(batch, dtype=torch.int64).to(self.device)
+        scores = 0
 
         with torch.no_grad():
             for _ in range(nsyms):
+                # check if done
+                if sum(mask).item() == 0:
+                    break
+
                 # embeddings
                 wemb = self.wembs(word.unsqueeze(0))
                 cemb = self.embed_chars(char, nchars, nwords)
@@ -217,20 +226,27 @@ class RNNLanguageModel(nn.Module):
                 # rnn
                 outs = embs
                 hidden_ = []
-                hidden = hidden or [None] * len(self.rnn)
                 for l, rnn in enumerate(self.rnn):
                     outs, h_ = rnn(outs, hidden[l])
                     hidden_.append(h_)
-                hidden = hidden_
-                # (1 x 1 x vocab) -> (1 x vocab)
+                # only update hidden for active instances
+                hidden = torch_utils.update_hidden(hidden, hidden_, mask)
+                # (1 x batch x vocab) -> (batch x vocab)
                 logits = self.proj(outs).squeeze(0)
 
                 preds = F.log_softmax(logits, dim=-1)
-                word = (preds / 1).exp().multinomial(1).squeeze(1)
+                word = (preds / 1).exp().multinomial(1)
+                score = preds.gather(1, word)
+                word, score = word.squeeze(1), score.squeeze(1)
 
-                # break
-                if word[0].item() == encoder.word.eos:
-                    break
+                # update mask
+                mask = mask * word.ne(encoder.word.eos).long()
+
+                # accumulate
+                scores += score * mask.float()
+                for idx, (active, w) in enumerate(zip(mask.tolist(), word.tolist())):
+                    if active:
+                        output[idx].append(encoder.word.i2w[w])
 
                 # get character-level input
                 char, nchars = [], []
@@ -239,18 +255,15 @@ class RNNLanguageModel(nn.Module):
                     c = encoder.char.transform(w)
                     char.append(c)
                     nchars.append(len(c))
-                char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
+                char = torch.tensor(char, dtype=torch.int64).t().to(self.device)
 
-                # accumulate
-                output.append([encoder.word.i2w[w] for w in word.tolist()])
-
+        # prepare output
+        hyps = []
+        for i in range(batch):
+            hyps.append(' '.join(output[i][::-1] if reverse else output[i]))
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
-        # single-batch for now
-        output = [step[0] for step in output]
-        # maybe reverse
-        output = ' '.join(output[::-1] if reverse else output)
 
-        return output, conds
+        return (hyps, conds), hidden
 
     def dev(self, corpus, encoder, best_loss, fails, nsamples=20, reverse=False):
         self.eval()
@@ -280,8 +293,10 @@ class RNNLanguageModel(nn.Module):
             print("Failed {} time to improve best dev loss: {}".format(fails, best_loss))
 
         print("Sampling #{} examples".format(nsamples))
+        print()
         for _ in range(nsamples):
-            print(self.sample(encoder, reverse=reverse))
+            (hyps, conds), _ = self.sample(encoder, reverse=reverse)
+            print(hyps[0], conds)  # only print first item in batch
         print()
 
         self.train()
@@ -334,11 +349,7 @@ class RNNLanguageModel(nn.Module):
                     trainer.step()
                     trainer.zero_grad()
                     # detach
-                    for l, h in enumerate(hidden):
-                        if isinstance(hidden, torch.Tensor):
-                            hidden[l] = h.detach()
-                        else:
-                            hidden[l] = tuple(hh.detach() for hh in h)
+                    hidden = torch_utils.detach_hidden(hidden)
 
                 tinsts, tloss = tinsts + insts, tloss + loss.item()
 

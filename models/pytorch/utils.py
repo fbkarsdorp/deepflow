@@ -375,3 +375,7 @@ def get_consecutive_rhyme_pairs_dict(path, dictpath, return_lines=True):
             yield 0
 
         prev = line
+
+
+# rhymes = list(get_consecutive_rhyme_pairs_dict(
+#     './data/ohhla-new.jsonl', './data/ohhla.vocab.phon.json'))

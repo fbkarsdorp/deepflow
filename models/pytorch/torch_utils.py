@@ -104,6 +104,30 @@ def flatten_padded_batch(batch, nwords):
     return torch.cat(output, dim=0)
 
 
+def detach_hidden(hidden):
+    for l, h in enumerate(hidden):
+        if isinstance(h, torch.Tensor):
+            hidden[l] = h.detach()
+        else:
+            hidden[l] = tuple(h_.detach() for h_ in h)
+
+    return hidden
+
+
+def update_hidden(old_hidden, new_hidden, mask):
+    if old_hidden[0] is None:
+        return new_hidden
+
+    for l, (old, new) in enumerate(zip(old_hidden, new_hidden)):
+        if isinstance(old, tuple):
+            new_hidden[l] = (mask.float() * new[0] + (1-mask).float() * old[0],
+                             mask.float() * new[1] + (1-mask).float() * old[1])
+        else:
+            new_hidden[l] = mask.float() * new + (1-mask).float() * old
+
+    return new_hidden
+
+
 def sequential_dropout(inp, p, training):
     if not training or not p:
         return inp

@@ -155,14 +155,11 @@ class HybridLanguageModel(RNNLanguageModel):
         """
         return math.log2(math.e) * loss
 
-    def sample(self, encoder, nsyms=50, max_sym_len=10,
+    def sample(self, encoder, nsyms=50, max_sym_len=10, batch=1,
                conds=None, hidden=None, reverse=False):
         """
         Generate stuff
         """
-        # TODO: batch sampling
-        batch = 1
-
         # sample conditions if needed
         conds, bconds = conds or {}, []
         for c in sorted(self.conds):
@@ -252,13 +249,10 @@ class HybridLanguageModel(RNNLanguageModel):
                 # accumulate
                 output.append(toutput)
 
+        hyps = [' '.join(step[0] for step in (output[::-1] if reverse else output))]
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
-        # single-batch for now
-        output = [step[0] for step in output]
-        # maybe reverse
-        output = ' '.join(output[::-1] if reverse else output)
 
-        return output, conds
+        return (hyps, conds), hidden
 
 
 if __name__ == '__main__':

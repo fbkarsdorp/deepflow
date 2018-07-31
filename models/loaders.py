@@ -1,5 +1,5 @@
 import collections
-import ijson
+import json
 
 import gensim
 import torch
@@ -10,8 +10,8 @@ PAD, EOS, BOS, UNK = '<PAD>', '<EOS>', '<BOS>', '<UNK>'
 
 def load_gensim_embeddings(fpath: str):
     model = gensim.models.KeyedVectors.load(fpath)
-    model.init_sims(replace=True)
-    return model.index2word, model.vectors
+    # model.init_sims(replace=True)
+    return model.index2word, model.syn0
 
 def identity(x): return x
 
@@ -21,7 +21,16 @@ def word_boundaries(syllables):
     return []
 
 def normalize_stress(stress):
+    return [0] if len(stress) == 1 else [int(s) if s != '.' else 0 for s in stress]
+
+def normalize_beats(stress):
     return [int(s) if s != '.' else 0 for s in stress]
+
+def lowercase(syllables):
+    return [syllable.lower() for syllable in syllables]
+
+def clean_syllables(syllables):
+    return [syllable.strip('+,') for syllable in syllables]
 
 def format_syllables(syllables):
     if len(syllables) == 1:
@@ -33,7 +42,7 @@ def format_syllables(syllables):
 
 class Encoder:
     def __init__(self, name, pad_token=PAD, eos_token=EOS, bos_token=BOS, unk_token=UNK,
-                 vocab=None, fixed_vocab=False, preprocessor=identity):
+                 vocab=None, fixed_vocab=False, preprocessor=identity, word_based=False):
         self.index = collections.defaultdict()
         self.index.default_factory = lambda: len(self.index)
         self.pad_token = pad_token
@@ -43,7 +52,9 @@ class Encoder:
         self.reserved_tokens = list(filter(None, (pad_token, eos_token, bos_token, unk_token)))
         self.name = name
         self.preprocessor = preprocessor
+        self.word_based = word_based
         self.fixed_vocab = fixed_vocab
+        self._unknowns = set()
 
         for token in self.reserved_tokens:
             self.index[token]
@@ -53,7 +64,10 @@ class Encoder:
 
     def __getitem__(self, item):
         if self.fixed_vocab:
-            return self.index.get(item, self.unk_index)
+            index = self.index.get(item, self.unk_index)
+            if index == self.unk_index:
+                self._unknowns.add(item)
+            return index
         return self.index[item]
 
     def __len__(self):
@@ -84,15 +98,21 @@ class Encoder:
     def transform(self, sample):
         eos = [self.eos_index] if self.eos_token is not None else []
         bos = [self.bos_index] if self.bos_token is not None else []
-        sample = bos + [
-            self[elt] for item in sample for elt in self.preprocessor(item[self.name])
-        ] + eos
+        if not self.word_based:
+            sample = bos + [
+                self[elt] for item in sample for elt in self.preprocessor(item[self.name])
+            ] + eos
+        else:
+            sample = bos + [self[''.join(map(str, self.preprocessor(item[self.name])))] for item in sample] + eos
         return torch.LongTensor(sample)
 
     def decode(self, sample):
         if not hasattr(self, 'index2item'):
             self.index2item = sorted(self.index, key=self.index.get)
         return [self.index2item[elt] for elt in sample]
+
+    def unknowns(self):
+        return self._unknowns
 
 
 class Batch:
@@ -153,21 +173,23 @@ class DataSet:
     def batches(self):
         batch = Batch(list(self.encoders.keys()) + ['song_id'], length_field='stress')
 
-        with open(self.fpath) as f:
-            for song in ijson.items(f, 'item'):
-                for verse in song['text']:
-                    for line in verse:
-                        # yield if needed
-                        if len(batch) == self.batch_size:
-                            yield batch.get_batch()
-                            batch.reset()
-                        # accumulate data
-                        data = {f: t.transform(line) for f, t in self.encoders.items()}
-                        data = {'song_id': song['id'], **data}
-                        batch.add(data)
+        for line in open(self.fpath):
+            song = json.loads(line.strip())
+            for verse in song['text']:
+                for line in verse:
+                    if not [s for w in line for s in w['syllables']]:
+                        continue
+                    # yield if needed
+                    if len(batch) == self.batch_size:
+                        yield batch.get_batch()
+                        batch.reset()
+                    # accumulate data
+                    data = {f: t.transform(line) for f, t in self.encoders.items()}
+                    data = {'song_id': song['id'], **data}
+                    batch.add(data)
 
-            if len(batch) > 0:
-                yield batch.get_batch()
+        if len(batch) > 0:
+            yield batch.get_batch()
 
 
 def chunks(it, size):

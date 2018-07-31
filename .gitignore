@@ -103,3 +103,6 @@ data/lyrics-corpora/ohhla.com
 
 # midi files
 *.mid
+
+# emacs
+*~

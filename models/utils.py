@@ -13,3 +13,15 @@ def accuracy_score(x: np.ndarray, y: np.ndarray) -> float:
 def chop_padding(samples, lengths):
     return [samples[i, 0:lengths[i]] for i in range(samples.shape[0])]
 
+def seq_accuracy_score(x: np.ndarray, y: np.ndarray) -> float:
+    def accuracy(a, b):
+        return sum(i == j for i, j in zip(a, b)) / len(a)
+    return [accuracy(a, b) for a, b in zip(x, y)]
+
+def fmap(*funcs):
+    def _f(collection):
+        result = collection
+        for fn in reversed(funcs):
+            result = fn(result)
+        return result
+    return _f

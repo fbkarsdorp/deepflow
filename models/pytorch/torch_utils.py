@@ -118,6 +118,8 @@ def update_hidden(old_hidden, new_hidden, mask):
     if old_hidden[0] is None:
         return new_hidden
 
+    mask = mask.unsqueeze(0).unsqueeze(2)
+
     for l, (old, new) in enumerate(zip(old_hidden, new_hidden)):
         if isinstance(old, tuple):
             new_hidden[l] = (mask.float() * new[0] + (1-mask).float() * old[0],

@@ -178,14 +178,19 @@ class RNNLanguageModel(nn.Module):
         """
         return math.exp(min(loss, 100))
 
-    def sample(self, encoder, nsyms=100, conds=None, batch=1, hidden=None, reverse=False):
+    def sample(self, encoder, nsyms=100,
+               conds=None, batch=1, hidden=None, reverse=False, tau=1.0):
         """
         Generate stuff
         """
         # batch
         if hidden is not None:
-            batch = hidden[0].size(0)
-        hidden = hidden or [None] * len(self.rnn)
+            if isinstance(hidden[0], tuple):
+                batch = hidden[0][0].size(1)
+            else:
+                batch = hidden[0].size(1)
+        else:
+            hidden = [None] * len(self.rnn)
 
         # sample conditions if needed
         conds, bconds = conds or {}, []
@@ -235,7 +240,7 @@ class RNNLanguageModel(nn.Module):
                 logits = self.proj(outs).squeeze(0)
 
                 preds = F.log_softmax(logits, dim=-1)
-                word = (preds / 1).exp().multinomial(1)
+                word = (preds / tau).exp().multinomial(1)
                 score = preds.gather(1, word)
                 word, score = word.squeeze(1), score.squeeze(1)
 
@@ -249,13 +254,12 @@ class RNNLanguageModel(nn.Module):
                         output[idx].append(encoder.word.i2w[w])
 
                 # get character-level input
-                char, nchars = [], []
+                char = []
                 for w in word.tolist():  # iterate over batch
                     w = encoder.word.i2w[w]
                     c = encoder.char.transform(w)
                     char.append(c)
-                    nchars.append(len(c))
-                char = torch.tensor(char, dtype=torch.int64).t().to(self.device)
+                char, nchars = utils.get_batch(char, encoder.char.pad, self.device)
 
         # prepare output
         hyps = []

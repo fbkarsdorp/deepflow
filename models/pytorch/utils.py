@@ -1,4 +1,5 @@
 
+import itertools
 import re
 import json
 import collections
@@ -157,9 +158,9 @@ class CorpusReader:
         if self.d:
             rhyme = None
             if prev:
-                rhyme = get_rhyme(prev, line, self.d)
+                rhyme = get_rhyme2(prev, line, self.d)
                 if rhyme:
-                    _, rhyme = zip(*rhyme)  # get only second verse rhyme
+                    # _, rhyme = zip(*rhyme)  # get only second verse rhyme
                     rhyme = '-'.join(rhyme)
 
             conds['rhyme'] = rhyme or UNK
@@ -312,16 +313,16 @@ def get_consecutive_rhyme_pairs_pronouncing(path):
 def get_rhyme(line1, line2, d, return_lines=False):
 
     def get_vowels(line):
-        output = []
-        for token in line[::-1]:
-            try:
-                phon = d[token['token'].lower()]
-                phon = list(filter(lambda ph: ph[-1].isnumeric(), phon.split()))
-                output.extend(phon[::-1])
-            except KeyError:
-                break
+        try:
+            phon = d[line[-1]['token'].lower()]  # only last word
+            phon = list(filter(lambda ph: ph[-1].isnumeric(), phon.split()))
+            return phon
+        except KeyError:
+            return
 
-        return output[::-1]
+    # remove same word rhymes
+    if line1[-1]['token'] == line2[-1]['token']:
+        return
 
     vow1, vow2 = get_vowels(line1), get_vowels(line2)
     if not vow1 or not vow2:
@@ -344,6 +345,33 @@ def get_rhyme(line1, line2, d, return_lines=False):
         return [i['token'] for i in line1], [i['token'] for i in line2], match[::-1]
     else:
         return match[::-1]
+
+
+def get_rhyme2(line1, line2, d, return_lines=False):
+    """
+    This only works with the extra dictionary created by running "add_phon_dict.py"
+    """
+    last1, last2 = line1[-1]['token'], line2[-1]['token']
+    # remove same word rhymes
+    if last1 == last2:
+        return
+
+    if last2 in d and last1 in d[last2]['rhym']:
+        phon = d[last2]['phon']
+        phon = list(filter(lambda ph: ph[-1].isnumeric(), phon.split()))
+        rhyme = []
+        for ph in phon[::-1]:
+            rhyme.append(ph)
+            if ph.endswith('1'):
+                break
+        rhyme = rhyme[::-1]
+
+        if return_lines:
+            return ([i['token'] for i in line1],
+                    [i['token'] for i in line2],
+                    rhyme)
+        else:
+            return rhyme
 
 
 def get_consecutive_rhyme_pairs_dict(path, dictpath, return_lines=True):
@@ -370,12 +398,8 @@ def get_consecutive_rhyme_pairs_dict(path, dictpath, return_lines=True):
     prev = None
     for line, reset in lines_from_jsonl(path):
         if prev is not None and not reset:
-            yield get_rhyme(line, prev, d, return_lines)
+            yield get_rhyme2(line, prev, d, return_lines)
         else:
             yield 0
 
         prev = line
-
-
-# rhymes = list(get_consecutive_rhyme_pairs_dict(
-#     './data/ohhla-new.jsonl', './data/ohhla.vocab.phon.json'))

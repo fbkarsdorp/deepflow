@@ -162,14 +162,19 @@ class CharLanguageModel(RNNLanguageModel):
         """
         return math.log2(math.e) * loss
 
-    def sample(self, encoder, nsyms=100, conds=None, hidden=None, reverse=False, batch=1):
+    def sample(self, encoder, nsyms=100, conds=None, hidden=None, reverse=False, batch=1,
+               tau=1.0):
         """
         Generate stuff
         """
         # batch
         if hidden is not None:
-            batch = hidden[0].size(0)
-        hidden = hidden or [None] * len(self.rnn)
+            if isinstance(hidden[0], tuple):
+                batch = hidden[0][0].size(1)
+            else:
+                batch = hidden[0].size(1)
+        else:
+            hidden = [None] * len(self.rnn)
 
         # sample conditions if needed
         conds, bconds = conds or {}, []
@@ -214,7 +219,7 @@ class CharLanguageModel(RNNLanguageModel):
                 logits = self.proj(outs).squeeze(0)
 
                 preds = F.log_softmax(logits, dim=-1)
-                char = (preds / 1).exp().multinomial(1)
+                char = (preds / tau).exp().multinomial(1)
                 score = preds.gather(1, char)
                 char, score = char.squeeze(1), score.squeeze(1)
 

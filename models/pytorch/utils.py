@@ -156,13 +156,11 @@ class CorpusReader:
 
         # get rhyme
         if self.d:
-            rhyme = None
-            if prev:
-                rhyme = get_rhyme2(prev, line, self.d)
-                if rhyme:
-                    # _, rhyme = zip(*rhyme)  # get only second verse rhyme
-                    rhyme = '-'.join(rhyme)
-
+            try:
+                rhyme = get_final_phonology(self.d[line[-1]['token']])
+                rhyme = '-'.join(rhyme) if len(rhyme) <= 2 else None
+            except KeyError:
+                rhyme = None
             conds['rhyme'] = rhyme or UNK
 
         # get length
@@ -347,6 +345,17 @@ def get_rhyme(line1, line2, d, return_lines=False):
         return match[::-1]
 
 
+def get_final_phonology(phon):
+    phon = list(filter(lambda ph: ph[-1].isnumeric(), phon.split()))
+    rhyme = []
+    for ph in phon[::-1]:
+        rhyme.append(ph)
+        if ph.endswith('1'):
+            break
+
+    return rhyme[::-1]
+
+
 def get_rhyme2(line1, line2, d, return_lines=False):
     """
     This only works with the extra dictionary created by running "add_phon_dict.py"
@@ -357,14 +366,7 @@ def get_rhyme2(line1, line2, d, return_lines=False):
         return
 
     if last2 in d and last1 in d[last2]['rhym']:
-        phon = d[last2]['phon']
-        phon = list(filter(lambda ph: ph[-1].isnumeric(), phon.split()))
-        rhyme = []
-        for ph in phon[::-1]:
-            rhyme.append(ph)
-            if ph.endswith('1'):
-                break
-        rhyme = rhyme[::-1]
+        rhyme = get_final_phonology(d[last2]['phon'])
 
         if return_lines:
             return ([i['token'] for i in line1],

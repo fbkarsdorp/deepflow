@@ -109,7 +109,7 @@ class RNNLanguageModel(nn.Module):
 
         return cembs
 
-    def forward(self, word, nwords, char, nchars, conds, hidden=None):
+    def forward(self, word, nwords, char, nchars, conds, hidden=None, project=True):
         # dropout!: embedding dropout (dropoute), not implemented
         # (seq x batch x wemb_dim)
         wembs = self.wembs(word)
@@ -155,7 +155,7 @@ class RNNLanguageModel(nn.Module):
         # dropout!: output dropout (dropouto)
         outs = torch_utils.sequential_dropout(outs, self.dropout, self.training)
 
-        logits = self.proj(outs)
+        logits = self.proj(outs) if project else outs
 
         return logits, hidden
 

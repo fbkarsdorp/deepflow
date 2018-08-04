@@ -188,7 +188,7 @@ class CorpusReader:
     def __iter__(self):
         yield from self.lines_from_jsonl(self.fpath)
 
-    def get_batches(self, batch_size):
+    def get_batches(self, batch_size, yield_stops=False):
         songs = []
         with open(self.fpath, errors='ignore') as f:
             for idx, line in enumerate(f):
@@ -199,6 +199,8 @@ class CorpusReader:
                         yield sents, conds
                     # reset
                     songs = []
+                    if yield_stops:
+                        yield None
                 try:
                     song = json.loads(line)['text']
                     lines = []

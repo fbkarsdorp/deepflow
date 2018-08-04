@@ -28,6 +28,21 @@ def format_syllables(syllables):
     return output
 
 
+def join_syllables(syllables):
+    joint = ''
+
+    for syl in syllables:
+        if syl.startswith('-'):
+            syl = syl[1:]
+        if syl.endswith('-'):
+            syl = syl[:-1]
+        else:
+            syl = syl + ' '
+        joint += syl
+
+    return joint
+
+
 def bucket_length(length, buckets=(5, 10, 15, 20)):
     for i in sorted(buckets, reverse=True):
         if length >= i:
@@ -157,6 +172,9 @@ class CorpusReader:
         # get rhyme
         if self.d:
             try:
+                # rhyme = get_rhyme2(line, prev, d)
+                # if rhyme:
+                #     rhyme = '-'.join(rhyme)
                 rhyme = get_final_phonology(self.d[line[-1]['token']])
                 rhyme = '-'.join(rhyme) if len(rhyme) <= 2 else None
             except KeyError:

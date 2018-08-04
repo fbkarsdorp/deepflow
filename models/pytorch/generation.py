@@ -1,22 +1,11 @@
 
+import collections
+import json
 import random
 import torch
+
 from models.pytorch.model import RNNLanguageModel
-
-
-def join(sylls):
-    joint = ''
-
-    for syl in sylls:
-        if syl.startswith('-'):
-            syl = syl[1:]
-        if syl.endswith('-'):
-            syl = syl[:-1]
-        else:
-            syl = syl + ' '
-        joint += syl
-
-    return joint
+import utils
 
 
 def is_valid(sylls, verbose=False):
@@ -59,7 +48,7 @@ def is_valid_pair(sylls1, sylls2, verbose=False):
             last.append(syl)
             if not syl.startswith('-'):
                 break
-        return join(last[::-1])
+        return utils.join_syllables(last[::-1])
 
     # avoid same word in the end of consecutive lines
     if get_last(sylls1) == get_last(sylls2):
@@ -122,16 +111,6 @@ def format_stanzas(stanzas, conds):
     print()
 
 
-def create_rhyme_eval_set(model, encoder, nsamples=25, length=15, tau=0.85):
-    conds = {'length': encoder.conds['length'].w2i[length]}
-    for cond in encoder.conds['rhyme'].w2i.keys():
-        conds['rhyme'] = encoder.conds['rhyme'].w2i[cond]
-        (samples, _), _ = model.sample(encoder, tau=tau, conds=conds, batch=nsamples)
-        for sample in samples:
-            sample = ' '.join(sample.split()[::-1])
-            yield cond, sample
-
-
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
@@ -157,11 +136,4 @@ if __name__ == '__main__':
         verbose=args.verbose)
 
     format_stanzas(stanzas, conds)
-
-    # import collections
-    # samples = collections.defaultdict(list)
-    # for idx, (cond, sample) in enumerate(create_rhyme_eval_set(model, encoder)):
-    #     if idx % 50 == 0:
-    #         print(idx)
-    #     samples[cond].append(sample)
 

@@ -160,3 +160,17 @@ def embedded_dropout(embed, words, dropout=0.1, scale=None):
     return torch.nn.functional.embedding(words, masked_embed_weight,
                                          padding_idx, embed.max_norm, embed.norm_type,
                                          embed.scale_grad_by_freq, embed.sparse)
+
+
+def batch_index_add(t, index, src):
+    """
+    Add values in `src` indexed by `index`
+
+    t: (batch x vocab)
+    index: (batch x cache_size)
+    src: (batch x cache_size)
+    """
+    batch, vocab = t.size()
+    ex = torch.arange(0, batch, out=t.new()).unsqueeze(1).long() * vocab
+    added = t.view(-1).index_add(0, (index + ex).view(-1), src.view(-1))
+    return added.view(batch, vocab)

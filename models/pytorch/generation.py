@@ -6,6 +6,7 @@ import torch
 
 from models.pytorch.model import RNNLanguageModel
 import utils
+from cache import Cache
 
 
 def is_valid(sylls, verbose=False):
@@ -62,10 +63,14 @@ def is_valid_pair(sylls1, sylls2, verbose=False):
 def generate_stanza(model, encoder,
                     nlines=4, nstanzas=20,
                     rhyme=None, length=15, tau=1.0,
-                    verbose=False):
+                    verbose=False,
+                    cache_size=0, alpha=0.0, theta=0.0):
 
     hidden = None
     rhyme = rhyme or random.choice(list(encoder.conds['rhyme'].w2i.keys()))
+    cache = None
+    if cache_size > 0:
+        cache = Cache(model.hidden_dim, cache_size, len(encoder.word.w2i), model.device)
 
     conds = {'rhyme': encoder.conds['rhyme'].w2i[rhyme],
              'length': encoder.conds['length'].w2i[length]}
@@ -73,8 +78,8 @@ def generate_stanza(model, encoder,
     stanzas = None
     for _ in range(nlines):
         (hyps, _), hidden = model.sample(
-            encoder, hidden=hidden, conds=conds, reverse=True,
-            batch=nstanzas, tau=tau)
+            encoder, hidden=hidden, conds=conds, batch=nstanzas, tau=tau,
+            cache=cache, alpha=alpha, theta=theta)
 
         if stanzas is None:
             stanzas = [[hyp.split()] for hyp in hyps]
@@ -98,7 +103,7 @@ def generate_stanza(model, encoder,
                 continue
 
         if valid:
-            output.append([join(line) for line in stanza])
+            output.append([utils.join_syllables(line) for line in stanza])
 
     return output, {'rhyme': rhyme, 'length': length}
 
@@ -120,6 +125,9 @@ if __name__ == '__main__':
     parser.add_argument('--verbose', action='store_true')
     parser.add_argument('--nlines', default=4, type=int)
     parser.add_argument('--nstanzas', default=20, type=int)
+    parser.add_argument('--alpha', type=float, default=0.0)
+    parser.add_argument('--theta', type=float, default=0.0)
+    parser.add_argument('--cache_size', type=int, default=0)
     args = parser.parse_args()
 
     # d = torch.load('./RNNLanguageModel.2018-07-31+16:28:30.pt')
@@ -133,6 +141,7 @@ if __name__ == '__main__':
     stanzas, conds = generate_stanza(
         model, encoder, nlines=args.nlines, nstanzas=args.nstanzas,
         tau=args.tau, length=args.length, rhyme=rhyme,
+        cache_size=args.cache_size, alpha=args.alpha, theta=args.theta,
         verbose=args.verbose)
 
     format_stanzas(stanzas, conds)

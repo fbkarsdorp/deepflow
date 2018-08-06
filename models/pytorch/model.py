@@ -235,18 +235,29 @@ class RNNLanguageModel(nn.Module):
                 for l, rnn in enumerate(self.rnn):
                     outs, h_ = rnn(outs, hidden[l])
                     hidden_.append(h_)
+                # (1 x batch x hid) -> (batch x hid)
+                outs = outs.squeeze(0)
                 # only update hidden for active instances
                 hidden = torch_utils.update_hidden(hidden, hidden_, mask)
-                # (1 x batch x vocab) -> (batch x vocab)
-                logits = self.proj(outs).squeeze(0)
 
-                preds = F.log_softmax(logits, dim=-1)
-                word = (preds / tau).exp().multinomial(1)
-                score = preds.gather(1, word)
+                # get logits
+                logits = self.proj(outs)
+                if cache and cache.stored > 0:
+                    logprob = cache.interpolate(
+                        outs, logits, alpha, theta).add(1e-8).log()
+                else:
+                    logprob = F.log_softmax(logits, dim=-1)
+
+                word = (logprob / tau).exp().multinomial(1)
+                score = logprob.gather(1, word)
                 word, score = word.squeeze(1), score.squeeze(1)
 
                 # update mask
                 mask = mask * word.ne(encoder.word.eos).long()
+
+                # update cache if needed
+                if cache:
+                    cache.add(outs.unsqueeze(0), word.unsqueeze(0))
 
                 # accumulate
                 scores += score * mask.float()

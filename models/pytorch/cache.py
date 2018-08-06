@@ -1,10 +1,14 @@
 
+import collections
 import itertools
+import random
 
 import tqdm
 import torch
+import torch.nn.functional as F
 
 import utils
+import torch_utils
 
 
 class Cache(object):
@@ -95,25 +99,22 @@ class Cache(object):
 
         return scores.t(), memvals.t()
 
+    def interpolate(self, query, logits, alpha, theta):
+        # query
+        cache_logits, vals = self.query(query)
+        # interpolate
+        cache_prob = alpha * F.softmax(theta * cache_logits, dim=1)
+        prob = (1 - alpha) * F.softmax(logits, dim=1)
+        prob = torch_utils.batch_index_add(prob, vals, cache_prob)
 
-def batch_index_add_(t, index, src):
-    """
-    Add values in `src` indexed by `index` 
-
-    t: (batch x vocab)
-    index: (batch x cache_size)
-    src: (batch x cache_size)
-    """
-    batch, vocab = t.size()
-    ex = torch.arange(0, batch, out=t.new()).unsqueeze(1).long() * vocab
-    t.view(-1).index_add_(0, (index + ex).view(-1), src.view(-1))
+        return prob
 
 
-def evaluate(model, encoder, dev, size=200, alpha=0.1, theta=0.1, batch=1):
+def evaluate(model, encoder, dev, cache_size=200, alpha=0.1, theta=0.1, batch=1):
     """
     Evaluate model using a cache
     """
-    cache = Cache(model.hidden_dim, size, len(encoder.word.w2i), model.device)
+    cache = Cache(model.hidden_dim, cache_size, len(encoder.word.w2i), model.device)
     hidden = None
     tloss, tinsts = 0, 0
 
@@ -121,7 +122,7 @@ def evaluate(model, encoder, dev, size=200, alpha=0.1, theta=0.1, batch=1):
 
         for stuff in tqdm.tqdm(dev.get_batches(batch, yield_stops=True)):
 
-            if stuff is None:
+            if stuff is None:  # avoid cache reaching over different sentences
                 cache.reset()
                 continue
 
@@ -139,21 +140,14 @@ def evaluate(model, encoder, dev, size=200, alpha=0.1, theta=0.1, batch=1):
             for source, target in zip(sources, targets):
                 # (batch x vocab)
                 logits = model.proj(source)
-
                 if cache.stored > 0:
-                    # query
-                    cache_logits, vals = cache.query(source)
-                    # interpolate
-                    cache_prob = alpha * torch.nn.functional.softmax(
-                        theta * cache_logits, dim=1)
-                    prob = (1 - alpha) * torch.nn.functional.softmax(logits, dim=1)
-                    batch_index_add_(prob, vals, cache_prob)
+                    prob = cache.interpolate(source, logits, alpha, theta)
                 else:
-                    prob = torch.nn.functional.softmax(logits, dim=1)
+                    prob = F.softmax(logits, dim=1)
 
-                tloss += torch.nn.functional.nll_loss(
-                    prob.add(1e-8).log(), target, weight=model.nll_weight,
-                    size_average=False
+                tloss += F.nll_loss(
+                    prob.add(1e-8).log(), target,
+                    weight=model.nll_weight, size_average=False
                 ).item()
 
                 cache.add(source.unsqueeze(0), target.unsqueeze(0))
@@ -163,8 +157,8 @@ def evaluate(model, encoder, dev, size=200, alpha=0.1, theta=0.1, batch=1):
     return model.loss_formatter(tloss / tinsts)
 
 
-def sample(model, encoder, nsyms=100, conds=None,
-           batch=1, hidden=None, reverse=False, tau=1.0):
+def sample(model, encoder, cache, nsyms=100, conds=None, batch=1, hidden=None, tau=1.0,
+           alpha=0.0, theta=0.2):
     """
     Generate stuff using cache
     """
@@ -219,14 +213,20 @@ def sample(model, encoder, nsyms=100, conds=None,
             for l, rnn in enumerate(model.rnn):
                 outs, h_ = rnn(outs, hidden[l])
                 hidden_.append(h_)
+            outs = outs.squeeze(0)  # remove seq dim (1 x batch x hid) -> (batch x hid)
             # only update hidden for active instances
             hidden = torch_utils.update_hidden(hidden, hidden_, mask)
-            # (1 x batch x vocab) -> (batch x vocab)
-            logits = model.proj(outs).squeeze(0)
 
-            preds = F.log_softmax(logits, dim=-1)
-            word = (preds / tau).exp().multinomial(1)
-            score = preds.gather(1, word)
+            # get logits
+            logits = model.proj(outs)
+            if cache.stored > 0:
+                prob = cache.interpolate(outs, logits, alpha, theta)
+            else:
+                prob = F.softmax(logits, dim=1)
+
+            logprob = prob.add(1e-8).log()
+            word = (logprob / tau).exp().multinomial(1)
+            score = logprob.gather(1, word)
             word, score = word.squeeze(1), score.squeeze(1)
 
             # update mask
@@ -237,6 +237,9 @@ def sample(model, encoder, nsyms=100, conds=None,
             for idx, (active, w) in enumerate(zip(mask.tolist(), word.tolist())):
                 if active:
                     output[idx].append(encoder.word.i2w[w])
+
+            # cache
+            cache.add(outs.unsqueeze(0), word.unsqueeze(0))
 
             # get character-level input
             char = []
@@ -249,7 +252,7 @@ def sample(model, encoder, nsyms=100, conds=None,
     # prepare output
     hyps = []
     for i in range(batch):
-        hyps.append(' '.join(output[i][::-1] if reverse else output[i]))
+        hyps.append(' '.join(output[i][::-1] if encoder.reverse else output[i]))
     conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
 
     return (hyps, conds), hidden
@@ -261,7 +264,6 @@ if __name__ == '__main__':
     parser.add_argument('--model')
     parser.add_argument('--dev')
     parser.add_argument('--dpath', default='./data/ohhla.vocab.phon.json')
-    parser.add_argument('--reverse', action='store_true')
     parser.add_argument('--size', default=200, type=int)
     parser.add_argument('--device', default='cpu')
     args = parser.parse_args()
@@ -283,12 +285,12 @@ if __name__ == '__main__':
     model.to(args.device)
     model.eval()
 
-    dev = CorpusReader(args.dev, dpath=args.dpath or None, reverse=args.reverse)
+    dev = CorpusReader(args.dev, dpath=args.dpath or None)
     grid = itertools.product(range_float(0, 1, 0.1), range_float(0, 0.5, 0.05))
 
     with open("{}.cache.eval.csv".format(model.modelname), 'w') as f:
         f.write("alpha,theta,loss\n")
         for theta, alpha in grid:
             loss = evaluate(
-                model, encoder, dev, size=args.size, alpha=alpha, theta=theta)
+                model, encoder, dev, cache_size=args.size, alpha=alpha, theta=theta)
             f.write("{},{},{}\n".format(alpha, theta, loss))

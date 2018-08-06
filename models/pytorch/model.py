@@ -178,8 +178,9 @@ class RNNLanguageModel(nn.Module):
         """
         return math.exp(min(loss, 100))
 
-    def sample(self, encoder, nsyms=100,
-               conds=None, batch=1, hidden=None, reverse=False, tau=1.0):
+    def sample(self, encoder, nsyms=100, batch=1,
+               conds=None, hidden=None, tau=1.0,
+               cache=None, alpha=0.0, theta=0.0):
         """
         Generate stuff
         """
@@ -264,12 +265,12 @@ class RNNLanguageModel(nn.Module):
         # prepare output
         hyps = []
         for i in range(batch):
-            hyps.append(' '.join(output[i][::-1] if reverse else output[i]))
+            hyps.append(' '.join(output[i][::-1] if encoder.reverse else output[i]))
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
 
         return (hyps, conds), hidden
 
-    def dev(self, corpus, encoder, best_loss, fails, nsamples=20, reverse=False):
+    def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
         self.eval()
 
         hidden = None
@@ -299,7 +300,7 @@ class RNNLanguageModel(nn.Module):
         print("Sampling #{} examples".format(nsamples))
         print()
         for _ in range(nsamples):
-            (hyps, conds), _ = self.sample(encoder, reverse=reverse)
+            (hyps, conds), _ = self.sample(encoder)
             print(hyps[0], conds)  # only print first item in batch
         print()
 
@@ -309,7 +310,7 @@ class RNNLanguageModel(nn.Module):
 
     def train_model(self, corpus, encoder, epochs=5, lr=0.001, clipping=5, dev=None,
                     patience=3, minibatch=15, trainer='Adam', repfreq=1000, checkfreq=0,
-                    lr_weight=1, bptt=1, reverse=False):
+                    lr_weight=1, bptt=1):
 
         # get trainer
         if trainer.lower() == 'adam':
@@ -365,8 +366,7 @@ class RNNLanguageModel(nn.Module):
                     start = time.time()
 
                 if dev and checkfreq and idx and idx % (checkfreq // minibatch) == 0:
-                    best_loss, fails = self.dev(
-                        dev, encoder, best_loss, fails, reverse=reverse)
+                    best_loss, fails = self.dev(dev, encoder, best_loss, fails)
                     # update lr
                     if fails > 0:
                         for pgroup in trainer.param_groups:
@@ -374,8 +374,7 @@ class RNNLanguageModel(nn.Module):
                         print(trainer)
 
             if dev and not checkfreq:
-                best_loss, fails = self.dev(
-                    dev, encoder, best_loss, fails, reverse=reverse)
+                best_loss, fails = self.dev(dev, encoder, best_loss, fails)
                 # update lr
                 if fails > 0:
                     for pgroup in trainer.param_groups:
@@ -421,10 +420,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = CorpusReader(args.train, dpath=args.dpath, reverse=args.reverse)
-    dev = CorpusReader(args.dev, dpath=args.dpath, reverse=args.reverse)
+    train = CorpusReader(args.train, dpath=args.dpath)
+    dev = CorpusReader(args.dev, dpath=args.dpath)
 
-    encoder = CorpusEncoder.from_corpus(train, dev, most_common=args.maxsize)
+    encoder = CorpusEncoder.from_corpus(
+        train, dev, most_common=args.maxsize, reverse=args.reverse)
     print("... took {} secs".format(time.time() - start))
 
     print("Building model")
@@ -440,4 +440,4 @@ if __name__ == '__main__':
     lm.train_model(train, encoder, epochs=args.epochs, minibatch=args.minibatch,
                    dev=dev, lr=args.lr, trainer=args.trainer, clipping=args.clipping,
                    repfreq=args.repfreq, checkfreq=args.checkfreq,
-                   lr_weight=args.lr_weight, bptt=args.bptt, reverse=args.reverse)
+                   lr_weight=args.lr_weight, bptt=args.bptt)

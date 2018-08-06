@@ -8,7 +8,6 @@ import itertools
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils.rnn import pad_packed_sequence as unpack
 
 import utils
 import torch_utils
@@ -16,14 +15,18 @@ from model import RNNLanguageModel
 
 
 class CharLevelCorpusEncoder(utils.CorpusEncoder):
-    def __init__(self, word, conds):
+    def __init__(self, word, conds, reverse=False):
         self.word = word
         c2i = collections.Counter(c for w in word.w2i for c in w + ' ')
         self.char = utils.Vocab(
             c2i, eos=utils.EOS, bos=utils.BOS, unk=utils.UNK, pad=utils.PAD)
         self.conds = conds
+        self.reverse = reverse
 
     def transform_batch(self, sents, conds, device='cpu'):
+        if self.reverse:
+            sents = [s[::-1] for s in sents]
+
         # word-level batch
         words, nwords = utils.get_batch(
             [self.word.transform(s) for s in sents], self.word.pad, device)
@@ -31,17 +34,10 @@ class CharLevelCorpusEncoder(utils.CorpusEncoder):
         # char-level batch
         chars = []
         for s in sents:
+            if self.reverse:    # reverse chars as well
+                s = [syl[::-1] for syl in s]
             # remove syllable structure
-            new_s = ''
-            for syl in s:
-                if syl.startswith('-'):
-                    syl = syl[1:]
-                if syl.endswith('-'):
-                    syl = syl[:-1]
-                else:
-                    syl = syl + ' '
-                new_s += syl
-            chars.append(self.char.transform(new_s))
+            chars.append(self.char.transform(utils.join_syllables(s)))
 
         chars, nchars = utils.get_batch(chars, self.char.pad, device)
 
@@ -101,6 +97,7 @@ class CharLanguageModel(RNNLanguageModel):
         pass
 
     def forward(self, word, nwords, char, nchars, conds, hidden=None):
+        # dropout!: embedding dropout (dropoute), not implemented
         # - embeddings
         # (seq x batch x emb_dim)
         embs = self.embs(char)
@@ -114,7 +111,9 @@ class CharLanguageModel(RNNLanguageModel):
             # concatenate
             embs = torch.cat([embs, *conds], -1)
 
-        embs = F.dropout(embs, p=self.dropout, training=self.training)
+        # dropout!: input dropout (dropouti)
+        embs = torch_utils.sequential_dropout(
+            embs, p=self.dropout, training=self.training)
 
         # - rnn
         embs, unsort = torch_utils.pack_sort(embs, nchars)
@@ -125,11 +124,12 @@ class CharLanguageModel(RNNLanguageModel):
             outs, h_ = rnn(outs, hidden[l])
             if l != len(self.rnn) - 1:
                 outs, lengths = nn.utils.rnn.pad_packed_sequence(outs)
+                # dropout!: hidden dropout (dropouth)
                 outs = torch_utils.sequential_dropout(
                     outs, self.dropout, self.training)
                 outs = nn.utils.rnn.pack_padded_sequence(outs, lengths)
             hidden_.append(h_)
-        outs, _ = unpack(outs)
+        outs, _ = nn.utils.rnn.pad_packed_sequence(outs)
         outs = outs[:, unsort]
         hidden = hidden_
         for l, h in enumerate(hidden):
@@ -137,6 +137,9 @@ class CharLanguageModel(RNNLanguageModel):
                 hidden[l] = h[0][:, unsort], h[1][:, unsort]
             else:
                 hidden[l] = h[:, unsort]
+
+        # dropout!: output dropout (dropouto)
+        outs = torch_utils.sequential_dropout(outs, self.dropout, self.training)
 
         # logits: (seq_len x batch x vocab)
         logits = self.proj(outs)
@@ -162,8 +165,7 @@ class CharLanguageModel(RNNLanguageModel):
         """
         return math.log2(math.e) * loss
 
-    def sample(self, encoder, nsyms=100, conds=None, hidden=None, reverse=False, batch=1,
-               tau=1.0):
+    def sample(self, encoder, nsyms=100, conds=None, hidden=None, batch=1, tau=1.0):
         """
         Generate stuff
         """
@@ -215,9 +217,10 @@ class CharLanguageModel(RNNLanguageModel):
                     hidden_.append(h_)
                 # only update hidden for active instances
                 hidden = torch_utils.update_hidden(hidden, hidden_, mask)
+
+                # get probs
                 # (1 x batch x vocab) -> (batch x vocab)
                 logits = self.proj(outs).squeeze(0)
-
                 preds = F.log_softmax(logits, dim=-1)
                 char = (preds / tau).exp().multinomial(1)
                 score = preds.gather(1, char)
@@ -235,7 +238,7 @@ class CharLanguageModel(RNNLanguageModel):
         # prepare output
         hyps = []
         for i in range(batch):
-            hyps.append(''.join(output[i][::-1] if reverse else output[i]))
+            hyps.append(''.join(output[i][::-1] if encoder.reverse else output[i]))
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
 
         return (hyps, conds), hidden
@@ -280,10 +283,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = reader(args.train, dpath=args.dpath, reverse=args.reverse)
-    dev = reader(args.dev, dpath=args.dpath, reverse=args.reverse)
+    train = reader(args.train, dpath=args.dpath)
+    dev = reader(args.dev, dpath=args.dpath)
 
-    encoder = CharLevelCorpusEncoder.from_corpus(train, dev, most_common=args.maxsize)
+    encoder = CharLevelCorpusEncoder.from_corpus(
+        train, dev, most_common=args.maxsize, reverse=args.reverse)
     print("... took {} secs".format(time.time() - start))
 
     print("Building model")

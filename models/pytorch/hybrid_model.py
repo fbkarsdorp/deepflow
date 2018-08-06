@@ -70,6 +70,7 @@ class HybridLanguageModel(RNNLanguageModel):
         wembs = self.wembs(word)
         # (seq x batch x cemb_dim)
         cembs = self.embed_chars(char, nchars, nwords)
+
         embs = torch.cat([wembs, cembs], -1)
 
         # - conditions
@@ -81,7 +82,9 @@ class HybridLanguageModel(RNNLanguageModel):
             # concatenate
             embs = torch.cat([embs, *conds], -1)
 
-        embs = F.dropout(embs, p=self.dropout, training=self.training)
+        # dropout!: input dropout (dropouti)
+        embs = torch_utils.sequential_dropout(
+            embs, p=self.dropout, training=self.training)
 
         # - rnn
         embs, unsort = torch_utils.pack_sort(embs, nwords)
@@ -92,6 +95,7 @@ class HybridLanguageModel(RNNLanguageModel):
             outs, h_ = rnn(outs, hidden[l])
             if l != len(self.rnn) - 1:
                 outs, lengths = nn.utils.rnn.pad_packed_sequence(outs)
+                # dropout!: hidden dropout (dropouth)
                 outs = torch_utils.sequential_dropout(
                     outs, self.dropout, self.training)
                 outs = nn.utils.rnn.pack_padded_sequence(outs, lengths)
@@ -104,6 +108,9 @@ class HybridLanguageModel(RNNLanguageModel):
                 hidden[l] = h[0][:, unsort], h[1][:, unsort]
             else:
                 hidden[l] = h[:, unsort]
+
+        # dropout!: output dropout (dropouto)
+        outs = torch_utils.sequential_dropout(outs, self.dropout, self.training)
 
         # - compute char-level logits
         breaks = list(itertools.accumulate(nwords))
@@ -155,8 +162,7 @@ class HybridLanguageModel(RNNLanguageModel):
         """
         return math.log2(math.e) * loss
 
-    def sample(self, encoder, nsyms=50, max_sym_len=10, batch=1,
-               conds=None, hidden=None, reverse=False):
+    def sample(self, encoder, nsyms=50, max_sym_len=10, batch=1, conds=None, hidden=None):
         """
         Generate stuff
         """
@@ -249,7 +255,7 @@ class HybridLanguageModel(RNNLanguageModel):
                 # accumulate
                 output.append(toutput)
 
-        hyps = [' '.join(step[0] for step in (output[::-1] if reverse else output))]
+        hyps = [' '.join(i[0] for i in (output[::-1] if encoder.reverse else output))]
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
 
         return (hyps, conds), hidden
@@ -295,10 +301,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = reader(args.train, dpath=args.dpath, reverse=args.reverse)
-    dev = reader(args.dev, dpath=args.dpath, reverse=args.reverse)
+    train = reader(args.train, dpath=args.dpath)
+    dev = reader(args.dev, dpath=args.dpath)
 
-    encoder = CorpusEncoder.from_corpus(train, dev, most_common=args.maxsize)
+    encoder = CorpusEncoder.from_corpus(
+        train, dev, most_common=args.maxsize, reverse=args.reverse)
     print("... took {} secs".format(time.time() - start))
 
     print("Building model")

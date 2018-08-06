@@ -102,14 +102,15 @@ def get_batch(sents, pad, device):
 
 
 class CorpusEncoder:
-    def __init__(self, word, conds):
+    def __init__(self, word, conds, reverse=False):
         self.word = word
         c2i = collections.Counter(c for w in word.w2i for c in w)
         self.char = Vocab(c2i, eos=EOS, bos=BOS, unk=UNK, pad=PAD, eol=EOL, bol=BOL)
         self.conds = conds
+        self.reverse = reverse
 
     @classmethod
-    def from_corpus(cls, *corpora, most_common=25000):
+    def from_corpus(cls, *corpora, most_common=25000, **kwargs):
         w2i = collections.Counter()
         conds_w2i = collections.defaultdict(collections.Counter)
         for sent, conds, *_ in tqdm.tqdm(it for corpus in corpora for it in corpus):
@@ -122,9 +123,12 @@ class CorpusEncoder:
         word = Vocab(w2i, bos=BOS, eos=EOS, unk=UNK, pad=PAD, most_common=most_common)
         conds = {c: Vocab(cond_w2i) for c, cond_w2i in conds_w2i.items()}
 
-        return cls(word, conds)
+        return cls(word, conds, **kwargs)
 
     def transform_batch(self, sents, conds, device='cpu'):  # conds is a list of dicts
+        if self.reverse:
+            sents = [s[::-1] for s in sents]
+
         # word-level batch
         words, nwords = get_batch(
             [self.word.transform(s) for s in sents], self.word.pad, device)
@@ -149,13 +153,12 @@ class CorpusEncoder:
 
 
 class CorpusReader:
-    def __init__(self, fpath, dpath=None, reverse=False):
+    def __init__(self, fpath, dpath=None):
         self.fpath = fpath
         self.d = None
         if dpath is not None:
             with open(dpath) as f:
                 self.d = json.loads(f.read())
-        self.reverse = reverse
 
     def prepare_line(self, line, prev):
         # prepare line
@@ -183,9 +186,6 @@ class CorpusReader:
 
         # get length
         conds['length'] = bucket_length(len(sent))
-
-        if self.reverse:
-            sent = sent[::-1]
 
         return sent, conds
 

@@ -28,6 +28,7 @@ def get_scoreboard() -> flask.Response:
 @app.route('/saveturn', methods=['POST'])
 def save_turn() -> flask.Response:
     data = flask.request.json
+    name = data['name']
     name = f'{name}^^^{uuid.uuid1()}'
     turn = Turn(name=name, log=data['log'], score=data['score'])
     db.session.add(turn)
@@ -35,10 +36,14 @@ def save_turn() -> flask.Response:
     return flask.jsonify(status='OK', message='turn saved')
 
 
-@app.route('/pair', methods=['GET'])
+@app.route('/pair', methods=['GET', 'POST'])
 def get_pair() -> flask.Response:
+    data = flask.request.json
     id, real, fake = app.ExampleSampler.next()
-    return flask.jsonify(status='OK', id=id, real=real, fake=fake)
+    return flask.jsonify(
+        status='OK', id=id, real=real, fake=fake,
+        level=level, iteration=iteration
+    )
 
 
 ###############################################################################

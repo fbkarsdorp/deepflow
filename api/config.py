@@ -18,11 +18,10 @@ class AppConfig:
         #    "cache": {"alpha": 0.01, "theta": 0.17}
         #    "tau": 0.95 }
     }
-    SYLLABIFIER = "syllable-model.tar.gz"
+    SYLLABIFIER = "data/models/syllable-model.tar.gz"
 
     TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
 
-    
     # database
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'turing.db')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')

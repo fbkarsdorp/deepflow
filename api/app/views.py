@@ -37,7 +37,7 @@ def save_turn() -> flask.Response:
 
 @app.route('/pair', methods=['GET'])
 def get_pair() -> flask.Response:
-    id, real, fake = app.SentenceSampler.next()
+    id, real, fake = app.ExampleSampler.next()
     return flask.jsonify(status='OK', id=id, real=real, fake=fake)
 
 

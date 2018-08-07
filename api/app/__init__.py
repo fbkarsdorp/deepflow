@@ -5,7 +5,7 @@ import flask_login
 import flask_sqlalchemy
 import celery
 
-from .turing import SentenceSampler
+from .turing import ExampleSampler
 from .lyrics import Generator
 
 
@@ -25,7 +25,7 @@ lm.session_protection = 'strong'
 lm.init_app(app)
 lm.login_view('login')
 
-app.SentenceSampler = SentenceSampler()
-app.Generator = Generator(app.config)
+app.ExampleSampler = ExampleSampler(config.AppConfig.TURING_FILE)
+app.Generator = Generator(config.AppConfig)
 
 from app import views, models

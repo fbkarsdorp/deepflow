@@ -1,0 +1,14 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+PartOf=deepflow.target
+
+[Service]
+User=ubuntu
+Group=www-data
+EnvironmentFile=-/etc/default/gunicornd
+WorkingDirectory=/home/ubuntu/deepflow/api
+ExecStart=/home/ubuntu/anaconda/bin/gunicorn -b 127.0.0.1:%i -w 1 -k eventlet wsgi:app
+
+[Install]
+WantedBy=deepflow.target

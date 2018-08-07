@@ -12,15 +12,15 @@ class AppConfig:
     }
     MODEL_DIR = os.path.join(basedir, 'data/models/')
     MODELS = {
-        # # add model-specific configuration in the form
+        # # add model-specific configuration in the following form
         # "path": "ModelName.pt",
         # "options": {
         #    "cache": {"alpha": 0.01, "theta": 0.17}
-        #    "tau": 0.95
-        # }
-
+        #    "tau": 0.95 }
     }
     SYLLABIFIER = "syllable-model.tar.gz"
+
+    TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
     
     # database
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'turing.db')

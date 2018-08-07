@@ -10,7 +10,7 @@ from .generation import Cache
 from .generation import utils
 
 
-def load_models(self, config):
+def load_models(config):
     """
     Load the models into a dictionary. Only called at loading time.
     """

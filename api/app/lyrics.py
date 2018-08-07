@@ -188,7 +188,7 @@ class Generator:
         self.counter = 0
         # load syllabifier
         self.syllabifier = Predictor.from_path(
-            os.path.join(config.MODEL_DIR, config.SYLLABIFIER))
+            os.path.join(config['MODEL_DIR'], config['SYLLABIFIER']))
         # load models
         self.models = load_models(config)
         # sample initial candidates

@@ -21,11 +21,11 @@ class JSONEncodedDict(db.TypeDecorator):
 
 
 class Machine:
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(10), unique=True)
+    id = db.Column(df.Integer, primary_key=True)
+    machine_name = db.Column(db.String(30), unique=True)
 
     def __repr__(self):
-        return f'<Machine({self.name})>'
+        return f'<Machine({self.machine_name})>'
 
 
 class Turn(db.Model):

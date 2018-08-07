@@ -15,7 +15,7 @@ def load_models(config):
     Load the models into a dictionary. Only called at loading time.
     """
     models = {}
-    for model in os.path.isdir(config.MODEL_DIR):
+    for model in os.path.isdir(config['MODEL_DIR']):
         if not model.endswith('.pt'):  # avoid weird files if present
             continue
 
@@ -28,7 +28,7 @@ def load_models(config):
 
         print("Loading model: {}".format(model))
         # load model
-        stuff = torch.load(os.path.join(config.MODEL_DIR, model))
+        stuff = torch.load(os.path.join(config['MODEL_DIR'], model))
         model, encoder = stuff["model"], stuff["encoder"]
         del stuff
 

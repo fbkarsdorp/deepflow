@@ -80,12 +80,17 @@ def get_status(id) -> flask.Response:
     return flask.jsonify(job.info)
 
 
+@app.route('/reset/', methods=['POST'])
+def reset() -> flask.Response:
+    app.Generator.reset()
+    return flask.jsonify({'status': OK, 'message': 'generator reset'})
+
+
 @celery.task
 def generate_task(user_id) -> Dict[str, str]:
     with app.app_context():
         try:
-            hyps = app.Generator.sample()
-            return {'status': 'OK', 'hyps': hyps}
+            return {'status': 'OK', 'payload': app.Generator.sample()}
         except Exception as e:
             if app.debug is True:
                 raise e

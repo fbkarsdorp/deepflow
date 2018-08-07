@@ -16,7 +16,7 @@ db = flask_sqlalchemy.SQLAlchemy(app)
 
 celery = celery.Celery(
     __name__,
-    broker=os.environ.get('CELERY_BROKER_URL', 'redis://')
+    broker=os.environ.get('CELERY_BROKER_URL', 'redis://'),
     backend=os.environ.get('CELERY_BROKER_URL', 'redis://'))
 celery.config_from_object('config.CeleryConfig')
 
@@ -26,6 +26,6 @@ lm.init_app(app)
 lm.login_view('login')
 
 app.SentenceSampler = SentenceSampler()
-app.Generator = Generator()
+app.Generator = Generator(app.config)
 
 from app import views, models

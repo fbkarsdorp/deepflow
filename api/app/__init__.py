@@ -25,7 +25,7 @@ lm.session_protection = 'strong'
 lm.init_app(app)
 lm.login_view('login')
 
-app.ExampleSampler = ExampleSampler(config.AppConfig.TURING_FILE)
-app.Generator = Generator(config.AppConfig)
+app.ExampleSampler = ExampleSampler(app.config['TURING_FILE'])
+app.Generator = Generator(app.config)
 
 from app import views, models

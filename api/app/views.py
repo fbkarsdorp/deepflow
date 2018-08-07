@@ -63,9 +63,8 @@ def login():
 @flask_login.login_required
 def generate() -> flask.Response:
     data = flask.request.json
-    user_id = int(flask_login.current_user.id)
     job = generate_task.apply_async(
-        args=(user_id,), queue=flask_login.current_user.name
+        args=(data['seed_id'],), queue=flask_login.current_user.name
     )
     return flask.jsonify({}), 202, {
         'Location': flask.url_for('get_status', id=job.id)}
@@ -80,17 +79,11 @@ def get_status(id) -> flask.Response:
     return flask.jsonify(job.info)
 
 
-@app.route('/reset/', methods=['POST'])
-def reset() -> flask.Response:
-    app.Generator.reset()
-    return flask.jsonify({'status': OK, 'message': 'generator reset'})
-
-
 @celery.task
-def generate_task(user_id) -> Dict[str, str]:
+def generate_task(seed_id) -> Dict[str, str]:
     with app.app_context():
         try:
-            return {'status': 'OK', 'payload': app.Generator.sample()}
+            return {'status': 'OK', 'payload': app.Generator.sample(seed_id=seed_id)}
         except Exception as e:
             if app.debug is True:
                 raise e
@@ -102,4 +95,5 @@ def save_session() -> flask.Response:
     data = flask.request.json
     with open(f'{app.config.RESULT_DIR}/{uuid.uuid1()}.txt', 'w') as f:
         json.dump(data, f)
+    app.Generator.reset()
     return flask.jsonify({'status': OK, 'message': 'session saved'})

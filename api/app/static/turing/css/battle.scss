@@ -1,0 +1,284 @@
+$margin: 0rem;
+$padding: 0rem;
+
+:root {
+    --gr1: #000000;
+    --gr2: #111111;
+    --lyrics: #ffffff;
+    --deepflow: #0c9ab3;
+    --gr1: #333;
+    --gr2: #111;
+    --controlbg: #59595a;
+    --controlfg: #000;
+    --optionbg: #202020;
+    --optionfg: #a0a0a0;
+    --optionbgs: #f0e6d3;
+    --optionfgs: #252529;
+    --maxwidth: 1200px;
+}
+
+@mixin sgr($color1, $color2) {
+    background: #{$color1}; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #{$color1} 0%, #{$color2} 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #{$color1} 0%,#{$color2} 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #{$color1} 0%,#{$color2} 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=' #{$color1}', endColorstr='#{$color2}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+body {
+    background: var(--controlbg);
+}
+
+#loading {
+    display:block;
+    position:absolute;
+    bottom:1rem;
+    width: 100%;
+    font-size: 2rem; 
+    text-align: left;
+    font-family: 'gofflight';
+    opacity: 0;
+    line-height: 1em;
+    color: #fff;
+    @include transition(0.25s);
+    &.show {
+        opacity: 1;
+    }
+    &:after {
+        content:"";
+        position: absolute;
+        left:0;
+        bottom:0;
+        height: 100%;
+        width: 100;
+        background: #fff;
+        @include sgr(rgba(#59595a,0),rgba(#59595a,1));
+        // @include mix(5);
+        @include animation(loading, infinite, 2.5s, linear){
+            0% { @include transform(translateX(0%));}
+            100% { @include transform(translateX(20rem));}
+        }
+    }
+}
+
+#start {
+    @include abs();
+    text-align: center;
+    font-size: 4rem;
+    line-height: 1em;
+    opacity: 1;
+    background: var(--controlbg);
+    padding: 20vh;
+    z-index:99;
+    @include transition(0.15s);
+    @include padding();
+    &.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+    #language {
+        button.taal {
+            font-size: inherit;
+            background:transparent;
+            &.active {
+                color: #ffe;
+            }
+        }
+        button.start {
+            font-size: inherit;
+            background: transparent;
+        }
+    }
+}
+
+#finished {
+    @include abs();
+    position: fixed;
+    z-index:999;
+    background: var(--controlbg);
+    text-align:center;
+    padding: 2em 0;
+    pointer-events: auto;
+    opacity: 1;
+    &.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+#score {
+    margin-bottom: 2em;
+    #dot {
+        display:inline-block;
+        $s: 1rem;
+        width: $s;
+        height: $s;
+        @include rounded(100%);
+        background: var(--controlfg);
+        margin-right: 0.5em;
+        opacity: 0.5;
+        &.wrong { opacity: 1; background: #f00;}
+        &.correct { opacity: 1; background: #0f0;}
+        &.active { opacity: 1;}
+    }
+}
+
+.phrase {
+    font-size: 3rem;
+    line-height: 1em;
+    margin-bottom: 1em;
+    &.active {
+        color: var(--optionbgs);
+    }
+}
+
+button {
+    font-size: 3rem;
+    background: transparent;
+    &.active {
+        color: var(--optionbgs);
+    }
+}
+
+element {
+    position: relative;
+    z-index:2;
+    // border: 10px double $text;
+    display:block;
+    width: calc(100vw - #{$margin * 2});
+    // max-width: var(--maxwidth);
+    height: 100vh;
+    margin: 0 auto;
+    padding: $padding;
+    padding: 2rem;
+    width: 100%;
+    background-color: var(--controlbg);
+    color: var(--controlfg);
+    @include padding();
+    @include bflex(row);
+    @include align-items(stretch);
+    #bgcolor {
+        @include abs();
+        z-index: -1;
+        &.yes { background-color: #007a00; }
+        &.no { background-color: #740000; }
+        @include transition(0.3s);
+    }
+    #canvas {
+        color: var(--lyrics);
+        min-width: 60%;
+        height: calc(100% - 2rem);
+        margin: 1rem; // solid var(--controlbg);
+        @include padding();
+        @include sgr(var(--gr1),var(--gr2));
+        padding: 3rem;
+        font-size: 1rem;
+        line-height: 1.25em;
+        // @include shadow(0,0,15px,rgba(#fff,0.25));
+        div {
+            margin-bottom:0.5em;
+        }
+        #flowline {
+            span {
+                display:inline-block;
+                opacity: 1;
+            }
+            &.loading {
+                span {
+                    // @include animation(rotlet, infinite, 5s, linear){
+                    //     0% { @include transform(translateY(0em))}
+                    //     20% { @include transform(translateY(-0.15em))}
+                    //     40% { @include transform(translateY(0em))}
+                    //     60% { @include transform(translateY(0.15em))}
+                    //     80% { @include transform(translateY(0em))}
+                    //     100% { @include transform(translateY(0em))}
+                    // }
+                    // @for $i from 1 through 99 {
+                    //     &:nth-child(#{$i}) {
+                    //         @include delay(random(3000) * 1ms);
+                    //     }
+                    // }
+                }
+            }
+        }
+        .new {
+            font-weight:bold;
+            font-style: italic;
+            &:before {
+                // content: "*** ";
+            }
+        }
+    }
+    #control {
+        width: 40%;
+        padding: 1rem;
+        position: relative;
+        @include padding();
+        > div {
+            // background: #9e9d98;
+            // background: #111;
+            width: 100%;
+            @include padding();
+        }
+        #buttons {
+            display: inline-block;
+            width: 12rem;
+        }
+        #options {
+            display: inline-block;
+            position:absolute;
+            left:1rem;
+            bottom:1rem;
+            width: calc(100% - 2rem);
+            .option {
+                margin-bottom:2px;
+                color: var(--optionfg);
+                background: var(--optionbg);
+                opacity: 1;
+                padding: 1em 1.5em;
+                // padding-left: 2.5em;
+                font-size: 0.8rem;
+                position: relative;
+                min-height: 2.5rem;
+                @include padding();
+                &:before {
+                    content:"";
+                    // width: .7rem;
+                    // height: .7rem;
+                    // @include rounded(100%);
+                    // background: #000;
+                    border: 8px solid transparent;
+                    border-width: 6px 8px;
+                    border-right-color: transparent;
+                    display:inline-block;
+                    margin: 0;
+                    position:absolute;
+                    left:-16px;
+                    top:1.5em;
+                }
+                > div {
+                    opacity: 0.5;
+                }
+                .text {
+                    display:inline-block;
+                }
+                &.selected {
+                    color: var(--optionfgs);
+                    background: var(--optionbgs);
+                    &:before {
+                        border-right-color: var(--optionbgs);
+                    }
+                    > div {
+                        opacity: 1;
+                    }
+                }
+            }
+            &.done {
+                .option {
+                    opacity: 0.5;
+                    font-style:italic;
+                }
+            }
+        }
+    }
+}

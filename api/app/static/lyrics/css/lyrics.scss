@@ -1,0 +1,199 @@
+$margin: 0rem;
+$padding: 0rem;
+
+:root {
+    --gr1: #000000;
+    --gr2: #111111;
+    --lyrics: #ffffff;
+    --deepflow: #0c9ab3;
+    --gr1: #333;
+    --gr2: #111;
+    --controlbg: #59595a;
+    --controlfg: #000;
+    --optionbg: #202020;
+    --optionfg: #a0a0a0;
+    --optionbgs: #f0e6d3;
+    --optionfgs: #252529;
+    --maxwidth: 1200px;
+}
+
+@mixin sgr($color1, $color2) {
+    background: #{$color1}; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #{$color1} 0%, #{$color2} 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #{$color1} 0%,#{$color2} 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #{$color1} 0%,#{$color2} 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=' #{$color1}', endColorstr='#{$color2}',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+body {
+    background: var(--controlbg);
+    overflow: hidden;
+}
+
+#loading {
+    display:block;
+    position:absolute;
+    bottom:1rem;
+    width: 100%;
+    font-size: 2rem; 
+    text-align: left;
+    // font-family: 'gofflight';
+    opacity: 0;
+    line-height: 2em;
+    color: #fff;
+    overflow: hidden;
+    @include transition(0.25s);
+    &.show {
+        opacity: 1;
+    }
+    &:after {
+        content:"";
+        position: absolute;
+        left:0;
+        bottom:0;
+        height: 100%;
+        width: 10rem;
+        background: #fff;
+        @include sgr(rgba(#ffffff,0),var(--controlbg));
+        // @include mix(5);
+        @include animation(loading, infinite, 1s, linear){
+            0% { @include transform(translateX(-10rem));}
+            100% { @include transform(translateX(10rem));}
+        }
+    }
+}
+
+element {
+    position: relative;
+    z-index:2;
+    // border: 10px double $text;
+    display:block;
+    width: calc(100vw - #{$margin * 2});
+    max-width: var(--maxwidth);
+    height: 100vh;
+    margin: 0 auto;
+    padding: $padding;
+    width: 100%;
+    background-color: var(--controlbg);
+    color: var(--controlfg);
+    @include padding();
+    @include bflex(row);
+    @include align-items(stretch);
+    #canvas {
+        color: var(--lyrics);
+        min-width: 60%;
+        height: calc(100% - 2rem);
+        margin: 1rem; // solid var(--controlbg);
+        @include padding();
+        @include sgr(var(--gr1),var(--gr2));
+        padding: 3rem;
+        font-size: 1rem;
+        line-height: 1.25em;
+        // @include shadow(0,0,15px,rgba(#fff,0.25));
+        div {
+            margin-bottom:0.5em;
+        }
+        #flowline {
+            span {
+                display:inline-block;
+                opacity: 1;
+            }
+            &.loading {
+                span {
+                    // @include animation(rotlet, infinite, 5s, linear){
+                    //     0% { @include transform(translateY(0em))}
+                    //     20% { @include transform(translateY(-0.15em))}
+                    //     40% { @include transform(translateY(0em))}
+                    //     60% { @include transform(translateY(0.15em))}
+                    //     80% { @include transform(translateY(0em))}
+                    //     100% { @include transform(translateY(0em))}
+                    // }
+                    // @for $i from 1 through 99 {
+                    //     &:nth-child(#{$i}) {
+                    //         @include delay(random(3000) * 1ms);
+                    //     }
+                    // }
+                }
+            }
+        }
+        .new {
+            font-weight:bold;
+            font-style: italic;
+            &:before {
+                // content: "*** ";
+            }
+        }
+    }
+    #control {
+        width: 40%;
+        padding: 1rem;
+        position: relative;
+        @include padding();
+        > div {
+            // background: #9e9d98;
+            // background: #111;
+            width: 100%;
+            @include padding();
+        }
+        #buttons {
+            display: inline-block;
+            width: 12rem;
+        }
+        #options {
+            display: inline-block;
+            position:absolute;
+            left:1rem;
+            bottom:1rem;
+            width: calc(100% - 2rem);
+            .option {
+                margin-bottom:2px;
+                color: var(--optionfg);
+                background: var(--optionbg);
+                opacity: 1;
+                padding: 1em 1.5em;
+                // padding-left: 2.5em;
+                font-size: 0.8rem;
+                position: relative;
+                min-height: 2.5rem;
+                @include padding();
+                &:before {
+                    content:"";
+                    // width: .7rem;
+                    // height: .7rem;
+                    // @include rounded(100%);
+                    // background: #000;
+                    border: 8px solid transparent;
+                    border-width: 6px 8px;
+                    border-right-color: transparent;
+                    display:inline-block;
+                    margin: 0;
+                    position:absolute;
+                    left:-16px;
+                    top:1.5em;
+                }
+                > div {
+                    opacity: 0.5;
+                }
+                .text {
+                    display:inline-block;
+                }
+                &.selected {
+                    color: var(--optionfgs);
+                    background: var(--optionbgs);
+                    &:before {
+                        border-right-color: var(--optionbgs);
+                    }
+                    > div {
+                        opacity: 1;
+                    }
+                }
+            }
+            &.done {
+                .option {
+                    opacity: 0.5;
+                    font-style:italic;
+                }
+            }
+        }
+    }
+}

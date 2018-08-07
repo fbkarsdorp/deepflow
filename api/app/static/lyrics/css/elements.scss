@@ -1,0 +1,92 @@
+/* CSS */
+
+body, html {
+  background:$bg;
+  color: $text;
+}
+
+body {
+  --fontoffset: #{$fontoffset};
+  --fontsize: #{$fontsize};
+  line-height: $lineheight;
+  @media (max-width:1000px){
+      --fontsize:2vw;
+  }
+}
+
+html, body, button, input, textarea {
+  font-size: #{$fontsize};
+  font-family: $font;
+  font-weight: normal;
+  color: $text;
+  letter-spacing: $letterspacing;
+  word-spacing: $wordspacing;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: $selectionbg; color: $selectiontext; }
+::-moz-selection { background: $selectionbg; color: $selectiontext; }
+
+a {
+  color:$link;
+  text-decoration: none;
+  &:hover {text-decoration: underline;}
+  &:active {color:$linkactive;}
+  // &.nuxt-link-active {text-decoration: underline;}
+  &.nuxt-link-exact-active {text-decoration: underline;}
+}
+
+b {
+  font-weight:bold;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight:inherit;
+}
+
+h1 {
+  font-size:1em;
+  line-height:1em;
+  margin:0;
+  display:inline;
+  font-weight: 500;
+}
+p {
+  text-indent: 1.5em;
+}
+
+button {
+  border:0;
+  outline-style:none;
+  cursor: pointer;
+  background: $buttonbg;
+  color: $buttonfg;
+}
+
+label {
+  font-size:$fxs;
+  opacity: 0.25;
+  padding: 0.5em 1em;
+  display:block;
+  letter-spacing: 0.1em;
+}
+
+input, textarea {
+  border: 1px solid rgba(#000,0.05);
+  outline-style:none;
+  padding: 0.5em 0.5em;
+  background: rgba(#fff,0.5);
+  @include padding();
+  @include rounded(); 
+  &:hover, &:focus {
+      background:#fff;
+  }
+  &:focus {
+      @include shadow2(inset 0px 1px 2px rgba(#000,0.3));
+  }
+}
+
+input {
+  line-height:1.5em;
+}

@@ -26,7 +26,7 @@ class Machine:
 
     def __repr__(self):
         return f'<Machine({self.name})>'
-    
+
 
 class Turn(db.Model):
     id = db.Column(db.Integer, primary_key=True)

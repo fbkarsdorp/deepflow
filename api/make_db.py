@@ -7,4 +7,3 @@ for machine in MACHINES:
     machine = models.Machine(name=machine)
     db.session.add(machine)
 db.session.commit()
-    

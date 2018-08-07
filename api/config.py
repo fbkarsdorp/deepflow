@@ -18,7 +18,7 @@ class AppConfig:
         #    "cache": {"alpha": 0.01, "theta": 0.17}
         #    "tau": 0.95 }
     }
-    SYLLABIFIER = "data/models/syllable-model.tar.gz"
+    SYLLABIFIER = "syllable-model.tar.gz"
 
     TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
 

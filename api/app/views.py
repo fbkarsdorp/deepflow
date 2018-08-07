@@ -96,4 +96,4 @@ def save_session() -> flask.Response:
     with open(f'{app.config.RESULT_DIR}/{uuid.uuid1()}.txt', 'w') as f:
         json.dump(data, f)
     app.Generator.reset()
-    return flask.jsonify({'status': OK, 'message': 'session saved'})
+    return flask.jsonify({'status': 'OK', 'message': 'session saved'})

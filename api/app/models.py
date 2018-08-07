@@ -21,7 +21,7 @@ class JSONEncodedDict(db.TypeDecorator):
 
 
 class Machine:
-    id = db.Column(df.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(10), unique=True)
 
     def __repr__(self):

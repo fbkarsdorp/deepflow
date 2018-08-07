@@ -24,6 +24,7 @@ lm = flask_login.LoginManager()
 lm.session_protection = 'strong'
 lm.init_app(app)
 
+print(app.config)
 app.ExampleSampler = ExampleSampler(app.config['TURING_FILE'])
 app.Generator = Generator(app.config)
 

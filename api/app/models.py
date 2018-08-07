@@ -20,17 +20,17 @@ class JSONEncodedDict(db.TypeDecorator):
         return value
 
 
-class Machine:
-    id = db.Column(df.Integer, primary_key=True)
-    machine_name = db.Column(db.String(30), unique=True)
+class Machine(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
 
     def __repr__(self):
-        return f'<Machine({self.machine_name})>'
+        return f'<Machine({self.name})>'
 
 
 class Turn(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String, unique=True)
     score = db.Column(db.Integer)
     log = db.Column(JSONEncodedDict)
     timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)

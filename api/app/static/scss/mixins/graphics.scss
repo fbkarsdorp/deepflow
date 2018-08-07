@@ -1,0 +1,150 @@
+@mixin gradient($color: #F5F5F5, $start: #EEE, $stop: #FFF, $orientation: x) {
+	@if $orientation == x {
+		background: $color;
+		background: -webkit-gradient(linear,left bottom, left top, color-stop(0, $start),color-stop(1, $stop));
+		background: -ms-linear-gradient(bottom, $start, $stop);
+		background: -moz-linear-gradient(center bottom,$start 0%, $stop 100%);
+		background: -o-linear-gradient($stop, $start);
+		background: linear-gradient(to right,$start 0%,$stop 100%);
+	} @else {
+		background: $color;
+		background: -webkit-gradient(linear,left top, right top, color-stop(0, $start), color-stop(1, $stop));
+		background: -ms-linear-gradient(left, $start, $stop);
+		background: -moz-linear-gradient(center right, $start 0%, $stop 100%);
+		background: -o-linear-gradient($stop,$start);
+		background: linear-gradient(to bottom,$start 0%,$stop 100%);
+	}
+
+}
+
+@mixin gr($color: #F5F5F5, $start: #EEE, $stop: #FFF, $percent:0) {
+	background: $color;
+	background: -webkit-gradient(linear, left bottom, left top, color-stop($percent, $start), color-stop(1, $stop));
+	background: -ms-linear-gradient(bottom, $start, $stop);
+	background: -moz-linear-gradient(center bottom, $start $percent*100%, $stop 100%);
+	background: -o-linear-gradient($stop, $start);
+	background: linear-gradient(to right,$start 0%,$stop 100%);
+}
+@mixin grx($color: #F5F5F5, $start: #EEE, $stop: #FFF, $percent:0) {
+	background: $color;
+	background: -moz-linear-gradient(left, $start $percent*100%, $stop 100%);
+	background: -webkit-linear-gradient(left, color-stop($percent, $start), color-stop(1, $stop));
+	background: -ms-linear-gradient(left, $start, $stop);
+	background: -o-linear-gradient($stop, $start);
+	background: linear-gradient(to right, $start $percent*100%, $stop 100%);
+}
+
+@mixin sh($x:0, $y:0, $b:3px, $c:0.3) {
+	-webkit-box-shadow: $x $y $b rgba(#000,$c);
+	-moz-box-shadow: $x $y $b rgba(#000,$c);
+	box-shadow: $x $y $b rgba(#000,$c);
+}
+
+@mixin shadow($x:0, $y:0, $b:3px, $c:rgba(0, 0, 0, 0.3)) {
+	-webkit-box-shadow: $x $y $b $c;
+	-moz-box-shadow: $x $y $b $c;
+	box-shadow: $x $y $b $c;
+}
+@mixin shadow2($params...) {
+	-webkit-box-shadow: $params;
+	-moz-box-shadow: $params;
+	box-shadow: $params;
+}
+
+@mixin cross($w, $color:#333, $w2:20px) {
+	@include transform(rotate(45deg));
+	&:before,
+	&:after {
+			content: "";
+			position: absolute;
+			z-index: 1;
+			background: $color;
+			@include rounded(5px);
+			// @include transition(0.05s);
+	}
+	&:before {
+			width: 100%;
+			top: 50%;
+			left: 0;
+			height: $w;
+			margin-top: -$w/2;
+	}
+	&:after {
+			height: 100%;
+			left: 50%;
+			top: 0;
+			width: $w;
+			margin-left: -$w/2;
+	}
+}
+
+@mixin burger($width, $line:5px, $color:#333, $hcolor:#000, $round:$line) {
+	position: absolute;
+	display: block;
+	background: $color;
+	height: $line;
+	width: $width;
+	margin-top: $width/9;
+	@include rounded($round);
+	top: 50%;
+	left: 50%;
+	margin-top: floor(-$width/2);
+	margin-left: floor(-$width/2);
+	&:after,
+	&:before {
+			position: absolute;
+			content: "";
+			width: 100%;
+			height: $line;
+			background: $color;
+			bottom: floor(-$width/3*1);
+			left: 0;
+			z-index: 1;
+			@include rounded($round);
+	}
+	&:before {
+			bottom: floor(-($width/3)*2);
+	}
+}
+
+
+@mixin arrowleft($size:1.5em,$w:3px, $color:#fff, $rounded:5px, $angle:45) {
+	position:relative;
+	display:inline-block;
+	width:$size;
+	height:$size;
+	// @include transform(rotate(135deg));
+	&:before,
+	&:after {
+			content: "";
+			position: absolute;
+			z-index: 1;
+			background: $color;
+			width: #{(100%/3)*2.2};
+			left:(100%/6);
+			height:$w;
+			@include rounded($rounded);
+			@include transform-origin(left center);
+	}
+	&:before {
+		top:  calc(50% - #{$w/2} + #{($w/2) / (90/$angle)});
+		@include transform(rotate($angle*-1deg));
+	}
+	&:after {
+		top: calc(50% - #{$w/2} - #{($w/2) / (90/$angle)});
+		@include transform(rotate($angle*1deg));
+	}
+}
+
+@mixin borderimage($content){
+	// $content: url(http://www.w3.org/TR/css3-background/border.png) 25 27 27 20 stretch repeat
+	-moz-border-image: $content;
+	-webkit-border-image: $content;
+	-o-border-image: $content;
+	border-image: $content;
+}
+
+@mixin maskimage($url){
+	-webkit-mask-image: url($url);
+	mask-image: url($url);
+}

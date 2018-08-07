@@ -61,7 +61,7 @@ def login():
         flask.session['remember_me'] = form.remember_me.data
         flask_login.login_user(machine, remember=form.remember_me.data)
         return flask.redirect(flask.url_for('index'))
-    return flask.render_template('login.html', title='Sign in', form=form)
+    return flask.render_template('static/login.html', title='Sign in', form=form)
 
 
 @app.route('/generate', methods=['POST', 'GET'])

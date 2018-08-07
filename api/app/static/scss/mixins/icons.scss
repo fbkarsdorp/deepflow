@@ -1,0 +1,62 @@
+@function str-replace($string, $search, $replace: '') {
+	$index: str-index($string, $search);
+	@if $index {
+		@return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+	}
+	@return $string;
+}
+
+@mixin icon($name:burger,$color:#000){
+    $color: str-replace(inspect($color), '#', '');
+    background-image: url('/api/icon/#{$name}?color=#{$color}');
+}
+
+@mixin left($width, $line:5px, $color:#333, $hcolor:#000, $round:$line, $correction:1) {
+    $q: sqrt((($width/2)*($width/2))+(($width/2)*($width/2)));
+    height: $line;
+    width: $width;
+    height: $width;
+    @include rounded($round);
+    &:after,
+    &:before {
+        @include rotation(-45deg);
+        position: absolute;
+        content: " ";
+        width: $q+($line/$correction);
+        height: $line;
+        background: $color;
+        top: sqrt(($q*$q)/2)/2*1px;
+        left: $q/4;
+        z-index: 1;
+        margin-top: -($line/2);
+        @include rounded($round);
+    }
+    &:before {
+        top: (sqrt(($q*$q)/2)/2)*3px;
+        @include rotation(-135deg);
+    }
+}
+@mixin right($width, $line:5px, $color:#333, $hcolor:#000, $round:$line, $correction:1) {
+    $q: sqrt((($width/2)*($width/2))+(($width/2)*($width/2))); height: $line;
+    width: $width;
+    height: $width;
+    @include rounded($round);
+    &:after,
+    &:before {
+        @include rotation(45deg);
+        position: absolute;
+        content: " ";
+        width: $q+($line/$correction);
+        height: $line;
+        background: $color;
+        top: (sqrt(($q*$q)/2)/2)*1px;
+        right: $q/4;
+        z-index: 1;
+        margin-top: -($line/2);
+        @include rounded($round);
+    }
+    &:before {
+        top: (sqrt(($q*$q)/2)/2)*3px;
+        @include rotation(135deg);
+    }
+}

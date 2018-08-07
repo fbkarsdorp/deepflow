@@ -9,7 +9,7 @@ from .turing import ExampleSampler
 from .lyrics import Generator
 
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_folder='static')
 app.config.from_object('config.AppConfig')
 
 db = flask_sqlalchemy.SQLAlchemy(app)

@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>Deepflow Battle</title>
+    <script src="js/axios.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <link href="css/_main.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <element>
+      
+      <!-- BACKGROUND FEEDBACK -->
+      <div id="bgcolor" v-if="lastQuestion" :class="{'yes': lastQuestion.correct, 'no': lastQuestion.correct === false}"></div>
+      
+      <!-- START SCREEN -->
+      <div id="start" :class="{'hide': storage.questions.length > 0}">
+        <div id="language">
+          <input type="text" v-model="storage.name" placeholder="name"/><Br>
+          <button class='start' @click="generate()">start</button>
+        </div>
+      </div>
+      
+      <!-- FINISHED SCREEN -->
+      <div id="finished" :class="{'hide':!finished}">
+        <h1>Thanks for participating!</h1>
+        <p>Please do something to start over (for now, hit escape)</p>
+      </div>
+      
+      <!-- CURRENT QUESTION -->
+      <div id="question">
+        <div id="score">
+          <div id="dot" v-for="n in totalQuestions" :class="dotclass(n)"></div>
+          <div id="name" style="float:right;">{{storage.name}}</div>
+        </div>
+        <div v-if="lastQuestion">
+          <div v-if="lastQuestion.type === 'choose'" id="choose">
+            <label>Choose the real phrase:</label>
+            <div class="phrase p1" v-html="lastQuestion.line1.text" :class="{'active':lastQuestion.selected === 1}" @click="select(1)"></div>
+            <div class="phrase p2" v-html="lastQuestion.line2.text" :class="{'active':lastQuestion.selected === 2}" @click="select(2)"></div>
+            <button @click="check()">check</button>
+          </div>
+          <div v-if="lastQuestion.type === 'forreal'" id="forreal">
+              <label>Is it real?</label>
+              <div class="phrase p1" v-html="lastQuestion.line.text"></div>
+              <button @click="select(1)" :class="{'active':lastQuestion.selected === 1}">Real</button>
+              <button @click="select(2)" :class="{'active':lastQuestion.selected === 2}">AI</button>
+          </div>
+        </div>
+      </div>
+    </element>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+/* COLORS */
+
+$bg: #9e9d98;
+$bg: #c9c7c1;
+$bg: #4e4d4b;
+$bg: #141618;
+$text: #0d162c;
+$text: #0b1224;
+$bg1: #fde;
+$bg2: #fff;
+$link: $text;
+$linkactive: #016;
+$selectiontext: $bg;
+$selectionbg: rgba($text,.9);
+// $selectionbg: rgba(#ffe605,.9);
+
+$menubg: $text;
+$menubg2: darken($menubg,2);
+$menufg: $bg;
+
+$action: #c7a200;
+
+$menulink: $link;
+$baseline: rgba($text,0.3);
+$bcolor: rgba($text,0.1);
+$border: 1px solid $bcolor;
+
+$c1: #fff;
+$c2: #ff0;
+$c3: #dd0;
+
+$green: #5b9634;
+
+$buttonbg: #adaca8;
+$buttonfg: $bg;

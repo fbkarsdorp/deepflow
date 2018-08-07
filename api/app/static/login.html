@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>login</title>
+    <style>
+      body {
+        font-size: 20px;
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #ccc;
+      }
+      form {
+        display:inline-block;
+        width: 500px;
+        margin: 4rem auto;
+      }
+      input {
+        font-size: 1rem;
+        display:inline-block;
+        padding: 0.5em 1em;
+        border:1px solid #999;
+        outline:none;
+      }
+      input[type="submit"]{
+        cursor:pointer;
+      }
+      label {
+        display: block;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/login">
+      <label>login</label>
+      <input type="text" name="name" />
+      <input type="submit" value="submit" />
+    </form>
+  </body>
+</html>

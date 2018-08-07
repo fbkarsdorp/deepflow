@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class AppConfig:
     MODEL_DIR = os.path.join(basedir, 'data/models/')
+    TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
     
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'turing.db')
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')

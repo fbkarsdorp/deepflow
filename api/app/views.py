@@ -17,6 +17,7 @@ from .models import Turn
 # MC Turing views
 ###############################################################################
 
+# autorename
 
 @app.route('/scoreboard', methods=['GET'])
 def get_scoreboard() -> flask.Response:
@@ -28,8 +29,7 @@ def get_scoreboard() -> flask.Response:
 @app.route('/saveturn', methods=['POST'])
 def save_turn() -> flask.Response:
     data = flask.request.json
-    name = data['name']
-    name = f'{name}^^^{uuid.uuid1()}'
+    name = f'{uuid.uuid1()}'
     turn = Turn(name=name, log=data['log'], score=data['score'])
     db.session.add(turn)
     db.session.commit()
@@ -39,10 +39,9 @@ def save_turn() -> flask.Response:
 @app.route('/pair', methods=['GET', 'POST'])
 def get_pair() -> flask.Response:
     data = flask.request.json
-    id, real, fake = app.ExampleSampler.next()
+    id, real, fake = app.ExampleSampler.next(data['seen'])
     return flask.jsonify(
-        status='OK', id=id, real=real, fake=fake,
-        level=level, iteration=iteration
+        status='OK', id=id, real=real, fake=fake
     )
 
 

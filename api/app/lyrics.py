@@ -15,7 +15,7 @@ def load_models(config):
     Load the models into a dictionary. Only called at loading time.
     """
     models = {}
-    for model in os.path.isdir(config['MODEL_DIR']):
+    for model in os.listdir(config['MODEL_DIR']):
         if not model.endswith('.pt'):  # avoid weird files if present
             continue
 

@@ -27,11 +27,8 @@ class ExampleSampler:
         self.seen = set()
 
         # set up examples in bins
-        if fpath is not None:
-            with open(fpath) as f:
-                examples = json.load(f)
-        else:
-            examples = examples
+        with open(fpath) as f:
+            examples = json.load(f)
         self.pairs = bin_examples(examples, bins=levels)
 
     def next(self) -> Dict:

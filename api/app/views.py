@@ -94,7 +94,7 @@ def generate_task(seed_id) -> Dict[str, str]:
             return {'status': 'fail', 'message': str(e), 'code': 500}
 
 
-@app.route('/upload', methods='POST')
+@app.route('/upload', methods=['POST'])
 def save_session() -> flask.Response:
     data = flask.request.json
     with open(f'{app.config.RESULT_DIR}/{uuid.uuid1()}.txt', 'w') as f:

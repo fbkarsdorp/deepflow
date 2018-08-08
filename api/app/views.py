@@ -11,7 +11,12 @@ import flask_login
 from celery import states
 from app import app, db, celery
 from .models import Turn
+from .forms import LoginForm
 
+
+@app.before_request
+def before_request():
+    flask.g.user = flask_login.current_user
 
 ###############################################################################
 # MC Turing views

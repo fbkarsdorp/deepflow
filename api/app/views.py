@@ -60,14 +60,14 @@ def get_pair() -> flask.Response:
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if flask.g.user is not None and flask.g.user.is_authenticated:
-        return flask.redirect(flask.url_for('index'))
+        return flask.redirect('static/lyrics/index.html')
     form = LoginForm()
     if form.validate_on_submit() and form.validate_fields():
         machine = form.get_machine()
         flask.session['remember_me'] = form.remember_me.data
         flask_login.login_user(machine, remember=form.remember_me.data)
-        return flask.redirect(flask.url_for('index'))
-    return flask.render_template('static/login.html', title='Sign in', form=form)
+        return flask.redirect('static/lyrics/index.html')
+    return flask.render_template('login.html', title='Sign in', form=form)
 
 
 @app.route('/generate', methods=['POST', 'GET'])

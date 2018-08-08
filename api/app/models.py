@@ -2,12 +2,17 @@ import datetime
 import json
 
 from app import app, db
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
+
+
+if os.environ.get('DEEPFLOW_DB_URL') is None:
+    MEDIUMTEXT = db.VARCHAR
 
 
 class JSONEncodedDict(db.TypeDecorator):
     "Represents an immutable structure as a json-encoded string."
 
-    impl = db.VARCHAR
+    impl = MEDIUMTEXT
 
     def process_bind_param(self, value, dialect):
         if value is not None:

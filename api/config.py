@@ -23,9 +23,13 @@ class AppConfig:
     TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
 
     # database
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'turing.db')
+    if os.environ.get('DEEPFLOW_DB_URL') is None:
+        print('Falling back to SQLite database.')
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'turing.db')
+    else:
+        print('Using MySQL database.')
+        SQLALCHEMY_DATABASE_URI = os.environ['DEEPFLOW_DB_URL']
     SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # others
     SECRET_KEY = "=\x07BoZ\xeb\xb0\x13\x88\xf8mW(\x93}\xe6k\r\xebA\xbf\xff\xb1v"

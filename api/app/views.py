@@ -102,7 +102,7 @@ def generate_task(seed_id) -> Dict[str, str]:
 @app.route('/upload', methods=['POST'])
 def save_session() -> flask.Response:
     data = flask.request.json
-    with open(f'{app.config.RESULT_DIR}/{uuid.uuid1()}.txt', 'w') as f:
+    with open(f'{app.config['LOG_DIR']}/{uuid.uuid1()}.txt', 'w') as f:
         json.dump(data, f)
     app.Generator.reset()
     return flask.jsonify({'status': 'OK', 'message': 'session saved'})

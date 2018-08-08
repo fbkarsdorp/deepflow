@@ -30,6 +30,9 @@ class AppConfig:
     # others
     SECRET_KEY = "=\x07BoZ\xeb\xb0\x13\x88\xf8mW(\x93}\xe6k\r\xebA\xbf\xff\xb1v"
 
+    # log dir for storing sessions
+    LOG_DIR = 'data/logs/'
+
 
 class CeleryConfig:
     task_serializer = 'pickle'

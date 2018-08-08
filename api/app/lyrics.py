@@ -20,9 +20,9 @@ def load_models(config):
             continue
 
         mconfig = {"path": model}
-        if config.MODELS:
-            if model not in config.MODELS:
-                mconfig = config.MODELS[model]
+        if config.get('MODELS'):
+            if model not in config['MODELS']:
+                mconfig = config['MODELS'][model]
             else:
                 continue
 
@@ -37,7 +37,7 @@ def load_models(config):
         if mconfig.get("options", {}).get("cache"):
             cache = Cache(
                 model.hidden_dim,               # hidden_dim
-                config.DEFAULTS["cache_size"],  # cache_size
+                config['DEFAULTS']["cache_size"],  # cache_size
                 len(encoder.word.w2i))          # vocabulary
 
         # add mconfig

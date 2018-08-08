@@ -99,7 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
-data/lyrics-corpora/ohhla.com
 
 # midi files
 *.mid
@@ -118,3 +117,9 @@ TAGS
 play.py
 rap.py
 raptext.txt
+# MAC OS
+.DS_Store
+
+# data
+data/
+*LanguageModel*

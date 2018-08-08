@@ -15,14 +15,6 @@ from .model import RNNLanguageModel
 
 
 class CharLevelCorpusEncoder(utils.CorpusEncoder):
-    def __init__(self, word, conds, reverse=False):
-        self.word = word
-        c2i = collections.Counter(c for w in word.w2i for c in w + ' ')
-        self.char = utils.Vocab(
-            c2i, eos=utils.EOS, bos=utils.BOS, unk=utils.UNK, pad=utils.PAD)
-        self.conds = conds
-        self.reverse = reverse
-
     def transform_batch(self, sents, conds, device='cpu'):
         if self.reverse:
             sents = [s[::-1] for s in sents]
@@ -96,6 +88,11 @@ class CharLanguageModel(RNNLanguageModel):
     def init(self):
         pass
 
+    def get_args_and_kwargs(self):
+        args = self.layers, self.emb_dim, self.hidden_dim, self.cond_dim
+        kwargs = {'dropout': self.dropout}
+        return args, kwargs
+
     def forward(self, word, nwords, char, nchars, conds, hidden=None):
         # dropout!: embedding dropout (dropoute), not implemented
         # - embeddings
@@ -165,7 +162,9 @@ class CharLanguageModel(RNNLanguageModel):
         """
         return math.log2(math.e) * loss
 
-    def sample(self, encoder, nsyms=100, conds=None, hidden=None, batch=1, tau=1.0):
+    def sample(self, encoder, nsyms=100, batch=1,
+               conds=None, hidden=None, tau=1.0,
+               cache=None, alpha=0.0, theta=0.0):
         """
         Generate stuff
         """

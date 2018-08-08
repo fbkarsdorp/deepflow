@@ -1,8 +1,11 @@
 
+import json
+import os
 import collections
 import random
 import math
 import time
+from datetime import datetime
 
 import torch
 import torch.nn as nn
@@ -78,21 +81,43 @@ class RNNLanguageModel(nn.Module):
         # self.proj.bias.zero_()
         pass
 
-    def save(self, fpath, encoder):
-        self.eval()
-        old_device = self.device
-        self.to('cpu')
+    def get_args_and_kwargs(self):
+        args = self.layers, self.wemb_dim, self.cemb_dim, self.hidden_dim, self.cond_dim
+        kwargs = {'dropout': self.dropout, 'tie_weights': self.tie_weights}
+        return args, kwargs
+
+    def save(self, dirpath, encoder):
+        fpath = os.path.join(dirpath, self.modelname)
+
+        # serialize weights
         with open(fpath + ".pt", 'wb') as f:
-            torch.save({'model': self, 'encoder': encoder}, f)
-        self.train()
-        self.to(old_device)
+            torch.save(self.state_dict(), f)
+
+        # serialize parameters (only first time)
+        if not os.path.isfile(fpath + '.params.json'):
+            with open(fpath + '.params.json', 'w') as f:
+                args, kwargs = self.get_args_and_kwargs()
+                json.dump({'args': args, 'kwargs': kwargs}, f)
+
+        # serialize encoder (only first time)
+        if not os.path.isfile(fpath + '.encoder.json'):
+            encoder.to_json(fpath + '.encoder.json')
+
+    @classmethod
+    def load(cls, modelname, encoder):
+        encoder = encoder.from_json(modelname + '.encoder.json')
+
+        with open(modelname + '.params.json') as f:
+            params = json.loads(f.read())
+            inst = cls(encoder, *params['args'], **params['kwargs'])
+        inst.load_state_dict(torch.load(modelname + '.pt'))
+        inst.modelname = os.path.basename(modelname)
+
+        return inst, encoder
 
     def get_modelname(self):
-        from datetime import datetime
-
         return "{}.{}".format(
-            type(self).__name__,
-            datetime.now().strftime("%Y-%m-%d+%H:%M:%S"))
+            type(self).__name__, datetime.now().strftime("%Y-%m-%d+%H:%M:%S"))
 
     @property
     def device(self):
@@ -304,7 +329,7 @@ class RNNLanguageModel(nn.Module):
             print("New best dev loss: {:g}".format(tloss))
             best_loss = tloss
             fails = 0
-            self.save(self.modelname, encoder)
+            self.save("./generators/", encoder)
         else:
             fails += 1
             print("Failed {} time to improve best dev loss: {}".format(fails, best_loss))
@@ -425,7 +450,6 @@ if __name__ == '__main__':
     parser.add_argument('--device', default='cpu')
     # extra
     parser.add_argument('--penn', action='store_true')
-
     args = parser.parse_args()
 
     from generation.utils import CorpusEncoder, CorpusReader

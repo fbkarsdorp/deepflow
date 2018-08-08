@@ -5,7 +5,7 @@ import random
 import torch
 from allennlp.predictors import Predictor
 
-from .generation import RNNLanguageModel, CharLanguageModel  # needed by torch.load
+from .generation import RNNLanguageModel, CharLanguageModel, model_loader
 from .generation import Cache
 from .generation import utils
 
@@ -15,22 +15,25 @@ def load_models(config):
     Load the models into a dictionary. Only called at loading time.
     """
     models = {}
-    for model in os.listdir(config['MODEL_DIR']):
-        if not model.endswith('.pt'):  # avoid weird files if present
+    for modelname in os.listdir(config['MODEL_DIR']):
+        if not modelname.endswith('.pt'):  # avoid non-weight files if present
             continue
 
-        mconfig = {"path": model}
-        if config.get('MODELS'):
-            if model not in config['MODELS']:
-                mconfig = config['MODELS'][model]
+        modelname = '.'.join(modelname.split('.')[:-1])  # remove extension
+
+        if modelname in models:  # already loaded
+            continue
+
+        mconfig = {"path": modelname}
+        if config['MODELS']:
+            if modelname not in config['MODELS']:
+                mconfig = config['MODELS'][modelname]
             else:
                 continue
 
-        print("Loading model: {}".format(model))
         # load model
-        stuff = torch.load(os.path.join(config['MODEL_DIR'], model))
-        model, encoder = stuff["model"], stuff["encoder"]
-        del stuff
+        print("Loading model: {}".format(modelname))
+        model, encoder = model_loader(os.path.join(config['MODEL_DIR'], modelname))
 
         # create cache if necessary
         cache = None
@@ -41,9 +44,9 @@ def load_models(config):
                 len(encoder.word.w2i))          # vocabulary
 
         # add mconfig
-        models[model] = {
-            "model": stuff["model"],
-            "encoder": stuff["encoder"],
+        models[modelname] = {
+            "model": model,
+            "encoder": modelname,
             "options": mconfig.get("options", {}),
             "cache": cache,
             "hidden": None}
@@ -73,6 +76,13 @@ def resample_conds(encoder, conds, counter):
 def process_seed(mconfig, seed, seed_conds):
     """
     Process the picked option (seed) and return the new hidden state / cache
+
+    Arguments:
+    ----------
+
+    - mconfig : dict corresponding to the model config data
+    - seed : list of str, input to transform_batch
+    - seed_conds : dict of conditions corresponding to the seed
     """
     (word, nwords), (char, nchars), conds = \
         mconfig["encoder"].transform_batch([seed], [seed_conds])
@@ -85,10 +95,17 @@ def process_seed(mconfig, seed, seed_conds):
 
 
 def syllabify(syllabifier, words):
+    """
+    Transform into syllables
+
+    Arguments:
+    - syllabifier : Predictor
+    - words : list of str
+    """
     sent = []
     for word in words:
         syllables = []
-        syllabifier.predict(' '.join(word))
+        pred = syllabifier.predict(' '.join(word))
         for char, tag in zip(pred['words'], pred['tags']):
             if int(tag) > 0:
                 syllables.append('')
@@ -136,11 +153,11 @@ def get_model_generation(mconfig, config, conds,
     (hyps, _), scores, _ = model.sample(
         mconfig['encoder'],
         # general config
-        batch=config.TRIES,
+        batch=config['TRIES'],
         # model config
         conds=conds,
-        hidden=hidden.repeat(1, config.TRIES, 1),  # expand to batch
-        tau=mconfig.get("options", {}).get("tau", config.DEFAULTS["tau"]),
+        hidden=hidden.repeat(1, config['TRIES'], 1),  # expand to batch
+        tau=mconfig.get("options", {}).get("tau", config['DEFAULTS']["tau"]),
         # cache: TODO: don't force-update cache until a pick has been done
         cache=mconfig.get("cache"))
 
@@ -191,7 +208,7 @@ class Generator:
             os.path.join(config['MODEL_DIR'], config['SYLLABIFIER']))
         # load models
         self.models = load_models(config)
-        # sample initial candidates
+        # first sample
         self.candidates = {"conds": {}, "hyps": {}}
 
     def sample(self, seed_id=None):
@@ -199,17 +216,26 @@ class Generator:
 
         # add new conditions
         encoder = self.models.values()[0]["encoder"]
-        conds = resample_conds(encoder, self.candidates["conds"], self.counter)
+        conds = resample_conds(encoder, self.candidates.get("conds"), self.counter)
         candidates["conds"] = conds
 
         # prepare seed
         seed = None
         if seed_id is not None:
+            if not self.candidates["hyps"]:
+                raise ValueError("Generator was passed seed {} but ")
+
             modelname, uuid = seed_id.split('/')
-            seed = self.candidates["hyps"][modelname][uuid]["hyp"].split()
+            try:
+                seed = self.candidates["hyps"][modelname][uuid]["hyp"]
+            except KeyError:
+                raise ValueError("Couldn't find hyp {}".format(seed_id))
+
+            # list of words for CharLanguageModel, syllables for RNNLanguageModel
+            seed = seed.split()
             if isinstance(self.models[modelname], CharLanguageModel):
                 # needs syllabification
-                seed = syllabify(self.syllabifier, seed.split())
+                seed = syllabify(self.syllabifier, seed)
 
         # add generations
         candidates["hyps"] = {}
@@ -217,11 +243,13 @@ class Generator:
 
         for model, mconfig in self.models.items():
             # TODO: this should run multiprocessing
+            # hidden is the state after reading the seed, not the state after
+            # generating the new candidates
             hyp, score, hidden = get_model_generation(
                 mconfig, self.config, conds,
                 seed=seed, seed_conds=self.candidates["conds"])
 
-            # update new candidates
+            # update new candidates (always kept as they come from model.sample)
             id = str(uuid.uuid1())
             candidates["hyps"][modelname][id] = {"hyp": hyp, "score": score}
 

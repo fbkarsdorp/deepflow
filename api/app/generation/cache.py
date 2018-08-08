@@ -167,8 +167,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', default='cpu')
     args = parser.parse_args()
 
-    from .utils import CorpusReader
-    from .model import RNNLanguageModel
+    from generation import utils, model_loader
 
     def range_float(start, stop, step):
         """
@@ -179,12 +178,11 @@ if __name__ == '__main__':
                                           int(stop * factor),
                                           int(step * factor)))
 
-    stuff = torch.load(args.model)
-    model, encoder = stuff['model'], stuff['encoder']
+    model, encoder = model_loader(args.model)
     model.to(args.device)
     model.eval()
 
-    dev = CorpusReader(args.dev, dpath=args.dpath or None)
+    dev = utils.CorpusReader(args.dev, dpath=args.dpath or None)
     grid = itertools.product(range_float(0, 1, 0.1), range_float(0, 0.5, 0.05))
 
     with open("{}.cache.eval.csv".format(model.modelname), 'w') as f:

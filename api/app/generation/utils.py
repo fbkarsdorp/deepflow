@@ -82,7 +82,7 @@ def is_valid_pair(sylls1, sylls2, verbose=False):
             last.append(syl)
             if not syl.startswith('-'):
                 break
-        return utils.join_syllables(last[::-1])
+        return join_syllables(last[::-1])
 
     # avoid same word in the end of consecutive lines
     if get_last(sylls1) == get_last(sylls2):

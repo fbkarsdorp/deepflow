@@ -16,7 +16,7 @@ def gather_statistics(model, encoder, d, nsamples=100, length=15, tau=0.85):
         (samples, _), _, _ = model.sample(encoder, tau=tau, conds=conds, batch=nsamples)
         counts, fails, examples = collections.Counter(), 0, []
         for sample in samples:
-            sample = utils.join_syllables(sample.split()[::-1])
+            sample = utils.join_syllables(sample.split())
             examples.append(sample)
             words = sample.split()
             last = words[-1] if words else ''
@@ -48,10 +48,10 @@ if __name__ == '__main__':
     parser.add_argument('--device', default='cpu')
     args = parser.parse_args()
 
-    from generation import RNNLanguageModel
+    from generation import model_loader
 
-    stuff = torch.load(args.model)
-    model, encoder = stuff['model'], stuff['encoder']
+    model, encoder = model_loader(args.model)
+
     model.to(args.device)
     with open(args.dpath) as f:
         d = json.loads(f.read())

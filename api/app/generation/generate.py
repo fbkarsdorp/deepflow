@@ -5,8 +5,8 @@ import random
 import torch
 
 from .model import RNNLanguageModel
-from . import utils
 from .cache import Cache
+from . import utils
 
 
 def generate_stanza(model, encoder,
@@ -79,10 +79,8 @@ if __name__ == '__main__':
     parser.add_argument('--cache_size', type=int, default=0)
     args = parser.parse_args()
 
-    # d = torch.load('./RNNLanguageModel.2018-07-31+16:28:30.pt')
-    # d = torch.load('./RNNLanguageModel.2018-08-01+19:33:04.pt')
-    d = torch.load(args.model)
-    model, encoder = d['model'], d['encoder']
+    from generation import model_loader
+    model, encoder = model_loader(args.model)
 
     rhymes = list(filter(lambda rhyme: len(rhyme.split('-')) < 2, encoder.conds['rhyme'].w2i))
     rhyme = random.choice(rhymes)

@@ -9,10 +9,14 @@ import flask
 import flask_login
 
 from celery import states
-from app import app, db, celery
-from .models import Turn
+from app import app, db, celery, lm
+from .models import Turn, Machine
 from .forms import LoginForm
 
+
+@lm.user_loader
+def load_user(id):
+    return Machine.query.get(int(id))
 
 @app.before_request
 def before_request():
@@ -67,9 +71,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit() and form.validate_fields():
         machine = form.get_machine()
+        print(machine)
         flask.session['remember_me'] = form.remember_me.data
         flask_login.login_user(machine, remember=form.remember_me.data)
         return flask.redirect('static/lyrics/index.html')
+    else:
+        print(form.validate_fields())
+        print(form.validate_on_submit())
+        print('NOT VALID')
     return flask.render_template('login.html', title='Sign in', form=form)
 
 
@@ -77,8 +86,9 @@ def login():
 @flask_login.login_required
 def generate() -> flask.Response:
     data = flask.request.json
+    seed_id = data['seed_id'] if data is not None else None
     job = generate_task.apply_async(
-        args=(data['seed_id'],), queue=flask_login.current_user.name
+        args=(seed_id,), queue=f'{flask_login.current_user.name}-queue'
     )
     return flask.jsonify({}), 202, {
         'Location': flask.url_for('get_status', id=job.id)}

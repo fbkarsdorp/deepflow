@@ -37,7 +37,7 @@ class ExampleSampler:
             level += 1
             iteration = 0
         # sample a new pair for the current level
-        id, true, false = None
+        id, true, false = None, None, None
         while id is None:
             candidate = random.choice(self.pairs[level])
             if candidate['id'] not in seen:

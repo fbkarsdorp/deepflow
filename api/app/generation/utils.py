@@ -103,12 +103,13 @@ def bucket_length(length, buckets=(5, 10, 15, 20)):
 class Vocab:
     def __init__(self, counter, most_common=1e+6, **reserved):
         self.w2i = {}
+        self.reserved = {}
         for key, sym in reserved.items():
-            if sym is not None:
-                if sym in counter:
-                    print("Removing {} [{}] from training corpus".format(key, sym))
-                    del counter[sym]
-                self.w2i.setdefault(sym, len(self.w2i))
+            if sym in counter:
+                print("Removing {} [{}] from training corpus".format(key, sym))
+                del counter[sym]
+            self.w2i.setdefault(sym, len(self.w2i))
+            self.reserved[key] = sym
             setattr(self, key, self.w2i.get(sym))
 
         for sym, _ in counter.most_common(int(most_common)):
@@ -138,6 +139,20 @@ class Vocab:
     def __getitem__(self, item):
         return self.w2i[item]
 
+    def to_dict(self):
+        return {"reserved": self.reserved,
+                'w2i': [{"key": key, "val": val} for key, val in self.w2i.items()]}
+
+    @classmethod
+    def from_dict(cls, d):
+        inst = cls(collections.Counter())
+        inst.w2i = {d["key"]: d["val"] for d in d['w2i']}
+        for key, idx in d['reserved'].items():
+            setattr(inst, key, idx)
+        inst.i2w = {val: key for key, val in inst.w2i.items()}
+
+        return inst
+
 
 def get_batch(sents, pad, device):
     lengths = [len(sent) for sent in sents]
@@ -152,28 +167,49 @@ def get_batch(sents, pad, device):
 
 
 class CorpusEncoder:
-    def __init__(self, word, conds, reverse=False):
+    def __init__(self, word, char, conds, reverse=False):
         self.word = word
-        c2i = collections.Counter(c for w in word.w2i for c in w)
-        self.char = Vocab(c2i, eos=EOS, bos=BOS, unk=UNK, pad=PAD, eol=EOL, bol=BOL)
+        self.char = char
         self.conds = conds
         self.reverse = reverse
 
     @classmethod
     def from_corpus(cls, *corpora, most_common=25000, **kwargs):
+        # create counters
         w2i = collections.Counter()
         conds_w2i = collections.defaultdict(collections.Counter)
         for sent, conds, *_ in tqdm.tqdm(it for corpus in corpora for it in corpus):
             for cond in conds:
                 conds_w2i[cond][conds[cond]] += 1
-    
             for word in sent:
                 w2i[word] += 1
+        c2i = collections.Counter(c for w in word.w2i for c in w)
 
-        word = Vocab(w2i, bos=BOS, eos=EOS, unk=UNK, pad=PAD, most_common=most_common)
+        # create vocabs
+        word = Vocab(w2i, most_common=most_common, bos=BOS, eos=EOS, unk=UNK, pad=PAD)
+        char = Vocab(c2i, eos=EOS, bos=BOS, unk=UNK, pad=PAD, eol=EOL, bol=BOL, space=' ')
         conds = {c: Vocab(cond_w2i) for c, cond_w2i in conds_w2i.items()}
 
-        return cls(word, conds, **kwargs)
+        return cls(word, char, conds, **kwargs)
+
+    def to_json(self, fpath):
+        with open(fpath, 'w') as f:
+            json.dump({'word': self.word.to_dict(),
+                       'char': self.char.to_dict(),
+                       'conds': {cond: c.to_dict() for cond, c in self.conds.items()},
+                       'reverse': self.reverse},
+                      f)
+
+    @classmethod
+    def from_json(cls, fpath):
+        with open(fpath) as f:
+            obj = json.load(f)
+
+        word = Vocab.from_dict(obj['word'])
+        char = Vocab.from_dict(obj['char'])
+        conds = {cond: Vocab.from_dict(obj["conds"][cond]) for cond in obj['conds']}
+
+        return cls(word, char, conds, obj['reverse'])
 
     def transform_batch(self, sents, conds, device='cpu'):  # conds is a list of dicts
         if self.reverse:

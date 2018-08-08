@@ -78,7 +78,7 @@ def login():
 def generate() -> flask.Response:
     data = flask.request.json
     job = generate_task.apply_async(
-        args=(data['seed_id'],), queue=flask_login.current_user.name
+        args=(data['seed_id'],), queue=f'{flask_login.current_user.name}-queue'
     )
     return flask.jsonify({}), 202, {
         'Location': flask.url_for('get_status', id=job.id)}

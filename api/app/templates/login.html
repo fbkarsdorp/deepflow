@@ -34,6 +34,7 @@
       <label>login</label>
       <label for="name" class="sr-only">{{ form.name.label }}</label>
       {{ form.name(class="form-control", placeholder="name") }}
+      {{ form.csrf_token }}
       {% if form.name.errors %}
       {% for error in form.name.errors %}
           <span class="help-block">{{ error }}</span>

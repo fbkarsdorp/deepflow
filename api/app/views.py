@@ -44,11 +44,14 @@ def save_turn() -> flask.Response:
 @app.route('/pair', methods=['GET', 'POST'])
 def get_pair() -> flask.Response:
     data = flask.request.json
-    iteration, level, seen = data['iteration'], data['level'], data['seen']
+    if data is None:
+        iteration, level, seen = 0, 0, []
+    else:
+        iteration, level, seen = data['iteration'], data['level'], data['seen']
     id, true, false, iteration, level = app.ExampleSampler.next(
         iteration, level, seen)
     return flask.jsonify(
-        status='OK', id=id, real=real, fake=fake, iteration=iteration, level=level
+        status='OK', id=id, real=true, fake=false, iteration=iteration, level=level
     )
 
 

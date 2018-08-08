@@ -102,10 +102,21 @@ ENV/
 
 # midi files
 *.mid
+*.midi
 
 # emacs
 *~
 
+data*
+*.tar
+*.ipynb
+TAGS
+.vs/*
+.vscode/*
+*.mp3
+play.py
+rap.py
+raptext.txt
 # MAC OS
 .DS_Store
 

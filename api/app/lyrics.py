@@ -1,9 +1,12 @@
+
+import json
 import os
 import uuid
 import random
 
 import torch
 from allennlp.predictors import Predictor
+import billiard as mp
 
 from .generation import RNNLanguageModel, CharLanguageModel, model_loader
 from .generation import Cache
@@ -26,7 +29,7 @@ def load_models(config):
 
         mconfig = {"path": modelname}
         if config['MODELS']:
-            if modelname not in config['MODELS']:
+            if modelname in config['MODELS']:
                 mconfig = config['MODELS'][modelname]
             else:
                 continue
@@ -34,6 +37,13 @@ def load_models(config):
         # load model
         print("Loading model: {}".format(modelname))
         model, encoder = model_loader(os.path.join(config['MODEL_DIR'], modelname))
+
+        # load rhyme weights
+        rweights = {}
+        rpath = os.path.join(config['MODEL_DIR'], modelname + '.rhyme.stats.json')
+        if os.path.isfile(rpath):
+            with open(rpath) as f:
+                rweights = {r: w['entropy'] for r, w in json.loads(f.read()).items()}
 
         # create cache if necessary
         cache = None
@@ -46,8 +56,9 @@ def load_models(config):
         # add mconfig
         models[modelname] = {
             "model": model,
-            "encoder": modelname,
+            "encoder": encoder,
             "options": mconfig.get("options", {}),
+            "rweights": rweights,
             "cache": cache,
             "hidden": None}
 
@@ -60,10 +71,10 @@ def resample_conds(encoder, conds, counter):
     """
     def sample_conds(encoder):
         conds = {}
-        for cond, values in encoder.conds.items():
+        for cond, vocab in encoder.conds.items():
             # TODO: add weights to conditions based on rhyme evaluation
             #       e.g. shorter phonological endings are more productive in general
-            conds[cond] = random.choice(list(values.keys()))
+            conds[cond] = random.choice(list(vocab.w2i.keys()))
         return conds
 
     # TODO: better planning
@@ -147,32 +158,45 @@ def get_model_generation(mconfig, config, conds,
     if seed is not None:
         hidden = process_seed(mconfig, seed, seed_conds)
 
+    # expand hidden to batch size
+    hidden_ = None
+    if hidden is not None:
+        hidden_ = []
+        for h in hidden:
+            if isinstance(h, tuple):
+                hidden_.append((h[0].repeat(1, config['TRIES'], 1),
+                                h[1].repeat(1, config['TRIES'], 1)))
+            else:
+                hidden_.append(h.repeat(1, config['TRIES'], 1))
+
     # transform conditions to actual input
     conds = {key: mconfig['encoder'].conds[key].w2i[val] for key, val in conds.items()}
 
     (hyps, _), scores, _ = model.sample(
         mconfig['encoder'],
-        # general config
         batch=config['TRIES'],
-        # model config
         conds=conds,
-        hidden=hidden.repeat(1, config['TRIES'], 1),  # expand to batch
+        hidden=hidden_,
         tau=mconfig.get("options", {}).get("tau", config['DEFAULTS']["tau"]),
         # cache: TODO: don't force-update cache until a pick has been done
         cache=mconfig.get("cache"))
 
+    # sort by score to ensure best is last
+    scores, hyps = zip(*sorted(list(zip(scores, hyps))))
+    scores, hyps = list(scores), list(hyps)
+    # TODO: <unk> sentences have high probability, we should remove them first,
+    #    while still ensuring at least 1 sentence is kept in `hyps`
     # filter out invalid hyps
-    c, seed = 0, seed.split()
-    while c < len(hyps):
+    c = 0
+    while c < len(hyps) - 1:  # always leave last one at least
         hyp = hyps[c].split()
         if not utils.is_valid(hyp) or (seed and not utils.is_valid_pair(hyp, seed)):
-            hyps.pop(c)
-            scores.pop(c)
+            hyps.pop(c); scores.pop(c)
         else:
             c += 1
 
     # sample from the filtered hyps
-    idx = random.choices(list(range(len(hyps))), scores)[0]
+    idx = random.choices(list(range(len(hyps))), scores).pop()
     # select sampled
     hyp, score = hyps[idx], scores[idx]
 
@@ -211,12 +235,44 @@ class Generator:
         # first sample
         self.candidates = {"conds": {}, "hyps": {}}
 
+    def regenerate(self):
+        """
+        Update candidates for the current step without modifying any local state 
+        (hidden, cache, counter, conds) except, of course, the current candidates
+        """
+        candidates, payload = {}, []
+        conds = self.candidates['conds']
+        candidates['conds'] = conds
+
+        with mp.Pool() as pool:
+            results = pool.starmap(
+                get_model_generation,
+                [(mconfig, self.config, conds) for mconfig in self.models.values()])
+
+        for modelname, (hyp, score, _) in zip(self.models.keys(), results):
+            # update new candidates (always kept as they come from model.sample)
+            id = str(uuid.uuid1())[:8]
+            candidates["hyps"][modelname] = {id: {"hyp": hyp, "score": score}}
+
+            if isinstance(self.models[modelname], RNNLanguageModel):
+                hyp = utils.join_syllables(hyp.split())
+            payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
+
+        self.candidates = candidates
+
+        return payload
+
     def sample(self, seed_id=None):
-        candidates = {}
+        """
+        Create new generations based on a picked seed. Update local state (hidden,
+        cache, counter, conds) and the current candidates
+        """
+        candidates, payload = {}, []
 
         # add new conditions
-        encoder = self.models.values()[0]["encoder"]
-        conds = resample_conds(encoder, self.candidates.get("conds"), self.counter)
+        encoder = list(self.models.values())[0]["encoder"]
+        conds = resample_conds(
+            encoder, self.candidates.get("conds"), self.counter)
         candidates["conds"] = conds
 
         # prepare seed
@@ -225,9 +281,9 @@ class Generator:
             if not self.candidates["hyps"]:
                 raise ValueError("Generator was passed seed {} but ")
 
-            modelname, uuid = seed_id.split('/')
+            modelname, id = seed_id.split('/')
             try:
-                seed = self.candidates["hyps"][modelname][uuid]["hyp"]
+                seed = self.candidates["hyps"][modelname][id]["hyp"]
             except KeyError:
                 raise ValueError("Couldn't find hyp {}".format(seed_id))
 
@@ -239,32 +295,34 @@ class Generator:
 
         # add generations
         candidates["hyps"] = {}
-        payload = []
 
-        for model, mconfig in self.models.items():
+        for modelname, mconfig in self.models.items():
             # TODO: this should run multiprocessing
-            # hidden is the state after reading the seed, not the state after
-            # generating the new candidates
+            # Warning! hidden is the state after reading the seed and NOT
+            # the state after generating the new candidates
             hyp, score, hidden = get_model_generation(
                 mconfig, self.config, conds,
                 seed=seed, seed_conds=self.candidates["conds"])
 
             # update new candidates (always kept as they come from model.sample)
-            id = str(uuid.uuid1())
-            candidates["hyps"][modelname][id] = {"hyp": hyp, "score": score}
+            id = str(uuid.uuid1())[:8]
+            candidates["hyps"][modelname] = {id: {"hyp": hyp, "score": score}}
 
             # update hidden
-            self.models[model]["hidden"] = hidden
+            self.models[modelname]["hidden"] = hidden
 
             # TODO: update cache
 
             # payload
-            if isinstance(self.models[model], RNNLanguageModel):
+            if isinstance(self.models[modelname], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
             payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
 
         # reset candidates
         self.candidates = candidates
+
+        # increment counter
+        self.counter += 1
 
         return payload
 

@@ -298,14 +298,21 @@ class RNNLanguageModel(nn.Module):
                     char.append(c)
                 char, nchars = utils.get_batch(char, encoder.char.pad, self.device)
 
-        # prepare output
-        hyps = []
-        for i in range(batch):
-            hyps.append(' '.join(output[i][::-1] if encoder.reverse else output[i]))
-        conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
-        scores = scores.tolist()
+        # transform output to list-batch of hyps
+        _, output = zip(*sorted(output.items()))
 
-        return (hyps, conds), scores, hidden
+        # prepare output
+        conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
+        hyps, probs = [], []
+        for hyp, score in zip(output, scores):
+            try:
+                prob = score.exp().item() / len(hyp)
+            except ZeroDivisionError:
+                prob = 0.0
+            probs.append(prob)
+            hyps.append(' '.join(hyp[::-1] if encoder.reverse else hyp))
+
+        return (hyps, conds), probs, hidden
 
     def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
         self.eval()

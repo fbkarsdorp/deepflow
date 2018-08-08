@@ -8,6 +8,7 @@ import celery
 from .turing import ExampleSampler
 from .lyrics import Generator
 
+import config
 
 app = flask.Flask(__name__)
 app.config.from_object('config.AppConfig')

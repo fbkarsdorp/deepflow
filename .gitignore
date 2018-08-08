@@ -106,3 +106,6 @@ data/lyrics-corpora/ohhla.com
 
 # emacs
 *~
+
+# MAC OS
+.DS_Store

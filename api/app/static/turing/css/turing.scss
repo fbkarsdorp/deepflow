@@ -68,7 +68,7 @@ body {
     line-height: 1em;
     opacity: 1;
     background: var(--controlbg);
-    padding: 20vh;
+    padding: 2rem;
     z-index:99;
     @include transition(0.15s);
     @include padding();
@@ -91,15 +91,42 @@ body {
     }
 }
 
+#scoreboard {
+    font-size: 2rem;
+    width: 70%;
+    max-width: 14em;
+    padding: 2em;
+    margin: 0 auto;
+    display:block;
+    line-height: 1em;
+    // background: #000;
+    #participant {
+        margin-bottom: 0.25em;
+        display:block;
+        width: 100%;
+        overflow: hidden;
+        #name {
+            float:left;
+            color: var(--optionbgs);
+        }
+        #thescore {
+            float:right;
+            color: #ffee00;
+        }
+    }
+}
+
 #finished {
     @include abs();
     position: fixed;
+    overflow: auto;
     z-index:999;
     background: var(--controlbg);
     text-align:center;
     padding: 2em 0;
     pointer-events: auto;
     opacity: 1;
+    @include padding();
     &.hide {
         opacity: 0;
         pointer-events: none;
@@ -124,9 +151,10 @@ body {
 }
 
 .phrase {
-    font-size: 3rem;
+    font-size: 2rem;
     line-height: 1em;
     margin-bottom: 1em;
+    cursor: pointer;
     &.active {
         color: var(--optionbgs);
     }

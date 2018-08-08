@@ -51,7 +51,7 @@ def get_pair() -> flask.Response:
     id, true, false, iteration, level = app.ExampleSampler.next(
         iteration, level, seen)
     return flask.jsonify(
-        status='OK', id=id, real=real, fake=fake, iteration=iteration, level=level
+        status='OK', id=id, real=true, fake=false, iteration=iteration, level=level
     )
 
 

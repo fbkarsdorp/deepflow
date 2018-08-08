@@ -5,7 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class AppConfig:
     # generation
-    TRIES = 10  # parallel tries per sentence
+    TRIES = 20  # parallel tries per sentence
     DEFAULTS = {
         "tau": 0.8,
         "cache_size": 100
@@ -14,6 +14,7 @@ class AppConfig:
     MODELS = {
         # # add model-specific configuration in the following form
         # "path": "ModelName.pt",
+        # "rweights": {} # json output by generation/rhymes.py
         # "options": {
         #    "cache": {"alpha": 0.01, "theta": 0.17}
         #    "tau": 0.95 }

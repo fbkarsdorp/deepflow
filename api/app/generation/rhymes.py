@@ -1,9 +1,19 @@
 
+import math
 import torch
 import json
 import collections
 
 from . import utils
+
+
+def counts_entropy(counts):
+    total = sum(counts.values())
+    ent = 0
+    for c in counts.values():
+        p = c / total
+        ent -= p * math.log(p)
+    return ent
 
 
 def gather_statistics(model, encoder, d, nsamples=100, length=15, tau=0.85):
@@ -37,6 +47,7 @@ def gather_statistics(model, encoder, d, nsamples=100, length=15, tau=0.85):
                "fails": fails,
                "accuracy": sum(counts.values()) / nsamples,
                "dispersion": len(counts) / (nsamples - fails),
+               "entropy": counts_entropy(counts),
                "examples": examples}
 
 
@@ -46,6 +57,7 @@ if __name__ == '__main__':
     parser.add_argument('--model')
     parser.add_argument('--dpath', default='./data/ohhla.vocab.phon.json')
     parser.add_argument('--device', default='cpu')
+    parser.add_argument('--debug', action='store_true', help="Print sampled examples")
     args = parser.parse_args()
 
     from generation import model_loader
@@ -60,4 +72,7 @@ if __name__ == '__main__':
         for idx, stuff in enumerate(gather_statistics(model, encoder, d)):
             if idx % 50 == 0:
                 print(idx+1)
+            if not args.debug:
+                del stuff['examples']
+                del stuff['counts']
             f.write(json.dumps(stuff) + '\n')

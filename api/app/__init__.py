@@ -10,7 +10,7 @@ from .lyrics import Generator
 
 import config
 
-app = flask.Flask(__name__, static_folder='static')
+app = flask.Flask(__name__, static_folder='static', template_folder='templates')
 app.config.from_object('config.AppConfig')
 
 db = flask_sqlalchemy.SQLAlchemy(app)

@@ -258,11 +258,19 @@ class HybridLanguageModel(RNNLanguageModel):
                 # accumulate
                 output.append(toutput)
 
-        hyps = [' '.join(i[0] for i in (output[::-1] if encoder.reverse else output))]
-        conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
-        scores = scores.tolist()
+        # transpose
+        output = list(zip(*output))
 
-        return (hyps, conds), scores, hidden
+        hyps, probs = [], []
+        for hyp, score in zip(output, scores):
+            try:
+                prob = score.exp().item() / len(hyp)
+            except ZeroDivisionError:
+                prob = 0.0
+            probs.append(prob)
+            hyps.append(' '.join(hyp[::-1] if encoder.reverse else hyp))
+
+        return (hyps, conds), probs, hidden
 
 
 if __name__ == '__main__':

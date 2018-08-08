@@ -27,11 +27,11 @@ def before_request():
 @app.route('/scoreboard', methods=['GET'])
 def get_scoreboard() -> flask.Response:
     ranking = Turn.query.order_by(Turn.score.desc()).all()
-    ranking = [(row.name.split('^^^')[0], row.score) for row in ranking]
+    ranking = [{'name': row.name.split('^^^')[0], 'score': row.score} for row in ranking]
     return flask.jsonify(status='OK', ranking=ranking)
 
 
-@app.route('/saveturn', methods=['POST'])
+@app.route('/saveturing', methods=['POST'])
 def save_turn() -> flask.Response:
     data = flask.request.json
     name = f'{uuid.uuid1()}'

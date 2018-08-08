@@ -1,16 +1,29 @@
 var app = new Vue({ 
   el: 'element',
   data: {
-    generateUrl: './pair',
-    submitUrl: './saveturn',
+    generateUrl: '/pair',
+    submitUrl: '/saveturing',
     loading: false,
     id: null,
     finished: false,
+    score: null,
+    name: null,
     storage: {
-      name: '',
       log: [],
       questions: [],
     },
+    scoreboard: [
+      {name: 'Lil Turing', score: 17 },
+      {name: 'MC FOGG', score: 15 },
+      {name: 'Lil Hop', score: 13 },
+      {name: 'MC Hip', score: 17 },
+      {name: 'Lil ENrique', score: 17 },
+      {name: 'MC Turing', score: 17 },
+      {name: 'Lil MIC', score: 17 },
+      {name: 'MC Mini', score: 17 },
+      {name: 'Lil Miny', score: 17 },
+      {name: 'MC Moe', score: 17 },
+    ],
     done: false
   },
   computed: {
@@ -22,10 +35,6 @@ var app = new Vue({
       if (this.storage.questions.length < 1) return -1
       return this.storage.questions.filter( function (x) { return x.answered }).length
     },
-    score () {
-      if (!this.storage.questions) return false
-      return this.storage.questions.filter( function (x) { return x.answered }).length
-    },
     totalQuestions () {
       return this.storage.questions.length > 10 ? this.storage.questions.length : 10
     }
@@ -35,11 +44,14 @@ var app = new Vue({
       this.storeInBrowser();
     },
     clear () {
-      this.storage = {log: [], questions: [], name: ''}
+      this.score = 0
+      this.finished = false
+      this.storage = {log: [], questions: []}
       this.storeInBrowser()
     },
     generate () {
-      if (!this.loading && this.storage.name) {
+      document.activeElement.blur()
+      if (!this.loading) {
         if (!this.storage.questions || !this.lastQuestion || this.lastQuestion.answered) {
           let self = this
           this.options = null
@@ -47,7 +59,15 @@ var app = new Vue({
           this.loading = true
           // define log object
           self.log('generate')
-          axios.post(self.generateUrl).then(function(res) {
+          let postdata = null
+          if (self.lastQuestion) {
+            postdata = {}
+            postdata.iteration = self.lastQuestion.raw.iteration
+            postdata.level = self.lastQuestion.raw.level
+            postdata.seen = self.storage.questions.map( function (x) { return x.raw.id })
+          }
+          axios.post(self.generateUrl, postdata).then(function(res) {
+            console.log(res.data)
             self.loading = false
             // setup new question
             let newq = {}
@@ -58,10 +78,12 @@ var app = new Vue({
               newq.line1 = shuffle === 1 ? res.data.real : res.data.fake
               newq.line2 = shuffle === 2 ? res.data.real : res.data.fake
               newq.answer = shuffle
+              newq.raw = res.data
             } else {
               newq.type = 'forreal'
               newq.answer = Math.floor(Math.random() * 2) + 1 // 1 = real or 2 = fake
               newq.line = newq.answer === 1 ? res.data.real : res.data.fake
+              newq.raw = res.data
             }
             // newquestion.received = new Date().getTime()
             if (!self.storage.questions) self.storage.questions = []
@@ -81,7 +103,7 @@ var app = new Vue({
       }
     },
     select (val) {
-      if (this.storage.questions.length > 0) {
+      if (this.storage.questions.length > 0 && this.lastQuestion && !this.lastQuestion.answered) {
         this.log('select', val)
         this.storage.questions[this.storage.questions.length - 1].selected = val
         this.storeInBrowser()
@@ -92,12 +114,32 @@ var app = new Vue({
       let self = this
       self.log('submit') // for timestamp of submit
       // send to the server
-      axios.post(self.submitUrl, self.storage).then(function() {
-        self.finished = false
-        self.clear()
+      let upload = {}
+      upload.log = {log: self.storage.log, questions: self.storage.questions}
+      upload.score = self.storage.questions.filter(function(x) { return x.correct }).length /// calculate
+      self.score = upload.score
+      axios.post(self.submitUrl, upload).then(function(res) {
+        /* 
+        
+        todo: set name here 
+        
+        */
+        let name = ''
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < 5; i++) {
+          name += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        self.name = name
+        console.log('uploaded')
       }).catch(function (err) {
         self.log('error submitting', err)
-        setTimeout(submit, 1000)
+        let name = ''
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < 5; i++) {
+          name += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        self.name = name
+        // setTimeout(submit, 1000)
       })
     },
     check () {
@@ -115,6 +157,8 @@ var app = new Vue({
           setTimeout(function () {
             if (!self.checkFinished()) {
               self.generate()
+            } else {
+              self.submit()
             }
           }, 1000)
         }
@@ -154,6 +198,9 @@ var app = new Vue({
       }).catch(function(err) {
         console.log('error getting scoreboard', err)
       })
+    },
+    restart () {
+      this.clear()
     }
   },
   created: function () {
@@ -164,12 +211,12 @@ var app = new Vue({
       if (ev.keyCode === 37) self.select(1)
       if (ev.keyCode === 39) self.select(2)
       if (ev.keyCode === 32) self.start()
-      if (ev.keyCode === 27) self.submit()
+      if (ev.keyCode === 27) self.restart()
       if (ev.keyCode === 13) {
         if (self.storage.questions.length === 0) self.generate()
         else self.check()
       }
     })
-    this.checkFinished()
+    if(this.checkFinished()) this.clear()
   }
 });

@@ -183,7 +183,7 @@ class CorpusEncoder:
                 conds_w2i[cond][conds[cond]] += 1
             for word in sent:
                 w2i[word] += 1
-        c2i = collections.Counter(c for w in word.w2i for c in w)
+        c2i = collections.Counter(c for w in w2i for c in w)
 
         # create vocabs
         word = Vocab(w2i, most_common=most_common, bos=BOS, eos=EOS, unk=UNK, pad=PAD)

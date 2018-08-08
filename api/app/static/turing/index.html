@@ -28,7 +28,7 @@
       
       <!-- FINISHED SCREEN -->
       <div id="finished" :class="{'hide':!finished}">
-        <h1 v-if="score">You're score is {{score}}</h1>
+        <h1 v-if="score">Your score is {{score}}</h1>
         <p v-if="name">and your given name is <b>{{name}}</b> so you can keep track of your score.</p>
         <div id="scoreboard">
           <div id="participant" v-for="item in scoreboard">

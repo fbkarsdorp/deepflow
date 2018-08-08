@@ -26,20 +26,21 @@ class ExampleSampler:
             examples = json.load(f)
         self.pairs = bin_examples(examples, bins=levels)
 
-    def next(self, level: int, iteration: int, seen) -> Tuple:
+    def next(self, level: int, iteration: int, seen: List[int]) -> Tuple:
+        seen = set(seen)
         if iteration == self.n_iter and level != self.levels:
             level += 1
             iteration = 0
         if not self.pairs[level]:
             if level == self.levels:
-                return {'id': "GAME OVER", 'false': None, 'true': None}
+                return {'id': None, 'false': None, 'true': None}
             level += 1
+            iteration = 0
         # sample a new pair for the current level
-        iteration += 1
         id, true, false = None
         while id is None:
             candidate = random.choice(self.pairs[level])
             if candidate['id'] not in seen:
                 id, true, false = candidate['id'], candidate['true'], candidate['false']
-                seen.append(id)
-        return id, true, false, level, iteration, seen
+                seen.add(id)
+        return id, true, false, iteration, level

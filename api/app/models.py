@@ -1,13 +1,19 @@
 import datetime
 import json
+import os
 
 from app import app, db
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
+
+
+if os.environ.get('DEEPFLOW_DB_URL') is None:
+    MEDIUMTEXT = db.VARCHAR
 
 
 class JSONEncodedDict(db.TypeDecorator):
     "Represents an immutable structure as a json-encoded string."
 
-    impl = db.VARCHAR
+    impl = MEDIUMTEXT
 
     def process_bind_param(self, value, dialect):
         if value is not None:
@@ -20,17 +26,17 @@ class JSONEncodedDict(db.TypeDecorator):
         return value
 
 
-class Machine:
-    id = db.Column(df.Integer, primary_key=True)
-    name = db.Column(db.String(10), unique=True)
+class Machine(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True)
 
     def __repr__(self):
         return f'<Machine({self.name})>'
-    
+
 
 class Turn(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(30), unique=True)
     score = db.Column(db.Integer)
     log = db.Column(JSONEncodedDict)
     timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)

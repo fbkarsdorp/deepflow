@@ -15,7 +15,7 @@ def load_models(config):
     Load the models into a dictionary. Only called at loading time.
     """
     models = {}
-    for modelname in os.listdir(config.MODEL_DIR):
+    for modelname in os.listdir(config['MODEL_DIR']):
         if not modelname.endswith('.pt'):  # avoid non-weight files if present
             continue
 
@@ -25,22 +25,22 @@ def load_models(config):
             continue
 
         mconfig = {"path": modelname}
-        if config.MODELS:
-            if modelname not in config.MODELS:
-                mconfig = config.MODELS[modelname]
+        if config['MODELS']:
+            if modelname not in config['MODELS']:
+                mconfig = config['MODELS'][modelname]
             else:
                 continue
 
-        print("Loading model: {}".format(modelname))
         # load model
-        model, encoder = model_loader(os.path.join(config.MODEL_DIR, modelname))
+        print("Loading model: {}".format(modelname))
+        model, encoder = model_loader(os.path.join(config['MODEL_DIR'], modelname))
 
         # create cache if necessary
         cache = None
         if mconfig.get("options", {}).get("cache"):
             cache = Cache(
                 model.hidden_dim,               # hidden_dim
-                config.DEFAULTS["cache_size"],  # cache_size
+                config['DEFAULTS']["cache_size"],  # cache_size
                 len(encoder.word.w2i))          # vocabulary
 
         # add mconfig
@@ -153,11 +153,11 @@ def get_model_generation(mconfig, config, conds,
     (hyps, _), scores, _ = model.sample(
         mconfig['encoder'],
         # general config
-        batch=config.TRIES,
+        batch=config['TRIES'],
         # model config
         conds=conds,
-        hidden=hidden.repeat(1, config.TRIES, 1),  # expand to batch
-        tau=mconfig.get("options", {}).get("tau", config.DEFAULTS["tau"]),
+        hidden=hidden.repeat(1, config['TRIES'], 1),  # expand to batch
+        tau=mconfig.get("options", {}).get("tau", config['DEFAULTS']["tau"]),
         # cache: TODO: don't force-update cache until a pick has been done
         cache=mconfig.get("cache"))
 
@@ -205,7 +205,7 @@ class Generator:
         self.counter = 0
         # load syllabifier
         self.syllabifier = Predictor.from_path(
-            os.path.join(config.MODEL_DIR, config.SYLLABIFIER))
+            os.path.join(config['MODEL_DIR'], config['SYLLABIFIER']))
         # load models
         self.models = load_models(config)
         # first sample

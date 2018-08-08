@@ -2,7 +2,7 @@ import collections
 import json
 import random
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import pandas as pd
 
@@ -21,27 +21,25 @@ class ExampleSampler:
         self.levels = levels
         self.n_iter = n_iter
 
-        # starting values
-        self.level = 0
-        self.iteration = 0
-        self.seen = set()
-
         # set up examples in bins
         with open(fpath) as f:
             examples = json.load(f)
         self.pairs = bin_examples(examples, bins=levels)
 
-    def next(self) -> Dict:
-        if self.iteration == self.n_iter and self.level != self.levels:
-            self.level += 1
-            self.iteration = 0
-            print('Level UP!')
-        # check if there are
-        n_pairs = len(self.pairs[self.level])
-        if n_pairs == 0:
-            if self.level == self.levels:
-                return "GAME OVER"
-            self.level += 1
+    def next(self, level: int, iteration: int, seen) -> Tuple:
+        if iteration == self.n_iter and level != self.levels:
+            level += 1
+            iteration = 0
+        if not self.pairs[level]:
+            if level == self.levels:
+                return {'id': "GAME OVER", 'false': None, 'true': None}
+            level += 1
         # sample a new pair for the current level
-        self.iteration += 1
-        return self.pairs[self.level].pop(random.randint(0, n_pairs))
+        iteration += 1
+        id, true, false = None
+        while id is None:
+            candidate = random.choice(self.pairs[level])
+            if candidate['id'] not in seen:
+                id, true, false = candidate['id'], candidate['true'], candidate['false']
+                seen.append(id)
+        return id, true, false, level, iteration, seen

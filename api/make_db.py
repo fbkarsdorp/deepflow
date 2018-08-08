@@ -1,10 +1,4 @@
-from app import db, models
+from app import db
 
 db.create_all()
 
-MACHINES = 'tupac', 'big', 'kendrick'
-for machine in MACHINES:
-    machine = models.Machine(name=machine)
-    db.session.add(machine)
-db.session.commit()
-    

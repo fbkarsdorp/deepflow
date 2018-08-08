@@ -1,0 +1,113 @@
+@mixin no-animation(){
+    /*CSS transitions*/
+    -o-transition-property: none !important;
+    -moz-transition-property: none !important;
+    -ms-transition-property: none !important;
+    -webkit-transition-property: none !important;
+    transition-property: none !important;
+    /*CSS transforms*/
+    -o-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -webkit-transform: none !important;
+    transform: none !important;
+    /*CSS animations*/
+    -webkit-animation: none !important;
+    -moz-animation: none !important;
+    -o-animation: none !important;
+    -ms-animation: none !important;
+    animation: none !important;
+}
+
+@mixin create_animation($name){
+    @keyframes #{$name} { @content; }
+    @-moz-keyframes #{$name} { @content; }
+    @-webkit-keyframes #{$name} { @content; }
+}
+
+@mixin insert_animation($name,$times:infinite,$duration:0.5s,$ease:ease-out,$direction:forwards){
+    -webkit-animation:$name $ease $times; 
+    -moz-animation:$name $ease $times;
+    animation:$name $ease $times;
+    -webkit-animation-fill-mode:$direction; 
+    -moz-animation-fill-mode:$direction;
+    animation-fill-mode:$direction;
+    animation-duration: $duration;
+}
+
+@mixin animation($name,$times:infinite,$duration:0.5s,$ease:ease-out,$direction:forwards){
+    @keyframes #{$name} { @content; }
+    @-moz-keyframes #{$name} { @content; }
+    @-webkit-keyframes #{$name} { @content; }
+    -webkit-animation:$name $ease $times; 
+    -moz-animation:$name $ease $times;
+    animation:$name $ease $times;
+    -webkit-animation-fill-mode:$direction; 
+    -moz-animation-fill-mode:$direction;
+    animation-fill-mode:$direction;
+    animation-duration: $duration;
+}
+
+@mixin delayrow($time:0.1s,$steps:100,$start:0){
+    @for $i from 1 through $steps {
+        &:nth-child(1n + #{$i}){
+            -webkit-animation-delay: $time * $i + $start;
+            -moz-animation-delay: $time * $i + $start;
+            animation-delay: $time * $i + $start;
+        }
+    }
+}
+
+@mixin delay($time:0.1s){
+    -webkit-animation-delay: $time;
+    -moz-animation-delay: $time;
+    animation-delay: $time;
+}
+
+@mixin transition($duration:0.2s, $ease:ease-out) {
+    -webkit-transition: all $duration $ease;
+    -moz-transition: all $duration $ease;
+    -o-transition: all $duration $ease;
+    transition: all $duration $ease;
+}
+
+@mixin transitiondelay($duration){
+    -webkit-transition-delay: $duration;
+    -moz-transition-delay: $duration;
+    -o-transition-delay: $duration;
+    transition-delay: $duration;
+}
+@mixin transition2($anim:all, $duration:0.2s, $ease:ease-out) {
+    // @if $anim == transform {
+        
+    // }
+    -webkit-transition: $anim $duration $ease;
+    -moz-transition: $anim $duration $ease;
+    -o-transition: $anim $duration $ease;
+    transition: $anim $duration $ease;
+}
+
+@mixin spinner($color:#333,$width:20px,$time:0.5s,$line:0.2) {
+    &:after {
+        content: " ";
+        position:absolute;
+        left:50%;
+        top:50%;
+        margin-left:-$width/2;
+        margin-top:-$width/2;
+        width:$width;
+        height:$width;
+        line-height:0;
+        font-size:0;
+        @include rounded(50%);
+        @include padding();
+        border:$width*$line solid $color;
+        border-bottom-color:transparent;
+        display:block;
+        -webkit-animation: spin $time linear infinite;
+        -moz-animation: spin $time linear infinite;
+        -ms-animation: spin $time linear infinite;
+        -o-animation: spin $time linear infinite;
+        animation: spin $time linear infinite;
+    }
+}

@@ -1,0 +1,128 @@
+@mixin reverz($steps:100){
+     @for $i from 1 through $steps {
+        &:nth-child(1n + #{$i}){
+            z-index: $steps - $i;
+        }
+    }
+}
+
+@mixin placeholder {
+    ::-webkit-input-placeholder { @content }
+    :-moz-placeholder { @content }
+    ::-moz-placeholder { @content }
+    :-ms-input-placeholder { @content }
+}
+
+@mixin ink($start:#000, $stop:#ccc, $steps:40, $distance:120, $blurstart:1px, $blurend:1px, $fade:0){
+    // start, stop, step, distance, blurstart, blurend, fade
+    color:$start;
+    $fade: (1-$fade)+1;
+    $value: '0 0 #{$blurstart} #{$start}';
+    @for $i from 1 through $steps {
+        $perc: (1/$steps)*$i;
+        $blur: 0;
+        @if $blurend == $blurstart {
+            $blur: $blurstart;
+        } @else {
+            $blur: ($blurend - $blurstart)*$perc+$blurstart;
+        }
+        $value: '#{$value} , 0 #{$i * ($distance/$steps)}em #{$blur} ' + rgba(mix($stop,$start, $perc*100%),$fade - $perc);
+    }
+    text-shadow: unquote($value);
+}
+
+@mixin stripes($direction:x,$steps:100,$distance:30px,$color:#000,$width:2px,$blur:0){
+    $cstart: #fff;
+    $cstop: #fff;
+    @if type-of($color) == color {
+        $cstart: $color;
+        $cstop: $color;
+    } @else {
+        $cstart: nth($color,1);
+        $cstop: nth($color,2);
+    }
+
+    $dstart: 30px;
+    $dstop: 30px;
+    @if type-of($distance) == number {
+        $dstart: $distance;
+        $dstop: $distance;
+    } @else {
+        $dstart: nth($distance,1);
+        $dstop: nth($distance,2);
+    }
+
+    @if $direction == x {
+        width:$width;
+        height:100%;
+        left:-1*$width;
+    }
+    @if $direction == xx {
+        width:$width;
+        height:100%;
+        left:auto;
+        right:-1*$width;
+    }
+    @if $direction == y {
+        width:100%;
+        height:$width;
+        top:-1*$width;
+    }
+    @if $direction == yy {
+        width:100%;
+        height:$width;
+        top: auto;
+        bottom:-1*$width;
+    }
+    $value: "0 0 0 #{$cstart}";
+    @for $i from 1 through $steps {
+        $pos: "";
+        $perc: (1/$steps)*$i;
+        $dist: ($perc*($dstop - $dstart)) + $dstart;
+        $c: mix($cstop,$cstart, $perc*100%);
+        @if $direction == x { $pos: #{$i * $dist} 0; }
+        @if $direction == xx { $pos: #{$i * $dist * -1} 0; }
+        @if $direction == y { $pos: 0 #{$i * $dist}; }
+        @if $direction == yy { $pos: 0 #{$i * $dist * -1}; }
+        $value: '#{$value} , #{$pos} #{$blur} #{$c}';
+    }
+    $shadow: unquote($value);
+
+    @include shadow2($shadow);
+    z-index:1;
+}
+
+@mixin mix($index:1){
+    $mode: null;
+    @if $index == 0 { $mode: normal; }
+    @if $index == 1 { $mode: multiply; }
+    @if $index == 2 { $mode: screen; }
+    @if $index == 3 { $mode: overlay; }
+    @if $index == 4 { $mode: darken; }
+    @if $index == 5 { $mode: lighten; }
+    @if $index == 6 { $mode: color-dodge; }
+    @if $index == 7 { $mode: color-burn; }
+    @if $index == 8 { $mode: hard-light; }
+    @if $index == 9 { $mode: soft-light; }
+    @if $index == 10 { $mode: difference; }
+    @if $index == 11 { $mode: exclusion; }
+    @if $index == 12 { $mode: hue; }
+    @if $index == 13 { $mode: saturation; }
+    @if $index == 14 { $mode: color; }
+    @if $index == 15 { $mode: luminosity; }
+    mix-blend-mode:$mode;
+}
+
+@mixin hovershake($distance:10,$speed:0.5s,$times:infinite){
+    &:hover {
+        @include mix(10);
+        @include animation(hsh,$times,$speed){
+            0% { @include transform(translate((random($distance)-$distance/2) + px,(random($distance)-$distance/2) + px))}
+            20% { @include transform(translate((random($distance)-$distance/2) + px,(random($distance)-$distance/2) + px))}
+            40% { @include transform(translate((random($distance)-$distance/2) + px,(random($distance)-$distance/2) + px))}
+            60% { @include transform(translate((random($distance)-$distance/2) + px,(random($distance)-$distance/2) + px))}
+            80% { @include transform(translate((random($distance)-$distance/2) + px,(random($distance)-$distance/2) + px))}
+            100% { @include transform(translate((random($distance)-$distance/2) + px,(random($distance)-$distance/2) + px))}
+        }
+    }
+}

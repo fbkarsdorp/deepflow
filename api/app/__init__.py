@@ -10,7 +10,7 @@ from .lyrics import Generator
 
 import config
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_folder='static')
 app.config.from_object('config.AppConfig')
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -24,9 +24,9 @@ celery.config_from_object('config.CeleryConfig')
 lm = flask_login.LoginManager()
 lm.session_protection = 'strong'
 lm.init_app(app)
-lm.login_view('login')
 
-app.ExampleSampler = ExampleSampler(config.AppConfig.TURING_FILE)
-app.Generator = Generator(config.AppConfig)
+print(app.config)
+app.ExampleSampler = ExampleSampler(app.config['TURING_FILE'])
+app.Generator = Generator(app.config)
 
 from app import views, models

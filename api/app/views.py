@@ -11,12 +11,18 @@ import flask_login
 from celery import states
 from app import app, db, celery
 from .models import Turn
+from .forms import LoginForm
 
 
-################################################################################
+@app.before_request
+def before_request():
+    flask.g.user = flask_login.current_user
+
+###############################################################################
 # MC Turing views
-################################################################################
+###############################################################################
 
+# autorename
 
 @app.route('/scoreboard', methods=['GET'])
 def get_scoreboard() -> flask.Response:
@@ -28,22 +34,25 @@ def get_scoreboard() -> flask.Response:
 @app.route('/saveturn', methods=['POST'])
 def save_turn() -> flask.Response:
     data = flask.request.json
-    name = f'{name}^^^{uuid.uuid1()}'
+    name = f'{uuid.uuid1()}'
     turn = Turn(name=name, log=data['log'], score=data['score'])
     db.session.add(turn)
     db.session.commit()
     return flask.jsonify(status='OK', message='turn saved')
 
 
-@app.route('/pair', methods=['GET'])
+@app.route('/pair', methods=['GET', 'POST'])
 def get_pair() -> flask.Response:
-    id, real, fake = app.ExampleSampler.next()
-    return flask.jsonify(status='OK', id=id, real=real, fake=fake)
+    data = flask.request.json
+    id, real, fake = app.ExampleSampler.next(data['seen'])
+    return flask.jsonify(
+        status='OK', id=id, real=real, fake=fake
+    )
 
 
-################################################################################
+###############################################################################
 # Lyrics composition views
-################################################################################
+###############################################################################
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -56,16 +65,15 @@ def login():
         flask.session['remember_me'] = form.remember_me.data
         flask_login.login_user(machine, remember=form.remember_me.data)
         return flask.redirect(flask.url_for('index'))
-    return flask.render_template('login.html', title='Sign in', form=form)
+    return flask.render_template('static/login.html', title='Sign in', form=form)
 
 
 @app.route('/generate', methods=['POST', 'GET'])
 @flask_login.login_required
 def generate() -> flask.Response:
     data = flask.request.json
-    user_id = int(flask_login.current_user.id)
     job = generate_task.apply_async(
-        args=(user_id,), queue=flask_login.current_user.name
+        args=(data['seed_id'],), queue=flask_login.current_user.name
     )
     return flask.jsonify({}), 202, {
         'Location': flask.url_for('get_status', id=job.id)}
@@ -80,26 +88,21 @@ def get_status(id) -> flask.Response:
     return flask.jsonify(job.info)
 
 
-@app.route('/reset/', methods=['POST'])
-def reset() -> flask.Response:
-    app.Generator.reset()
-    return flask.jsonify({'status': OK, 'message': 'generator reset'})
-
-
 @celery.task
-def generate_task(user_id) -> Dict[str, str]:
+def generate_task(seed_id) -> Dict[str, str]:
     with app.app_context():
         try:
-            return {'status': 'OK', 'payload': app.Generator.sample()}
+            return {'status': 'OK', 'payload': app.Generator.sample(seed_id=seed_id)}
         except Exception as e:
             if app.debug is True:
                 raise e
             return {'status': 'fail', 'message': str(e), 'code': 500}
 
 
-@app.route('/upload', methods='POST')
+@app.route('/upload', methods=['POST'])
 def save_session() -> flask.Response:
     data = flask.request.json
-    with open(f'{app.config.RESULT_DIR}/{uuid.uuid1()}.txt', 'w') as f:
+    with open(f'{app.config["LOG_DIR"]}/{uuid.uuid1()}.txt', 'w') as f:
         json.dump(data, f)
-    return flask.jsonify({'status': OK, 'message': 'session saved'})
+    app.Generator.reset()
+    return flask.jsonify({'status': 'OK', 'message': 'session saved'})

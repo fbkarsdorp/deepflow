@@ -8,7 +8,8 @@ class AppConfig:
     TRIES = 20  # parallel tries per sentence
     DEFAULTS = {
         "tau": 0.8,
-        "cache_size": 100
+        "cache_size": 100,
+        "avoid_unk": False
     }
     MODEL_DIR = os.path.join(basedir, 'data/models/')
     MODELS = {

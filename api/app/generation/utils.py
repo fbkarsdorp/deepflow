@@ -147,8 +147,8 @@ class Vocab:
     def from_dict(cls, d):
         inst = cls(collections.Counter())
         inst.w2i = {d["key"]: d["val"] for d in d['w2i']}
-        for key, idx in d['reserved'].items():
-            setattr(inst, key, idx)
+        for key, val in d['reserved'].items():
+            setattr(inst, key, inst.w2i[val])
         inst.i2w = {val: key for key, val in inst.w2i.items()}
 
         return inst

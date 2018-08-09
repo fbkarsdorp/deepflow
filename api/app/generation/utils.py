@@ -327,12 +327,13 @@ class CorpusEncoder:
 
 
 class CorpusReader:
-    def __init__(self, fpath, dpath=None):
+    def __init__(self, fpath, dpath=None, conds=None):
         self.fpath = fpath
         self.d = None
         if dpath is not None:
             with open(dpath) as f:
                 self.d = json.loads(f.read())
+        self.conds = conds
 
     def prepare_line(self, line, prev):
         # prepare line
@@ -347,7 +348,7 @@ class CorpusReader:
         conds = {}
 
         # get rhyme
-        if self.d:
+        if self.d and not (self.conds is not None and 'rhyme' not in self.conds):
             try:
                 # rhyme = get_rhyme2(line, prev, d)
                 # if rhyme:
@@ -359,7 +360,8 @@ class CorpusReader:
             conds['rhyme'] = rhyme or UNK
 
         # get length
-        conds['length'] = bucket_length(len(sent))
+        if not (self.conds is not None and 'length' not in self.conds):
+            conds['length'] = bucket_length(len(sent))
 
         return sent, conds
 
@@ -423,7 +425,7 @@ def chunks(it, size):
 
 
 class PennReader:
-    def __init__(self, fpath):
+    def __init__(self, fpath, **kwargs):
         self.fpath = fpath
 
     def __iter__(self):

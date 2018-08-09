@@ -289,8 +289,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = reader(args.train, dpath=args.dpath)
-    dev = reader(args.dev, dpath=args.dpath)
+    conds = None
+    if args.conds:
+        conds = set(args.conds.split(','))
+    train = reader(args.train, dpath=args.dpath, conds=conds)
+    dev = reader(args.dev, dpath=args.dpath, conds=conds)
 
     encoder = CharLevelCorpusEncoder.from_corpus(
         train, dev, most_common=args.maxsize, reverse=args.reverse)

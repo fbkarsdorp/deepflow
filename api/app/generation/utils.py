@@ -5,9 +5,97 @@ import collections
 import torch
 import tqdm
 
-
+# encoder
 BOS, EOS, BOL, EOL, UNK, PAD = '<s>', '</s>', '<l>', '</l>', '<unk>', '<pad>'
+# identify punctuation
 PUNCT = re.compile(r'[^\w\s]+$')
+
+
+def detokenize(line, debug=False):
+    """
+    Detokenize string
+    """
+    # rules
+    PRE       = {'(', '[', '{'}
+    POST      = {';', '.', ',', ':', '?', '?!', '!', ')', ']', '}', '...'}
+    AMB       = {'"', "'"}
+    CONTS     = {('i', 'ma'), ('y', 'all'), ('c', 'mon'), ('it', 's'),
+                 # french stuff (shouldn't matter too much)
+                 ('c', 'qui'), ('c', 'est'), ('n', 'est'), ('j', 'ceux')}
+    PRECONTS  = {'gon'}
+    POSTCONTS = {'cause', 'em', 'round', 'till'}
+
+    words = line.split()
+    unclosed = set()
+    output = ""
+
+    c = 0
+    while c < len(words) - 1:
+        if c == 0:
+            prev, cur, post = '', words[c], words[c+1]
+        else:
+            prev, cur, post = words[c-1:c+2]
+        # contractions
+        if cur == "'" and (prev.lower(), post.lower()) in CONTS:
+            output += cur + post
+            c += 1
+        # pre ' contractions
+        elif cur == "'" and prev.lower() in PRECONTS:
+            output += cur + ' ' + post
+            c += 1
+        # post ' contractions
+        elif cur == "'" and post.lower() in POSTCONTS:
+            output += ' ' + cur + post
+            c += 1
+        # ambiguous quotes (why do they even exist?)
+        elif cur in AMB:
+            if cur in unclosed:
+                # post
+                output += cur
+                unclosed.remove(cur)
+            else:
+                # pre
+                output += ' ' + cur + post
+                unclosed.add(cur)
+                c += 1
+        # closing stuff
+        elif cur in POST:
+            output += cur
+        # opening stuff
+        elif cur in PRE:
+            output += ' ' + cur + post
+            c += 1
+        # normal situation
+        else:
+            output += ' ' + cur
+
+        c += 1
+
+    output = output.strip()
+
+    # no last bit to add
+    if len(words) == 1:
+        pass
+
+    # last bit was already added
+    if c == len(words):
+        pass
+
+    # finish last bit
+    else:
+        prev, cur = words[-2:]
+        if cur in POST:
+            output += cur
+        elif cur in AMB and cur in unclosed:
+            output += cur
+        else:
+            output += ' ' + cur
+
+    if debug:
+        print("line: [{}]".format(line))
+        print("outs: [{}]".format(output))
+
+    return output
 
 
 def format_syllables(syllables):

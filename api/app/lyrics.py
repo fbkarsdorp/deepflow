@@ -258,6 +258,7 @@ class Generator:
 
             if isinstance(self.models[modelname], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
+            hyp = utils.detokenize(hyp)
             payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
 
         self.candidates = candidates
@@ -273,8 +274,7 @@ class Generator:
 
         # add new conditions
         encoder = list(self.models.values())[0]["encoder"]
-        conds = resample_conds(
-            encoder, self.candidates.get("conds"), self.counter)
+        conds = resample_conds(encoder, self.candidates["conds"], self.counter)
         candidates["conds"] = conds
 
         # prepare seed
@@ -310,15 +310,15 @@ class Generator:
             id = str(uuid.uuid1())[:8]
             candidates["hyps"][modelname] = {id: {"hyp": hyp}}
 
-            # update hidden
-            self.models[modelname]["hidden"] = hidden
-
-            # TODO: update cache
-
             # payload
-            if isinstance(self.models[modelname], RNNLanguageModel):
+            if isinstance(mconfig['model'], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
+            hyp = utils.detokenize(hyp)
             payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
+
+            # side-effects
+            self.models[modelname]["hidden"] = hidden
+            # TODO: update cache
 
         # reset candidates
         self.candidates = candidates

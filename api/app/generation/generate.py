@@ -48,7 +48,10 @@ def generate_stanza(model, encoder,
                 continue
 
         if valid:
-            output.append([utils.join_syllables(line) for line in stanza])
+            lines = []
+            for line in stanza:
+                lines.append(utils.detokenize(utils.join_syllables(line), debug=verbose))
+            output.append(lines)
 
     return output, {'rhyme': rhyme, 'length': length}
 

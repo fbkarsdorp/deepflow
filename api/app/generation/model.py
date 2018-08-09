@@ -205,7 +205,8 @@ class RNNLanguageModel(nn.Module):
 
     def sample(self, encoder, nsyms=100, batch=1,
                conds=None, hidden=None, tau=1.0,
-               cache=None, alpha=0.0, theta=0.0):
+               cache=None, alpha=0.0, theta=0.0,
+               avoid_unk=False):
         """
         Generate stuff
         """
@@ -267,6 +268,9 @@ class RNNLanguageModel(nn.Module):
 
                 # get logits
                 logits = self.proj(outs)
+                # set unk to least value (might still return unk in high-entropy cases)
+                if avoid_unk:
+                    logits[:, encoder.word.unk] = logits.min(dim=1)[0]
                 if cache and cache.stored > 0:
                     logprob = cache.interpolate(
                         outs, logits, alpha, theta).add(1e-8).log()
@@ -299,7 +303,7 @@ class RNNLanguageModel(nn.Module):
                 char, nchars = utils.get_batch(char, encoder.char.pad, self.device)
 
         # transform output to list-batch of hyps
-        _, output = zip(*sorted(output.items()))
+        output = [output[i] for i in range(len(output))]
 
         # prepare output
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
@@ -432,6 +436,7 @@ if __name__ == '__main__':
     parser.add_argument('--train')
     parser.add_argument('--dev')
     parser.add_argument('--dpath', help='path to rhyme dictionary')
+    parser.add_argument('--conds')
     parser.add_argument('--reverse', action='store_true',
                         help='whether to reverse input')
     parser.add_argument('--wemb_dim', type=int, default=100)
@@ -463,8 +468,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = CorpusReader(args.train, dpath=args.dpath)
-    dev = CorpusReader(args.dev, dpath=args.dpath)
+    conds = None
+    if args.conds:
+        conds = set(args.conds.split(','))
+    train = CorpusReader(args.train, dpath=args.dpath, conds=conds)
+    dev = CorpusReader(args.dev, dpath=args.dpath, conds=conds)
 
     encoder = CorpusEncoder.from_corpus(
         train, dev, most_common=args.maxsize, reverse=args.reverse)

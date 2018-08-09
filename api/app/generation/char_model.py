@@ -162,8 +162,7 @@ class CharLanguageModel(RNNLanguageModel):
         return math.log2(math.e) * loss
 
     def sample(self, encoder, nsyms=100, batch=1,
-               conds=None, hidden=None, tau=1.0,
-               cache=None, alpha=0.0, theta=0.0):
+               conds=None, hidden=None, tau=1.0, **kwargs):
         """
         Generate stuff
         """
@@ -234,7 +233,7 @@ class CharLanguageModel(RNNLanguageModel):
                         output[idx].append(encoder.char.i2w[c])
 
         # transform output to list-batch of hyps
-        _, output = zip(*sorted(output.items()))
+        output = [output[i] for i in range(len(output))]
 
         # prepare output
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
@@ -289,8 +288,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = reader(args.train, dpath=args.dpath)
-    dev = reader(args.dev, dpath=args.dpath)
+    conds = None
+    if args.conds:
+        conds = set(args.conds.split(','))
+    train = reader(args.train, dpath=args.dpath, conds=conds)
+    dev = reader(args.dev, dpath=args.dpath, conds=conds)
 
     encoder = CharLevelCorpusEncoder.from_corpus(
         train, dev, most_common=args.maxsize, reverse=args.reverse)

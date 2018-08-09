@@ -47,9 +47,9 @@ def load_models(config):
         cache = None
         if mconfig.get("options", {}).get("cache"):
             cache = Cache(
-                model.hidden_dim,               # hidden_dim
+                model.hidden_dim,                  # hidden_dim
                 config['DEFAULTS']["cache_size"],  # cache_size
-                len(encoder.word.w2i))          # vocabulary
+                len(encoder.word.w2i))             # vocabulary
 
         # add mconfig
         models[modelname] = {
@@ -82,7 +82,7 @@ def resample_conds(encoder, conds, counter):
     return conds
 
 
-def process_seed(mconfig, seed, seed_conds):
+def process_seed(model, encoder, hidden, seed, seed_conds):
     """
     Process the picked option (seed) and return the new hidden state / cache
 
@@ -93,12 +93,10 @@ def process_seed(mconfig, seed, seed_conds):
     - seed : list of str, input to transform_batch
     - seed_conds : dict of conditions corresponding to the seed
     """
-    (word, nwords), (char, nchars), conds = \
-        mconfig["encoder"].transform_batch([seed], [seed_conds])
+    (word, nwords), (char, nchars), conds = encoder.transform_batch([seed], [seed_conds])
 
-    _, hidden = mconfig["model"](
-        # TODO: add cache
-        word, nwords, char, nchars, conds, mconfig.get("hidden"))
+    # TODO: add cache
+    _, hidden = model(word, nwords, char, nchars, conds, hidden)
 
     return hidden
 
@@ -137,7 +135,8 @@ def get_model_generation(mconfig, conds, tries, defaults,
     ----------
     - mconfig : dict, model-specific dictionary with keys:
         "model", "encoder", "hidden", "cache", "options"
-    - config : AppConfig, global AppConfig object
+    - tries : int, number of candidates to sample from based on their probs
+    - defaults : dict, app-level defaults for sampling options
     - conds : dict, dictionary of currently active conditions
     - seed : str, picked sentence to use as seed (already syllabified)
     - seed_conds : dict, dictionary of conditions used to generate previous sentence
@@ -151,20 +150,20 @@ def get_model_generation(mconfig, conds, tries, defaults,
     """
     model, encoder = mconfig["model"], mconfig['encoder']
 
-    # preprocess seed
-    hidden = mconfig.get("hidden")
+    # update hidden with given seed
+    seed_hidden = mconfig.get("hidden")
     if seed is not None:
-        hidden = process_seed(mconfig, seed, seed_conds)
+        seed_hidden = process_seed(model, encoder, seed_hidden, seed, seed_conds)
 
-    # expand hidden to batch size
-    hidden_ = None
-    if hidden is not None:
-        hidden_ = []
-        for h in hidden:
+    # prepare hidden for generation
+    hidden = None
+    if seed_hidden is not None:
+        hidden = []
+        for h in seed_hidden:
             if isinstance(h, tuple):
-                hidden_.append((h[0].repeat(1, tries, 1), h[1].repeat(1, tries, 1)))
+                hidden.append((h[0].repeat(1, tries, 1), h[1].repeat(1, tries, 1)))
             else:
-                hidden_.append(h.repeat(1, tries, 1))
+                hidden.append(h.repeat(1, tries, 1))
 
     # transform conditions to actual input
     conds = {key: encoder.conds[key].w2i[val] for key, val in conds.items()}
@@ -173,9 +172,9 @@ def get_model_generation(mconfig, conds, tries, defaults,
         encoder,
         batch=tries,
         conds=conds,
-        hidden=hidden_,
+        hidden=hidden,
+        avoid_unk=defaults["avoid_unk"],
         tau=mconfig.get("options", {}).get("tau", defaults["tau"]),
-        # cache: TODO: don't force-update cache until a pick has been done
         cache=mconfig.get("cache"))
 
     # sort by score to ensure best is last
@@ -204,7 +203,7 @@ def get_model_generation(mconfig, conds, tries, defaults,
     # select sampled
     hyp, score = hyps[idx], scores[idx]
 
-    return hyp, score, hidden
+    return hyp, score, seed_hidden
 
 
 class Generator:
@@ -252,12 +251,14 @@ class Generator:
         for modelname, mconfig in self.models.items():
             hyp, score, _ = get_model_generation(
                 mconfig, conds, self.config['TRIES'], self.config['DEFAULTS'])
+            # seed is the same as previous time around (no need to update hidden)
             # update new candidates (always kept as they come from model.sample)
             id = str(uuid.uuid1())[:8]
             candidates["hyps"][modelname] = {id: {"hyp": hyp}}
 
             if isinstance(self.models[modelname], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
+            hyp = utils.detokenize(hyp)
             payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
 
         self.candidates = candidates
@@ -273,8 +274,7 @@ class Generator:
 
         # add new conditions
         encoder = list(self.models.values())[0]["encoder"]
-        conds = resample_conds(
-            encoder, self.candidates.get("conds"), self.counter)
+        conds = resample_conds(encoder, self.candidates["conds"], self.counter)
         candidates["conds"] = conds
 
         # prepare seed
@@ -310,15 +310,15 @@ class Generator:
             id = str(uuid.uuid1())[:8]
             candidates["hyps"][modelname] = {id: {"hyp": hyp}}
 
-            # update hidden
-            self.models[modelname]["hidden"] = hidden
-
-            # TODO: update cache
-
             # payload
-            if isinstance(self.models[modelname], RNNLanguageModel):
+            if isinstance(mconfig['model'], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
+            hyp = utils.detokenize(hyp)
             payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
+
+            # side-effects
+            self.models[modelname]["hidden"] = hidden
+            # TODO: update cache
 
         # reset candidates
         self.candidates = candidates

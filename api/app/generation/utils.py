@@ -5,9 +5,114 @@ import collections
 import torch
 import tqdm
 
-
+# encoder
 BOS, EOS, BOL, EOL, UNK, PAD = '<s>', '</s>', '<l>', '</l>', '<unk>', '<pad>'
+# identify punctuation
 PUNCT = re.compile(r'[^\w\s]+$')
+
+
+def detokenize(line, debug=False):
+    """
+    Detokenize string
+    """
+    # rules
+    PRE       = {'(', '[', '{'}
+    POST      = {';', '.', ',', ':', '?', '?!', '!', '!!', '!!!', ')', ']', '}', '...', '..', "'s"}
+    AMB       = {'"', "'"}
+    CONTS     = {('i', 'ma'), ('i', 'mma'), ('y', 'all'), ('c', 'mon'), ('it', 's'),
+                 # french stuff (shouldn't matter too much)
+                 ('c', 'qui'), ('c', 'est'), ('n', 'est'), ('j', 'ceux')}
+    PRECONTS  = {'gon', 'yo', 'lil'}
+    POSTCONTS = {'cause', 'em', 'round', 'till', 'er', 'bout'}
+
+    words = line.split()
+    unclosed = set()
+    output = ""
+
+    c = 0
+    if len(words) == 1:
+        output += words[0]
+    while c < len(words) - 1:
+        # prepare input
+        if c == 0:
+            prev, cur, post = '', words[c], words[c+1]
+        else:
+            prev, cur, post = words[c-1:c+2]
+
+        # numbers sometimes get tokenized
+        if cur.isnumeric() and prev.isnumeric():
+            output += cur
+        # contractions (r&b)
+        elif cur == '&' and prev.lower() == 'r' and post.lower() == 'b':
+            output += cur + post
+            c += 1
+        # contractions on '
+        elif cur == "'" and post.lower() == 'until':
+            output += ' ' + cur + 'til'
+            c += 1
+        # triplets like I'ma
+        elif cur == "'" and (prev.lower(), post.lower()) in CONTS:
+            output += cur + post
+            c += 1
+        # pre ' contractions
+        elif cur == "'" and prev.lower() in PRECONTS:
+            output += cur + ' ' + post
+            c += 1
+        # post ' contractions
+        elif cur == "'" and post.lower() in POSTCONTS:
+            output += ' ' + cur + post
+            c += 1
+        # ambiguous quotes (why do they even exist?)
+        elif cur in AMB:
+            if cur in unclosed:
+                # post
+                output += cur
+                unclosed.remove(cur)
+            else:
+                # pre
+                output += ' ' + cur + post
+                unclosed.add(cur)
+                c += 1
+        # closing stuff
+        elif cur in POST:
+            output += cur
+        # opening stuff
+        elif cur in PRE:
+            output += ' ' + cur + post
+            c += 1
+        # normal situation
+        else:
+            output += ' ' + cur
+
+        c += 1
+
+    output = output.strip()
+
+    # no last bit to add
+    if len(words) == 1:
+        pass
+
+    # last bit was already added
+    elif c == len(words):
+        pass
+
+    # finish last bit
+    else:
+        prev, cur = words[-2:]
+        if prev.isnumeric() and cur.isnumeric():
+            output += cur
+        elif cur in POST:
+            output += cur
+        elif cur in AMB and cur in unclosed:
+            output += cur
+        else:
+            output += ' ' + cur
+
+    if debug:
+        print("line: [{}]".format(line))
+        print("outs: [{}]".format(output))
+
+    return output
 
 
 def format_syllables(syllables):
@@ -239,12 +344,13 @@ class CorpusEncoder:
 
 
 class CorpusReader:
-    def __init__(self, fpath, dpath=None):
+    def __init__(self, fpath, dpath=None, conds=None):
         self.fpath = fpath
         self.d = None
         if dpath is not None:
             with open(dpath) as f:
                 self.d = json.loads(f.read())
+        self.conds = conds
 
     def prepare_line(self, line, prev):
         # prepare line
@@ -259,7 +365,7 @@ class CorpusReader:
         conds = {}
 
         # get rhyme
-        if self.d:
+        if self.d and not (self.conds is not None and 'rhyme' not in self.conds):
             try:
                 # rhyme = get_rhyme2(line, prev, d)
                 # if rhyme:
@@ -271,7 +377,8 @@ class CorpusReader:
             conds['rhyme'] = rhyme or UNK
 
         # get length
-        conds['length'] = bucket_length(len(sent))
+        if not (self.conds is not None and 'length' not in self.conds):
+            conds['length'] = bucket_length(len(sent))
 
         return sent, conds
 
@@ -335,7 +442,7 @@ def chunks(it, size):
 
 
 class PennReader:
-    def __init__(self, fpath):
+    def __init__(self, fpath, **kwargs):
         self.fpath = fpath
 
     def __iter__(self):

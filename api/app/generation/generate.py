@@ -24,7 +24,7 @@ def generate_stanza(model, encoder,
     for _ in range(nlines):
         (hyps, _), _, hidden = model.sample(
             encoder, hidden=hidden, conds=conds, batch=nstanzas, tau=tau,
-            cache=cache, alpha=alpha, theta=theta)
+            cache=cache, alpha=alpha, theta=theta, avoid_unk=True)
 
         if stanzas is None:
             stanzas = [[hyp.split()] for hyp in hyps]
@@ -48,7 +48,10 @@ def generate_stanza(model, encoder,
                 continue
 
         if valid:
-            output.append([utils.join_syllables(line) for line in stanza])
+            lines = []
+            for line in stanza:
+                lines.append(utils.detokenize(utils.join_syllables(line), debug=verbose))
+            output.append(lines)
 
     return output, {'rhyme': rhyme, 'length': length}
 

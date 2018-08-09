@@ -17,7 +17,7 @@ def detokenize(line, debug=False):
     """
     # rules
     PRE       = {'(', '[', '{'}
-    POST      = {';', '.', ',', ':', '?', '?!', '!', '!!!', ')', ']', '}', '...', '..', "'s"}
+    POST      = {';', '.', ',', ':', '?', '?!', '!', '!!', '!!!', ')', ']', '}', '...', '..', "'s"}
     AMB       = {'"', "'"}
     CONTS     = {('i', 'ma'), ('i', 'mma'), ('y', 'all'), ('c', 'mon'), ('it', 's'),
                  # french stuff (shouldn't matter too much)

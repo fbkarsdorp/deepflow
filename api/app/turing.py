@@ -26,7 +26,7 @@ class ExampleSampler:
             examples = json.load(f)
         self.pairs = bin_examples(examples, bins=levels)
 
-    def next(self, level: int, iteration: int, seen: List[int]) -> Tuple:
+    def next(self, iteration: int, level: int, seen: List[int]) -> Tuple:
         seen = set(seen)
         if iteration == self.n_iter and level != self.levels:
             level += 1
@@ -43,4 +43,4 @@ class ExampleSampler:
             if candidate['id'] not in seen:
                 id, true, false = candidate['id'], candidate['true'], candidate['false']
                 seen.add(id)
-        return id, true, false, iteration, level
+        return id, true, false, iteration + 1, level

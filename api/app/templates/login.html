@@ -32,7 +32,18 @@
   <body>
     <form action="/login" name="login" method="POST">
       <label>login</label>
-      <input type="text" name="name" />
+      <label for="name" class="sr-only">{{ form.name.label }}</label>
+      {{ form.name(class="form-control", placeholder="name") }}
+      {{ form.csrf_token }}
+      {% if form.name.errors %}
+      {% for error in form.name.errors %}
+          <span class="help-block">{{ error }}</span>
+      {% endfor %} 
+      {% endif %} 
+      <!-- <div class="form-group login-group-checkbox">
+          {{ form.remember_me() }}
+          <label for="remember_me">blijf ingelogd</label>
+      </div> -->
       <input type="submit" value="submit" />
     </form>
   </body>

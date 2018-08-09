@@ -10,15 +10,15 @@ from .lyrics import Generator
 
 import config
 
-app = flask.Flask(__name__, static_folder='static')
+app = flask.Flask(__name__, static_folder='static', template_folder='templates')
 app.config.from_object('config.AppConfig')
 
 db = flask_sqlalchemy.SQLAlchemy(app)
 
 celery = celery.Celery(
     __name__,
-    broker=os.environ.get('CELERY_BROKER_URL', 'redis://'),
-    backend=os.environ.get('CELERY_BROKER_URL', 'redis://'))
+    broker=os.environ.get('CELERY_BROKER_URL', 'redis://127.0.0.1:6379'),
+    backend=os.environ.get('CELERY_BROKER_URL', 'redis://127.0.0.1:6379'))
 celery.config_from_object('config.CeleryConfig')
 
 lm = flask_login.LoginManager()

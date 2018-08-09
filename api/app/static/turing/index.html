@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Deepflow Battle</title>
+    <title>Deepflow Turing</title>
     <script src="js/axios.min.js"></script>
     <script src="js/vue.min.js"></script>
     <link href="css/_main.css" rel="stylesheet"/>
@@ -14,15 +14,29 @@
       <!-- START SCREEN -->
       <div id="start" :class="{'hide': storage.questions.length > 0}">
         <div id="language">
-          <input type="text" v-model="storage.name" placeholder="name"/><Br>
+          <div id="scoreboard">
+            <div id="participant" v-for="item in scoreboard">
+              <div id="name" v-html="item.name"></div>
+              <div id="thescore" v-html="item.score"></div>
+            </div>
+          </div>
           <button class='start' @click="generate()">start</button>
         </div>
       </div>
+
+      <!-- SCOREBOARD -->
       
       <!-- FINISHED SCREEN -->
       <div id="finished" :class="{'hide':!finished}">
-        <h1>Thanks for participating!</h1>
-        <p>Please do something to start over (for now, hit escape)</p>
+        <h1 v-if="score">Your score is {{score}}</h1>
+        <p v-if="name">and your given name is <b>{{name}}</b> so you can keep track of your score.</p>
+        <div id="scoreboard">
+          <div id="participant" v-for="item in scoreboard">
+            <div id="name" v-html="item.name"></div>
+            <div id="thescore" v-html="item.score"></div>
+          </div>
+        </div>
+        <button @click="restart()">restart</button>
       </div>
       
       <!-- CURRENT QUESTION -->
@@ -34,15 +48,15 @@
         <div v-if="lastQuestion">
           <div v-if="lastQuestion.type === 'choose'" id="choose">
             <label>Choose the real phrase:</label>
-            <div class="phrase p1" v-html="lastQuestion.line1.text" :class="{'active':lastQuestion.selected === 1}" @click="select(1)"></div>
-            <div class="phrase p2" v-html="lastQuestion.line2.text" :class="{'active':lastQuestion.selected === 2}" @click="select(2)"></div>
+            <div class="phrase p1" v-html="lastQuestion.line1.join('<br>')" :class="{'active':lastQuestion.selected === 1}" @click="select(1)"></div>
+            <div class="phrase p2" v-html="lastQuestion.line2.join('<br>')" :class="{'active':lastQuestion.selected === 2}" @click="select(2)"></div>
             <button @click="check()">check</button>
           </div>
           <div v-if="lastQuestion.type === 'forreal'" id="forreal">
               <label>Is it real?</label>
-              <div class="phrase p1" v-html="lastQuestion.line.text"></div>
-              <button @click="select(1)" :class="{'active':lastQuestion.selected === 1}">Real</button>
-              <button @click="select(2)" :class="{'active':lastQuestion.selected === 2}">AI</button>
+              <div class="phrase p1" v-html="lastQuestion.line.join('<br>')"></div>
+              <button @click="select(1), check()" :class="{'active':lastQuestion.selected === 1}">Real</button>
+              <button @click="select(2), check()" :class="{'active':lastQuestion.selected === 2}">AI</button>
           </div>
         </div>
       </div>

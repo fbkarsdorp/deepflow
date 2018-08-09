@@ -17,13 +17,13 @@ def detokenize(line, debug=False):
     """
     # rules
     PRE       = {'(', '[', '{'}
-    POST      = {';', '.', ',', ':', '?', '?!', '!', ')', ']', '}', '...'}
+    POST      = {';', '.', ',', ':', '?', '?!', '!', '!!!', ')', ']', '}', '...', '..', "'s"}
     AMB       = {'"', "'"}
-    CONTS     = {('i', 'ma'), ('y', 'all'), ('c', 'mon'), ('it', 's'),
+    CONTS     = {('i', 'ma'), ('i', 'mma'), ('y', 'all'), ('c', 'mon'), ('it', 's'),
                  # french stuff (shouldn't matter too much)
                  ('c', 'qui'), ('c', 'est'), ('n', 'est'), ('j', 'ceux')}
-    PRECONTS  = {'gon'}
-    POSTCONTS = {'cause', 'em', 'round', 'till'}
+    PRECONTS  = {'gon', 'yo', 'lil'}
+    POSTCONTS = {'cause', 'em', 'round', 'till', 'er', 'bout'}
 
     words = line.split()
     unclosed = set()
@@ -31,12 +31,25 @@ def detokenize(line, debug=False):
 
     c = 0
     while c < len(words) - 1:
+        # prepare input
         if c == 0:
             prev, cur, post = '', words[c], words[c+1]
         else:
             prev, cur, post = words[c-1:c+2]
-        # contractions
-        if cur == "'" and (prev.lower(), post.lower()) in CONTS:
+
+        # numbers sometimes get tokenized
+        if cur.isnumeric() and prev.isnumeric():
+            output += cur
+        # contractions (r&b)
+        elif cur == '&' and prev.lower() == 'r' and post.lower() == 'b':
+            output += cur + post
+            c += 1
+        # contractions on '
+        elif cur == "'" and post.lower() == 'until':
+            output += ' ' + cur + 'til'
+            c += 1
+        # triplets like I'ma
+        elif cur == "'" and (prev.lower(), post.lower()) in CONTS:
             output += cur + post
             c += 1
         # pre ' contractions
@@ -78,13 +91,15 @@ def detokenize(line, debug=False):
         pass
 
     # last bit was already added
-    if c == len(words):
+    elif c == len(words):
         pass
 
     # finish last bit
     else:
         prev, cur = words[-2:]
-        if cur in POST:
+        if prev.isnumeric() and cur.isnumeric():
+            output += cur
+        elif cur in POST:
             output += cur
         elif cur in AMB and cur in unclosed:
             output += cur

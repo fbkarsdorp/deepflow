@@ -194,7 +194,8 @@ def get_model_generation(mconfig, conds, tries, defaults,
     while c < len(hyps) - 1:
         hyp = hyps[c].split()
         if not utils.is_valid(hyp) or (seed and not utils.is_valid_pair(hyp, seed)):
-            hyps.pop(c); scores.pop(c)
+            hyps.pop(c)
+            scores.pop(c)
         else:
             c += 1
 

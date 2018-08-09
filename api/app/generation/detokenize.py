@@ -45,7 +45,10 @@ tests = [
      "output": "i don't play, i get money, y'know what we control say"},
 
     {"input": "{ * blam * } nah , thought that y ' all stuck in the middle class ",
-     "output": "{* blam *} nah, thought that y'all stuck in the middle class"}
+     "output": "{* blam *} nah, thought that y'all stuck in the middle class"},
+
+    {"input": "a shakespeare intruders , 21 % of them ",
+     "output": "a shakespeare intruders, 21% of them"}
 ]
 
 if __name__ == '__main__':

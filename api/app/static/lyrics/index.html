@@ -12,7 +12,7 @@
           <flow-line :text="item.text" :loading="loading" :censored="censored">{{item.text}}</flow-line>
         </div>
         <div v-for="item,k in last" :key="k" v-if="k === selected && storage.lyric.length !== 20" class="new">
-          {{item.text}}
+          <flow-line :text="item.text" :loading="loading" :censored="censored">{{item.text}}</flow-line>
         </div>
       </div>
       <div id="control">
@@ -22,7 +22,7 @@
           <b>enter</b>: fix selection &amp; generate new options<br>
           <b>escape</b>: submit lyric, start clean<br><Br>
           {{storage.lyric.length}}/20<br>
-          <button @click="censored = !censored">censored {{censored}}</button>
+          <button @click="switchcensor()">censored {{censored}}</button>
         </div>
 
         <div id="loading" :class="{'show':loading}">
@@ -35,7 +35,7 @@
           </div>
           <div class="option" v-for="item,k in storage.generated[storage.generated.length - 1]" :key="k" :class="{'selected':selected === k}" v-if="storage.lyric.length < 20">
             <div class='text'>
-              {{item.text}}
+              <flow-line :text="item.text" :loading="loading" :censored="censored">{{item.text}}</flow-line>
             </div>
           </div>
         </div>

@@ -234,7 +234,7 @@ class CharLanguageModel(RNNLanguageModel):
                         output[idx].append(encoder.char.i2w[c])
 
         # transform output to list-batch of hyps
-        _, output = zip(*sorted(output.items()))
+        output = [output[i] for i in range(len(output))]
 
         # prepare output
         conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}

@@ -205,7 +205,8 @@ class RNNLanguageModel(nn.Module):
 
     def sample(self, encoder, nsyms=100, batch=1,
                conds=None, hidden=None, tau=1.0,
-               cache=None, alpha=0.0, theta=0.0):
+               cache=None, alpha=0.0, theta=0.0,
+               avoid_unk=False):
         """
         Generate stuff
         """
@@ -267,6 +268,9 @@ class RNNLanguageModel(nn.Module):
 
                 # get logits
                 logits = self.proj(outs)
+                # set unk to least value (might still return unk in high-entropy cases)
+                if avoid_unk:
+                    logits[:, encoder.word.unk] = logits.min(dim=1)[0]
                 if cache and cache.stored > 0:
                     logprob = cache.interpolate(
                         outs, logits, alpha, theta).add(1e-8).log()

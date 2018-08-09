@@ -162,8 +162,7 @@ class CharLanguageModel(RNNLanguageModel):
         return math.log2(math.e) * loss
 
     def sample(self, encoder, nsyms=100, batch=1,
-               conds=None, hidden=None, tau=1.0,
-               cache=None, alpha=0.0, theta=0.0):
+               conds=None, hidden=None, tau=1.0, **kwargs):
         """
         Generate stuff
         """

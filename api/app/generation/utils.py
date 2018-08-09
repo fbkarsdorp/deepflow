@@ -30,6 +30,8 @@ def detokenize(line, debug=False):
     output = ""
 
     c = 0
+    if len(words) == 1:
+        output += words[0]
     while c < len(words) - 1:
         if c == 0:
             prev, cur, post = '', words[c], words[c+1]
@@ -78,7 +80,7 @@ def detokenize(line, debug=False):
         pass
 
     # last bit was already added
-    if c == len(words):
+    elif c == len(words):
         pass
 
     # finish last bit

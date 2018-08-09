@@ -20,6 +20,9 @@ tests = [
 
     {"input": '" love ones " once more ',
      "output": '"love ones" once more'},
+
+    {"input": 'yo ',
+     "output": "yo"}
 ]
 
 if __name__ == '__main__':

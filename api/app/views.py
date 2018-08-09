@@ -1,6 +1,5 @@
-import datetime
+
 import json
-import random
 import uuid
 
 from typing import Dict
@@ -18,6 +17,7 @@ from .forms import LoginForm
 def load_user(id):
     return Machine.query.get(int(id))
 
+
 @app.before_request
 def before_request():
     flask.g.user = flask_login.current_user
@@ -26,7 +26,6 @@ def before_request():
 # MC Turing views
 ###############################################################################
 
-# autorename
 
 @app.route('/scoreboard', methods=['GET'])
 def get_scoreboard() -> flask.Response:
@@ -55,8 +54,7 @@ def get_pair() -> flask.Response:
     id, true, false, iteration, level = app.ExampleSampler.next(
         iteration, level, seen)
     return flask.jsonify(
-        status='OK', id=id, real=true, fake=false, iteration=iteration, level=level
-    )
+        status='OK', id=id, real=true, fake=false, iteration=iteration, level=level)
 
 
 ###############################################################################
@@ -86,26 +84,30 @@ def login():
 @flask_login.login_required
 def generate() -> flask.Response:
     data = flask.request.json
-    seed_id = data['seed_id'] if data is not None else None
+    seed_id = (data or {}).get('seed_id', None)
+    resample = (data or {}).get('resample', False)
     job = generate_task.apply_async(
-        args=(seed_id,), queue=f'{flask_login.current_user.name}-queue'
-    )
-    return flask.jsonify({"id":job.id})
+        args=(seed_id, resample), queue=f'{flask_login.current_user.name}-queue')
+    return flask.jsonify({"id": job.id})
 
 
 @app.route('/status/<id>', methods=['GET'])
 def get_status(id) -> flask.Response:
     job = generate_task.AsyncResult(id)
     if job.state in (states.PENDING, states.RECEIVED, states.STARTED):
-        return flask.jsonify({"status":"busy"})
+        return flask.jsonify({"status": "busy"})
     return flask.jsonify(job.info)
 
 
 @celery.task
-def generate_task(seed_id) -> Dict[str, str]:
+def generate_task(seed_id, resample) -> Dict[str, str]:
     with app.app_context():
         try:
-            return {'status': 'OK', 'payload': app.Generator.sample(seed_id=seed_id)}
+            if resample:
+                payload = app.Generator.resample()
+            else:
+                payload = app.Generator.sample(seed_id=seed_id)
+            return {'status': 'OK', 'payload': payload}
         except Exception as e:
             if app.debug is True:
                 raise e

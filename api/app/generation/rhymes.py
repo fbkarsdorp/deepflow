@@ -1,6 +1,5 @@
 
 import math
-import torch
 import json
 import collections
 
@@ -38,9 +37,6 @@ def gather_statistics(model, encoder, d, nsamples=100, length=15, tau=0.85):
             except KeyError:
                 fails += 1
                 continue
-
-        accuracy = sum(counts.values()) / nsamples
-        dispersion = len(counts) / (nsamples - fails)
 
         yield {"rhyme": rhyme,
                "counts": counts,

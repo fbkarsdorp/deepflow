@@ -3,7 +3,6 @@ import collections
 import math
 import random
 import time
-import itertools
 
 import torch
 import torch.nn as nn

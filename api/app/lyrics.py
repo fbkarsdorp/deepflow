@@ -4,7 +4,6 @@ import os
 import uuid
 import random
 
-import torch
 from allennlp.predictors import Predictor
 
 from .generation import RNNLanguageModel, CharLanguageModel, model_loader
@@ -195,7 +194,8 @@ def get_model_generation(mconfig, conds, tries, defaults,
     while c < len(hyps) - 1:
         hyp = hyps[c].split()
         if not utils.is_valid(hyp) or (seed and not utils.is_valid_pair(hyp, seed)):
-            hyps.pop(c); scores.pop(c)
+            hyps.pop(c)
+            scores.pop(c)
         else:
             c += 1
 
@@ -241,7 +241,7 @@ class Generator:
 
     def resample(self):
         """
-        Update candidates for the current step without modifying any local state 
+        Update candidates for the current step without modifying any local state
         (hidden, cache, counter, conds) except, of course, the current candidates
         """
         candidates, payload = {}, []
@@ -339,4 +339,3 @@ class Generator:
                 mconfig["cache"].reset()
 
         self.candidates = {"conds": {}, "hyps": {}}
-

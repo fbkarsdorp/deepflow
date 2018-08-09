@@ -1,5 +1,4 @@
 
-import itertools
 import re
 import json
 import collections
@@ -85,9 +84,10 @@ def is_valid_pair(sylls1, sylls2, verbose=False):
         return join_syllables(last[::-1])
 
     # avoid same word in the end of consecutive lines
-    if get_last(sylls1) == get_last(sylls2):
+    last1, last2 = get_last(sylls1), get_last(sylls2)
+    if last1 == last2:
         if verbose:
-            print("Lines end equal:\n\t- {}\n\t- {}\n\t".format(line1, line2))
+            print("Lines end equal:\n\t- {}\n\t- {}\n\t".format(last1, last2))
         return False
 
     return True

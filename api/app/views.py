@@ -29,7 +29,7 @@ def before_request():
 
 @app.route('/scoreboard', methods=['GET'])
 def get_scoreboard() -> flask.Response:
-    ranking = Turn.query.order_by(Turn.score.desc()).all()
+    ranking = Turn.query.order_by(Turn.score.desc(), Turn.timestamp.desc()).limit(10).all()
     ranking = [{'name': row.name.split('^^^')[0], 'score': row.score} for row in ranking]
     return flask.jsonify(status='OK', ranking=ranking)
 
@@ -37,11 +37,15 @@ def get_scoreboard() -> flask.Response:
 @app.route('/saveturing', methods=['POST'])
 def save_turn() -> flask.Response:
     data = flask.request.json
-    name = f'{uuid.uuid1()}'
+    name = f'{uuid.uuid1()}'[:5]
+    exists = Turn.query.filter_by(name=name).first()
+    while exists is not None:
+        name = f'{uuid.uuid1()}'[:5]
+        exists = Turn.query.filter_by(name=name).first()
     turn = Turn(name=name, log=data['log'], score=data['score'])
     db.session.add(turn)
     db.session.commit()
-    return flask.jsonify(status='OK', message='turn saved')
+    return flask.jsonify(status='OK', message='turn saved', name=name)
 
 
 @app.route('/pair', methods=['GET', 'POST'])

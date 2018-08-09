@@ -6,7 +6,6 @@ import random
 
 import torch
 from allennlp.predictors import Predictor
-import billiard as mp
 
 from .generation import RNNLanguageModel, CharLanguageModel, model_loader
 from .generation import Cache
@@ -127,7 +126,7 @@ def syllabify(syllabifier, words):
     return sent
 
 
-def get_model_generation(mconfig, config, conds,
+def get_model_generation(mconfig, conds, tries, defaults,
                          # seed params
                          seed=None, seed_conds=None):
     """
@@ -151,7 +150,7 @@ def get_model_generation(mconfig, config, conds,
     hidden : tuple, torch.Tensor or None, hidden state after reading currently
         picked candidate
     """
-    model = mconfig["model"]
+    model, encoder = mconfig["model"], mconfig['encoder']
 
     # preprocess seed
     hidden = mconfig.get("hidden")
@@ -164,20 +163,19 @@ def get_model_generation(mconfig, config, conds,
         hidden_ = []
         for h in hidden:
             if isinstance(h, tuple):
-                hidden_.append((h[0].repeat(1, config['TRIES'], 1),
-                                h[1].repeat(1, config['TRIES'], 1)))
+                hidden_.append((h[0].repeat(1, tries, 1), h[1].repeat(1, tries, 1)))
             else:
-                hidden_.append(h.repeat(1, config['TRIES'], 1))
+                hidden_.append(h.repeat(1, tries, 1))
 
     # transform conditions to actual input
-    conds = {key: mconfig['encoder'].conds[key].w2i[val] for key, val in conds.items()}
+    conds = {key: encoder.conds[key].w2i[val] for key, val in conds.items()}
 
     (hyps, _), scores, _ = model.sample(
-        mconfig['encoder'],
-        batch=config['TRIES'],
+        encoder,
+        batch=tries,
         conds=conds,
         hidden=hidden_,
-        tau=mconfig.get("options", {}).get("tau", config['DEFAULTS']["tau"]),
+        tau=mconfig.get("options", {}).get("tau", defaults["tau"]),
         # cache: TODO: don't force-update cache until a pick has been done
         cache=mconfig.get("cache"))
 
@@ -241,7 +239,7 @@ class Generator:
         # first sample
         self.candidates = {"conds": {}, "hyps": {}}
 
-    def regenerate(self):
+    def resample(self):
         """
         Update candidates for the current step without modifying any local state 
         (hidden, cache, counter, conds) except, of course, the current candidates
@@ -249,16 +247,14 @@ class Generator:
         candidates, payload = {}, []
         conds = self.candidates['conds']
         candidates['conds'] = conds
+        candidates['hyps'] = {}
 
-        with mp.Pool() as pool:
-            results = pool.starmap(
-                get_model_generation,
-                [(mconfig, self.config, conds) for mconfig in self.models.values()])
-
-        for modelname, (hyp, score, _) in zip(self.models.keys(), results):
+        for modelname, mconfig in self.models.items():
+            hyp, score, _ = get_model_generation(
+                mconfig, conds, self.config['TRIES'], self.config['DEFAULTS'])
             # update new candidates (always kept as they come from model.sample)
             id = str(uuid.uuid1())[:8]
-            candidates["hyps"][modelname] = {id: {"hyp": hyp, "score": score}}
+            candidates["hyps"][modelname] = {id: {"hyp": hyp}}
 
             if isinstance(self.models[modelname], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
@@ -307,12 +303,12 @@ class Generator:
             # Warning! hidden is the state after reading the seed and NOT
             # the state after generating the new candidates
             hyp, score, hidden = get_model_generation(
-                mconfig, self.config, conds,
+                mconfig, conds, self.config['TRIES'], self.config['DEFAULTS'],
                 seed=seed, seed_conds=self.candidates["conds"])
 
             # update new candidates (always kept as they come from model.sample)
             id = str(uuid.uuid1())[:8]
-            candidates["hyps"][modelname] = {id: {"hyp": hyp, "score": score}}
+            candidates["hyps"][modelname] = {id: {"hyp": hyp}}
 
             # update hidden
             self.models[modelname]["hidden"] = hidden
@@ -343,3 +339,4 @@ class Generator:
                 mconfig["cache"].reset()
 
         self.candidates = {"conds": {}, "hyps": {}}
+

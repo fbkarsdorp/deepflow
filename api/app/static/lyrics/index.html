@@ -9,7 +9,7 @@
     <element>
       <div id="canvas">
         <div v-for="item,k in storage.lyric" :key="k">
-          <flow-line :text="item.text" :loading="loading">line</flow-line>
+          <flow-line :text="item.text" :loading="loading" :censored="censored">{{item.text}}</flow-line>
         </div>
         <div v-for="item,k in last" :key="k" v-if="k === selected && storage.lyric.length !== 20" class="new">
           {{item.text}}
@@ -21,7 +21,8 @@
           <b>arrows</b>: select option<br>
           <b>enter</b>: fix selection &amp; generate new options<br>
           <b>escape</b>: submit lyric, start clean<br><Br>
-          {{storage.lyric.length}}/20
+          {{storage.lyric.length}}/20<br>
+          <button @click="censored = !censored">censored {{censored}}</button>
         </div>
 
         <div id="loading" :class="{'show':loading}">

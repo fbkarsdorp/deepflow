@@ -56,11 +56,11 @@ var app = new Vue({
           self.loading = true
           self.log('generate')
           // send seed id
-          // let id = null
-          // if (this.storage.lyric.length > 0) {
-          //   id = this.storage.lyric[this.storage.lyric.length - 1].id
-          // }
-          axios.post(self.generateUrl,{resample: resample}).then(function(res) {
+          let id = null
+          if (this.storage.lyric.length > 0) {
+            id = this.storage.lyric[this.storage.lyric.length - 1].id
+          }
+          axios.post(self.generateUrl,{seed_id: id, resample: resample}).then(function(res) {
             if (res.data.id) {
               self.id = res.data.id
               self.log('received job id', {jobid: res.data.id})
@@ -163,7 +163,7 @@ var app = new Vue({
     let self = this
     let ls = localStorage.getItem('storage')
     this.storage = (ls !== '' && ls !== null) ? JSON.parse(ls) : this.storage
-    if (this.storage.lyric.generated.length < 1) this.generate()
+    if (!this.storage.lyric || !this.storage.lyric.generated || this.storage.lyric.generated.length < 1) this.generate()
     setTimeout(this.show, 500)
     window.addEventListener('keydown', function(ev) {
       if (ev.keyCode === 40) self.changeSelection(-1)

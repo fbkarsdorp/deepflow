@@ -1,10 +1,6 @@
 
-import collections
-import json
 import random
-import torch
 
-from .model import RNNLanguageModel
 from .cache import Cache
 from . import utils
 
@@ -92,4 +88,3 @@ if __name__ == '__main__':
         verbose=args.verbose)
 
     format_stanzas(stanzas, conds)
-

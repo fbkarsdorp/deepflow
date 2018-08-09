@@ -15,14 +15,14 @@ def generate_stanza(model, encoder,
     rhyme = rhyme or random.choice(list(encoder.conds['rhyme'].w2i.keys()))
     cache = None
     if cache_size > 0:
-        cache = Cache(model.hidden_dim, cache_size, len(encoder.word.w2i), model.device)
+        cache = Cache.new(model.hidden_dim, cache_size, model.device)
 
     conds = {'rhyme': encoder.conds['rhyme'].w2i[rhyme],
              'length': encoder.conds['length'].w2i[length]}
 
     stanzas = None
     for _ in range(nlines):
-        (hyps, _), _, hidden = model.sample(
+        (hyps, _), _, hidden, cache = model.sample(
             encoder, hidden=hidden, conds=conds, batch=nstanzas, tau=tau,
             cache=cache, alpha=alpha, theta=theta, avoid_unk=True)
 

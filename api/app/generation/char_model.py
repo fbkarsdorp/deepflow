@@ -162,7 +162,7 @@ class CharLanguageModel(RNNLanguageModel):
         return math.log2(math.e) * loss
 
     def sample(self, encoder, nsyms=100, batch=1,
-               conds=None, hidden=None, tau=1.0, **kwargs):
+               conds=None, hidden=None, tau=1.0, cache=None, **kwargs):
         """
         Generate stuff
         """
@@ -246,7 +246,7 @@ class CharLanguageModel(RNNLanguageModel):
             probs.append(prob)
             hyps.append(''.join(hyp[::-1] if encoder.reverse else hyp))
 
-        return (hyps, conds), probs, hidden
+        return (hyps, conds), probs, hidden, cache
 
 
 if __name__ == '__main__':

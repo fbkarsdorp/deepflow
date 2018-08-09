@@ -45,11 +45,10 @@ def load_models(config):
 
         # create cache if necessary
         cache = None
-        if mconfig.get("options", {}).get("cache"):
-            cache = Cache(
-                model.hidden_dim,                  # hidden_dim
-                config['DEFAULTS']["cache_size"],  # cache_size
-                len(encoder.word.w2i))             # vocabulary
+        # if mconfig.get("options", {}).get("cache"):
+        #     cache = Cache.new(
+        #         model.hidden_dim,                  # hidden_dim
+        #         config['DEFAULTS']["cache_size"])  # cache_size
 
         # add mconfig
         models[modelname] = {
@@ -84,7 +83,7 @@ def resample_conds(encoder, conds, counter):
 
 def process_seed(model, encoder, hidden, seed, seed_conds):
     """
-    Process the picked option (seed) and return the new hidden state / cache
+    Process the picked option (seed) and return the new hidden state
 
     Arguments:
     ----------
@@ -151,7 +150,7 @@ def get_model_generation(mconfig, conds, tries, defaults,
     model, encoder = mconfig["model"], mconfig['encoder']
 
     # update hidden with given seed
-    seed_hidden = mconfig.get("hidden")
+    seed_hidden = mconfig["hidden"]
     if seed is not None:
         seed_hidden = process_seed(model, encoder, seed_hidden, seed, seed_conds)
 
@@ -168,14 +167,14 @@ def get_model_generation(mconfig, conds, tries, defaults,
     # transform conditions to actual input
     conds = {key: encoder.conds[key].w2i[val] for key, val in conds.items()}
 
-    (hyps, _), scores, _ = model.sample(
+    (hyps, _), scores, _, _ = model.sample(
         encoder,
         batch=tries,
         conds=conds,
         hidden=hidden,
         avoid_unk=defaults["avoid_unk"],
-        tau=mconfig.get("options", {}).get("tau", defaults["tau"]),
-        cache=mconfig.get("cache"))
+        tau=mconfig["options"].get("tau", defaults["tau"]),
+        cache=mconfig["cache"])
 
     # sort by score to ensure best is last
     scores, hyps = zip(*sorted(list(zip(scores, hyps))))
@@ -318,7 +317,7 @@ class Generator:
 
             # side-effects
             self.models[modelname]["hidden"] = hidden
-            # TODO: update cache
+            # self.models[modelname]["cache"] = cache
 
         # reset candidates
         self.candidates = candidates
@@ -335,7 +334,7 @@ class Generator:
             # reset hidden
             mconfig["hidden"] = None
             # reset cache if necessary
-            if mconfig.get("cache"):
-                mconfig["cache"].reset()
+            # if mconfig["cache"]:
+            #     mconfig["cache"] = mconfig["cache"].reset()
 
         self.candidates = {"conds": {}, "hyps": {}}

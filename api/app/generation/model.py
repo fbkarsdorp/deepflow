@@ -286,7 +286,7 @@ class RNNLanguageModel(nn.Module):
 
                 # update cache if needed
                 if cache:
-                    cache.add(outs.unsqueeze(0), word.unsqueeze(0))
+                    cache = cache.add(outs.unsqueeze(0), word.unsqueeze(0))
 
                 # accumulate
                 scores += score * mask.float()
@@ -316,7 +316,7 @@ class RNNLanguageModel(nn.Module):
             probs.append(prob)
             hyps.append(' '.join(hyp[::-1] if encoder.reverse else hyp))
 
-        return (hyps, conds), probs, hidden
+        return (hyps, conds), probs, hidden, cache
 
     def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
         self.eval()
@@ -348,7 +348,7 @@ class RNNLanguageModel(nn.Module):
         print("Sampling #{} examples".format(nsamples))
         print()
         for _ in range(nsamples):
-            (hyps, conds), _, _ = self.sample(encoder)
+            (hyps, conds), _, _, _ = self.sample(encoder)
             print(hyps[0], conds)  # only print first item in batch
         print()
 

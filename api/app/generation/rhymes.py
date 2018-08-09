@@ -22,7 +22,7 @@ def gather_statistics(model, encoder, d, nsamples=100, length=15, tau=0.85):
     conds = {'length': encoder.conds['length'].w2i[length]}
     for rhyme in encoder.conds['rhyme'].w2i.keys():
         conds['rhyme'] = encoder.conds['rhyme'].w2i[rhyme]
-        (samples, _), _, _ = model.sample(encoder, tau=tau, conds=conds, batch=nsamples)
+        (samples, _), _, _, _ = model.sample(encoder, tau=tau, conds=conds, batch=nsamples)
         counts, fails, examples = collections.Counter(), 0, []
         for sample in samples:
             sample = utils.join_syllables(sample.split())

@@ -37,6 +37,15 @@ tests = [
 
     {"input": "a nigga playin' with me cause i'm pimpin ? 106",
      "output": "a nigga playin' with me cause i'm pimpin? 106"},
+
+    {"input": "i disrespect you ( huh !!!! ) like its up to me for sure",
+     "output": "i disrespect you (huh!!!!) like its up to me for sure"},
+
+    {"input": "i don't play , i get money , y ' know what we control say ",
+     "output": "i don't play, i get money, y'know what we control say"},
+
+    {"input": "{ * blam * } nah , thought that y ' all stuck in the middle class ",
+     "output": "{* blam *} nah, thought that y'all stuck in the middle class"}
 ]
 
 if __name__ == '__main__':

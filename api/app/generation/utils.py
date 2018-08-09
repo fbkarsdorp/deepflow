@@ -17,9 +17,9 @@ def detokenize(line, debug=False):
     """
     # rules
     PRE       = {'(', '[', '{'}
-    POST      = {';', '.', ',', ':', '?', '?!', '!', '!!', '!!!', ')', ']', '}', '...', '..', "'s"}
+    POST      = {';', '.', ',', ':', '?', '?!', '!', '!!', '!!!', '!!!!', ')', ']', '}', '...', '..', "'s"}
     AMB       = {'"', "'"}
-    CONTS     = {('i', 'ma'), ('i', 'mma'), ('y', 'all'), ('c', 'mon'), ('it', 's'),
+    CONTS     = {('i', 'ma'), ('i', 'mma'), ('y', 'all'), ('c', 'mon'), ('it', 's'), ('y', 'know'),
                  # french stuff (shouldn't matter too much)
                  ('c', 'qui'), ('c', 'est'), ('n', 'est'), ('j', 'ceux')}
     PRECONTS  = {'gon', 'yo', 'lil'}
@@ -38,7 +38,6 @@ def detokenize(line, debug=False):
             prev, cur, post = '', words[c], words[c+1]
         else:
             prev, cur, post = words[c-1:c+2]
-
         # numbers sometimes get tokenized
         if cur.isnumeric() and prev.isnumeric():
             output += cur

@@ -1,3 +1,19 @@
+censored = ["word","nigga","shit","fuck","bitch","niggas","niggaz","black","fuckin","bitches","hoes","dick","blow","pussy","fucking","motherfucker","fucked","motherfuckin","ho","motherfuckers","pimp","bullshit","cock","motherfucking","blowin","pimpin","booty","muthafuckin","bangin","muthafucka","blowing","fucker","blown","muthafuckas","cocked","cum","allah","blows","titties","suckin","fuckers","whore","faggot","mothafuckin","banging","jigga","whores","fucks","mothafucka","tits","gay","shits","slut","blacks","dicks","motherfuck","pimping","fucka","shitty","rape","faggots","coochie","african","mothafuckas","africa","virgin","doggy","shittin","fu","hooker","nigger","blowed","motherfucka","stripper","pum","terrorist","pussies","sluts","womb","afro","clit","racist","biatch","porn","penetrate","penis","hos","fuckas","homo","condom","fag","niggers","raped","bitchin","strippers","bullshittin","nig","porno","titty","vagina","sperm","cunt","dyke","muthafucking","banged","fags","german","gangbang","puss","shitted","holocaust","jews","motherfuckas","muhammad","cockin","fukin","jew","muthafucker","sexin","jerkin","mothafucker","prostitute","turk","cocks","dykes","bitchy","muthafuck","jewish","shitting","terrorists","muthafuckers","nipple","erection","germany","israel","gangbangin","mothafucking","nazi","fuk","mothafuckers","cocking","bitching","muffin","prostitutes","mutherfuckin","africans","beyotch","cummin","fucken","niggy","nympho","penetration","anal","cocksucker","dickin","lesbian","raping","dickie","muthafuckaz","rapin","clitoris","hoez","dicky","fucc","gangbangers","cunts","hoein","rapist","bitchez","terrorism","booby","mutherfucker","prostitution","tittie","afrika","culo","boobs","mutherfuckers","blackman","bullshitting","clits","cocksuckers","sexing","fuckaz","shiiit","mothafuck","vaginas","arse","penetentiary","mothafuckaz","cumin","mutherfucking","jizz","sexed","dicked","blowjob","muhfuckin","nazis","gangbanger","scud","shiit","slutty","bitched","homos","sexist","mohammed","penetrated","israeli","lesbians","penetrating","boner","dickhead","biiitch","boobies","cumming","shitter","sudan","tity","mothafuckn","muhammed","niggah","fuckery","nymphos","beatch","bitchs","fuccin","germans","vaginal","muhfucka","homosexual","dickory","fuckn","jiggaboo","rapists","hoeing","muhfucker","pussyhole","hookie","gangbanging","muffins","pedophile","pornographic","boob","fucky","sexes","shitlist","butthole","pedo","pornos","rapes","jiggable","bisexual","muff","stompdashitoutu","tities","bitchass","boobie","brothel","israelite","mufucka","dickey","dicking","pussys","sexo","shiiiit","mufuckin","pecker","erections","fucca","fuga","homosexuals","israelites","motherfuckaz","shite","skanks","beyatch","mufuckas","niggaro","peckerwood","bullshitin","bullshitters","pornography","shithead","blowjobs","bullshitted","motherfucken","pornstar","jiggas","muthafucken","cums","muhfuckas","nevehoe","niggaaa","niggs","transvestite"];
+
+Vue.component('flow-line', {
+  props: ['text','loading','censored'],
+  computed: {
+    newtext: function (val) {
+      var words = this.text.split(' ');
+      words.forEach(function(v,k){
+        if (censored.indexOf(v.toLowerCase()) > -1) words[k] = '**********************************'.substr(0, v.length)
+      })
+      return words.join(' ')
+    }
+  },
+  template: '<div>{{censored ? newtext : text}}</div>'
+})
+
 var app = new Vue({ 
   el: 'element',
   data: {
@@ -7,6 +23,7 @@ var app = new Vue({
     loading: false,
     selected: null,
     id: null,
+    censored: false,
     storage: {
       lyric: [],
       log: [],
@@ -27,7 +44,7 @@ var app = new Vue({
       this.id = null
       this.$forceUpdate()
       document.activeElement.blur()
-      self.storeInBrowser()
+      this.storeInBrowser()
     },
     generate () {
       if (this.storage.lyric.length < 20) {
@@ -51,7 +68,7 @@ var app = new Vue({
               self.loading = false
               self.log('error', 'did not receive job id, trying again in 1 sec')
               self.storeInBrowser()
-              setTimeout(self.generate, 1000)
+              // setTimeout(self.generate, 1000)
             }
           }).catch(function (res) {
             self.loading = false
@@ -67,9 +84,9 @@ var app = new Vue({
     polling () {
       let self = this
       axios.get(self.statusUrl + self.id).then(function(res) {
-        if (!res.data.status) {
+        if (!res.data.status || res.data.status === 'busy') {
           // retry 
-          setTimeout(this.polling, 100)
+          setTimeout(self.polling, 500)
         } else {
           self.loading = false
           if (res.data.status === 'fail') {
@@ -89,6 +106,7 @@ var app = new Vue({
       });
     },
     add (item) {
+      console.log(item)
       let storage = this.storage
       this.log('line added', {jobid: this.id, line: this.selected})
       item.timestamp = new Date().getTime()

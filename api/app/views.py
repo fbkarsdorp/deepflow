@@ -90,16 +90,14 @@ def generate() -> flask.Response:
     job = generate_task.apply_async(
         args=(seed_id,), queue=f'{flask_login.current_user.name}-queue'
     )
-    return flask.jsonify({}), 202, {
-        'Location': flask.url_for('get_status', id=job.id)}
+    return flask.jsonify({"id":job.id})
 
 
 @app.route('/status/<id>', methods=['GET'])
 def get_status(id) -> flask.Response:
     job = generate_task.AsyncResult(id)
     if job.state in (states.PENDING, states.RECEIVED, states.STARTED):
-        return flask.jsonify({}), 202, {
-            'Location': flask.url_for('get_status', id=id)}
+        return flask.jsonify({"status":"busy"})
     return flask.jsonify(job.info)
 
 

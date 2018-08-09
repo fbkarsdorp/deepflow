@@ -256,7 +256,7 @@ class Generator:
             id = str(uuid.uuid1())[:8]
             candidates["hyps"][modelname] = {id: {"hyp": hyp}}
 
-            if isinstance(self.models[modelname], RNNLanguageModel):
+            if isinstance(mconfig['model'], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
             hyp = utils.detokenize(hyp)
             payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})

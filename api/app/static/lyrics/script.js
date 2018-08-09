@@ -54,7 +54,7 @@ var app = new Vue({
           let self = this
           self.selected = null
           self.loading = true
-          self.log('generate')
+          self.log('generate', resample)
           // send seed id
           let id = null
           if (this.storage.lyric.length > 0) {

@@ -49,7 +49,7 @@ def is_valid(sylls, verbose=False):
             print("Empty line")
         return False
 
-    if '<unk>' in sylls:
+    if UNK in sylls:
         if verbose:
             print("Found <unk> in line")
         return False

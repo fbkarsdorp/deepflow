@@ -184,11 +184,17 @@ def get_model_generation(mconfig, config, conds,
     # sort by score to ensure best is last
     scores, hyps = zip(*sorted(list(zip(scores, hyps))))
     scores, hyps = list(scores), list(hyps)
-    # TODO: <unk> sentences have high probability, we should remove them first,
-    #    while still ensuring at least 1 sentence is kept in `hyps`
-    # filter out invalid hyps
+
+    # downgrade sentences with <unk>
     c = 0
-    while c < len(hyps) - 1:  # always leave last one at least
+    while utils.UNK in hyps[-1] and c < len(hyps):
+        hyps[0], hyps[-1] = hyps[-1], hyps[0]
+        scores[0], scores[-1] = scores[-1], scores[0]
+        c += 1
+
+    # filter out invalid hyps (but always leave last one at least)
+    c = 0
+    while c < len(hyps) - 1:
         hyp = hyps[c].split()
         if not utils.is_valid(hyp) or (seed and not utils.is_valid_pair(hyp, seed)):
             hyps.pop(c); scores.pop(c)

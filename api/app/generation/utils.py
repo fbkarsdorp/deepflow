@@ -22,22 +22,25 @@ def detokenize(line, debug=False):
     CONTS     = {('i', 'ma'), ('i', 'mma'), ('y', 'all'), ('c', 'mon'), ('it', 's'), ('y', 'know'),
                  # french stuff (shouldn't matter too much)
                  ('c', 'qui'), ('c', 'est'), ('n', 'est'), ('j', 'ceux')}
-    PRECONTS  = {'gon', 'yo', 'lil'}
+    PRECONTS  = {'gon', 'yo', 'lil', 'fo', 'wit'}
     POSTCONTS = {'cause', 'em', 'round', 'till', 'er', 'bout'}
 
     words = line.split()
+    if len(words) == 1:
+        return words[0].strip()
+
     unclosed = set()
     output = ""
-
     c = 0
-    if len(words) == 1:
-        output += words[0]
-    while c < len(words) - 1:
+    while c < len(words):
         # prepare input
         if c == 0:
             prev, cur, post = '', words[c], words[c+1]
+        elif c == len(words) - 1:
+            prev, cur, post = words[c-1], words[c], ''
         else:
             prev, cur, post = words[c-1:c+2]
+
         # numbers sometimes get tokenized
         if cur.isnumeric() and prev.isnumeric():
             output += cur
@@ -53,13 +56,13 @@ def detokenize(line, debug=False):
         elif cur == "'" and (prev.lower(), post.lower()) in CONTS:
             output += cur + post
             c += 1
-        # pre ' contractions
-        elif cur == "'" and prev.lower() in PRECONTS:
-            output += cur + ' ' + post
-            c += 1
         # post ' contractions
         elif cur == "'" and post.lower() in POSTCONTS:
             output += ' ' + cur + post
+            c += 1
+        # pre ' contractions
+        elif cur == "'" and prev.lower() in PRECONTS:
+            output += cur + ' ' + post
             c += 1
         # ambiguous quotes (why do they even exist?)
         elif cur in AMB:
@@ -77,7 +80,10 @@ def detokenize(line, debug=False):
             output += cur
         # opening stuff
         elif cur in PRE:
-            output += ' ' + cur + post
+            if prev in PRE:
+                output += cur + post
+            else:
+                output += ' ' + cur + post
             c += 1
         # normal situation
         else:
@@ -86,26 +92,6 @@ def detokenize(line, debug=False):
         c += 1
 
     output = output.strip()
-
-    # no last bit to add
-    if len(words) == 1:
-        pass
-
-    # last bit was already added
-    elif c == len(words):
-        pass
-
-    # finish last bit
-    else:
-        prev, cur = words[-2:]
-        if prev.isnumeric() and cur.isnumeric():
-            output += cur
-        elif cur in POST:
-            output += cur
-        elif cur in AMB and cur in unclosed:
-            output += cur
-        else:
-            output += ' ' + cur
 
     if debug:
         print("line: [{}]".format(line))
@@ -342,6 +328,37 @@ class CorpusEncoder:
         return (words, nwords), (chars, nchars), bconds
 
 
+def prepare_line(line, prev=None, d=None, include_conds=None):
+    # prepare line
+    sent = []
+    for w in line:
+        if len(w.get('syllables', [])) == 0:
+            if re.match(PUNCT, w['token']):  # this actually always applies
+                sent.append(w['token'])
+        else:
+            sent.extend(format_syllables(w['syllables']))
+
+    conds = {}
+
+    # get rhyme
+    if d and not (include_conds is not None and 'rhyme' not in include_conds):
+        try:
+            # rhyme = get_rhyme2(line, prev, d)
+            # if rhyme:
+            #     rhyme = '-'.join(rhyme)
+            rhyme = get_final_phonology(d[line[-1]['token']])
+            rhyme = '-'.join(rhyme) if len(rhyme) <= 2 else None
+        except KeyError:
+            rhyme = None
+        conds['rhyme'] = rhyme or UNK
+
+    # get length
+    if not (include_conds is not None and 'length' not in include_conds):
+        conds['length'] = bucket_length(len(sent))
+
+    return sent, conds
+
+
 class CorpusReader:
     def __init__(self, fpath, dpath=None, conds=None):
         self.fpath = fpath
@@ -352,34 +369,7 @@ class CorpusReader:
         self.conds = conds
 
     def prepare_line(self, line, prev):
-        # prepare line
-        sent = []
-        for w in line:
-            if len(w.get('syllables', [])) == 0:
-                if re.match(PUNCT, w['token']):  # this actually always applies
-                    sent.append(w['token'])
-            else:
-                sent.extend(format_syllables(w['syllables']))
-
-        conds = {}
-
-        # get rhyme
-        if self.d and not (self.conds is not None and 'rhyme' not in self.conds):
-            try:
-                # rhyme = get_rhyme2(line, prev, d)
-                # if rhyme:
-                #     rhyme = '-'.join(rhyme)
-                rhyme = get_final_phonology(self.d[line[-1]['token']])
-                rhyme = '-'.join(rhyme) if len(rhyme) <= 2 else None
-            except KeyError:
-                rhyme = None
-            conds['rhyme'] = rhyme or UNK
-
-        # get length
-        if not (self.conds is not None and 'length' not in self.conds):
-            conds['length'] = bucket_length(len(sent))
-
-        return sent, conds
+        return prepare_line(line, prev, d=self.d, include_conds=self.conds)
 
     def lines_from_jsonl(self, path):
         with open(path, errors='ignore') as f:

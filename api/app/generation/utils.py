@@ -80,7 +80,10 @@ def detokenize(line, debug=False):
             output += cur
         # opening stuff
         elif cur in PRE:
-            output += ' ' + cur + post
+            if prev in PRE:
+                output += cur + post
+            else:
+                output += ' ' + cur + post
             c += 1
         # normal situation
         else:

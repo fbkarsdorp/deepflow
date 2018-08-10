@@ -328,6 +328,37 @@ class CorpusEncoder:
         return (words, nwords), (chars, nchars), bconds
 
 
+def prepare_line(line, prev=None, d=None, include_conds=None):
+    # prepare line
+    sent = []
+    for w in line:
+        if len(w.get('syllables', [])) == 0:
+            if re.match(PUNCT, w['token']):  # this actually always applies
+                sent.append(w['token'])
+        else:
+            sent.extend(format_syllables(w['syllables']))
+
+    conds = {}
+
+    # get rhyme
+    if d and not (include_conds is not None and 'rhyme' not in include_conds):
+        try:
+            # rhyme = get_rhyme2(line, prev, d)
+            # if rhyme:
+            #     rhyme = '-'.join(rhyme)
+            rhyme = get_final_phonology(d[line[-1]['token']])
+            rhyme = '-'.join(rhyme) if len(rhyme) <= 2 else None
+        except KeyError:
+            rhyme = None
+        conds['rhyme'] = rhyme or UNK
+
+    # get length
+    if not (include_conds is not None and 'length' not in include_conds):
+        conds['length'] = bucket_length(len(sent))
+
+    return sent, conds
+
+
 class CorpusReader:
     def __init__(self, fpath, dpath=None, conds=None):
         self.fpath = fpath
@@ -338,34 +369,7 @@ class CorpusReader:
         self.conds = conds
 
     def prepare_line(self, line, prev):
-        # prepare line
-        sent = []
-        for w in line:
-            if len(w.get('syllables', [])) == 0:
-                if re.match(PUNCT, w['token']):  # this actually always applies
-                    sent.append(w['token'])
-            else:
-                sent.extend(format_syllables(w['syllables']))
-
-        conds = {}
-
-        # get rhyme
-        if self.d and not (self.conds is not None and 'rhyme' not in self.conds):
-            try:
-                # rhyme = get_rhyme2(line, prev, d)
-                # if rhyme:
-                #     rhyme = '-'.join(rhyme)
-                rhyme = get_final_phonology(self.d[line[-1]['token']])
-                rhyme = '-'.join(rhyme) if len(rhyme) <= 2 else None
-            except KeyError:
-                rhyme = None
-            conds['rhyme'] = rhyme or UNK
-
-        # get length
-        if not (self.conds is not None and 'length' not in self.conds):
-            conds['length'] = bucket_length(len(sent))
-
-        return sent, conds
+        return prepare_line(line, prev, d=self.d, include_conds=self.conds)
 
     def lines_from_jsonl(self, path):
         with open(path, errors='ignore') as f:

@@ -43,7 +43,7 @@ class Cache(object):
     def reset(self):
         return Cache.new(self.dim, self.size, device=self.device)
 
-    def add(self, keys, vals, batch):
+    def add(self, keys, vals):
         """
         Parameters:
         -----------

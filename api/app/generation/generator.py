@@ -297,13 +297,13 @@ if __name__ == '__main__':
     if args.outputpath:
         with open(args.outputpath, 'w') as f:
             while c < args.nsamples:
-                sample = json.dumps(generator.sample(**opts))
+                sample = generator.sample(**opts)
                 if sample:
-                    f.write('{}\n'.format(sample))
+                    f.write('{}\n'.format(json.dumps(sample)))
                     c += 1
     else:
         while c < args.nsamples:
-            sample = json.dumps(generator.sample(**opts), indent=2)
+            sample = generator.sample(**opts)
             if sample:
-                print(sample)
+                print(json.dumps(sample, indent=2))
                 c += 1

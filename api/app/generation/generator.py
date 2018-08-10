@@ -289,7 +289,7 @@ if __name__ == '__main__':
 
     opts = {'tries': args.tries,
             'avoid_unk': True,
-            'cache_size': 100,
+            'cache_size': 0,
             'alpha': 0.15,
             'theta': 0.75}
 

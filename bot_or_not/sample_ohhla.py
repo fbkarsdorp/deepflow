@@ -3,8 +3,10 @@ import json
 import random
 import uuid
 
+from typing import List, Dict
 
-def hyphenate(syllables):
+
+def hyphenate(syllables) -> List[str]:
     if len(syllables) == 1:
         return syllables
     output = []
@@ -45,10 +47,10 @@ def sample_from_ohhla(fpath: str, n_samples: int = 10000) -> List[Dict]:
                 return samples
     return samples
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--ipath', type=str)
     parser.add_argument('--opath', type=str)
     args = parser.parse_args()
 
-    

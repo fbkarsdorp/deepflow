@@ -46,7 +46,9 @@ def sample_from_ohhla(fpath: str, n_samples: int = 10000) -> List[Dict]:
                                  for word in line), []))
                     } for line in lines]
                 }
-                samples.append(sample)
+                # to exclude some overly simple lines
+                if not all(len(l['original'].split()) == 1 for l in sample['text']):
+                    samples.append(sample)
     return samples
 
 

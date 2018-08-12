@@ -1,4 +1,5 @@
 import argparse
+import collections
 import itertools
 import json
 
@@ -7,10 +8,7 @@ from typing import List, Dict, Tuple
 import numpy as np
 import pandas as pd
 import scipy.stats
-from sklearn.metrics.pairwise import pairwise_distances
 import tqdm
-
-from sklearn.feature_extraction.text import CountVectorizer
 
 
 VOWELS = 'AA AE AH AO AW AX AY EH ER EY IH IX IY OW OY UH UW UX'.split()
@@ -94,23 +92,13 @@ class FeatureExtractor:
         with open(phon_path) as f:
             self.phon_dict = json.load(f)
 
-    def fit(self, org_samples, gen_samples):
-        org_samples = [
-            read_sample(sample, words=True) for sample in tqdm.tqdm(org_samples)
-        ]
-        gen_samples = [
-            read_sample(sample, words=True) for sample in tqdm.tqdm(gen_samples)
-        ]
-        self.vectorizer = CountVectorizer(analyzer=lambda t: sum(t, []))
-        self.vectorizer.fit(org_samples + gen_samples)
+    def fit(self, org_samples):
+        org_samples = [read_sample(sample, words=True) for sample in org_samples]
+        fd = collections.Counter(
+            word for sample in org_samples for line in sample for word in line)
+        self.low_frequency_words = {w for w, c in fd.items() if c <= self.min_freq}
+        self.feature_names = set(fd.keys())
 
-        self.X_org = self.vectorizer.transform(org_samples)
-        self.X_gen = self.vectorizer.transform(gen_samples)
-
-        feature_names = np.array(self.vectorizer.get_feature_names())
-        self.low_frequency_words = set(
-            feature_names[(self.X_org.sum(axis=0) <= self.min_freq).A[0]])
-        self.feature_names = set(feature_names)
         return self
 
     def transform(self, samples, original) -> List[Dict]:
@@ -119,15 +107,18 @@ class FeatureExtractor:
             features = {"sample_id": sample["id"]}
             syllable_lines = read_sample(sample)
             token_lines = read_sample(sample, words=True)
+            n_words = len(sum(token_lines, []))
             # are there same word rhymes?
-            features["same_word_rhyme"] = any(
-                a[-1] == b[-1] for a, b in zip(token_lines, token_lines[1:]))
+            features["same_word_rhyme"] = int(any(
+                a[-1] == b[-1] for a, b in zip(token_lines, token_lines[1:])))
             # how many low-frequency words are there?
             features["low_frequency_word"] = sum(
-                w in self.low_frequency_words for line in token_lines for w in line)
+                w in self.low_frequency_words for line in token_lines for w in line
+            ) / n_words
             # how many new words are there?
             features["new_word_frequency"] = sum(
-                w not in self.feature_names for line in token_lines for w in line)
+                w not in self.feature_names for line in token_lines for w in line
+            ) / n_words
             # what's the average word length?
             features["avg_word_length"] = np.mean(
                 [len(w) for line in token_lines for w in line])
@@ -148,35 +139,13 @@ class FeatureExtractor:
                 token_lines, self.phon_dict)
             features['alliteration_score'] = alliteration_score(
                 token_lines, self.phon_dict)
-            # min and max distance to generated samples
-            dist_scores = self.distances_to_samples(idx, original)
-            features.update(dist_scores)
             features['label'] = int(original)
             samples_features.append(features)
         return samples_features    
 
     def fit_transform(self, org_samples, gen_samples) -> Tuple[Dict, Dict]:
-        self.fit(org_samples, gen_samples)
+        self.fit(org_samples)
         return self.transform(org_samples, True), self.transform(gen_samples, False)
-
-    def distances_to_samples(self, idx, original) -> Dict[str, float]:
-        counts = self.X_org[idx] if original else self.X_gen[idx]
-        dists2org = pairwise_distances(counts, self.X_org, metric='cosine')[0]
-        dists2org.sort()
-        dists2gen = pairwise_distances(counts, self.X_gen, metric='cosine')[0]
-        dists2gen.sort()
-        scores = {}
-        if original:
-            scores['min_dist2org'] = dists2org[1]
-            scores['max_dist2org'] = dists2org[-1]
-            scores['min_dist2gen'] = dists2gen[0]
-            scores['max_dist2gen'] = dists2gen[-1]
-        else:
-            scores['min_dist2org'] = dists2org[0]
-            scores['max_dist2org'] = dists2org[-1]
-            scores['min_dist2gen'] = dists2gen[1]
-            scores['max_dist2gen'] = dists2gen[-1]            
-        return scores
     
 
 

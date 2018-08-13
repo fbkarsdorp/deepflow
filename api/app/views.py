@@ -9,13 +9,14 @@ from typing import Dict
 
 import flask
 import flask_login
+import tweepy
 
 from celery import states
 from app import app, db, celery, lm
 from .models import Turn, Machine
 from .forms import LoginForm
 from .social import create_image_file
-import .twitterconfig as tw
+from . import twitterconfig as tw
 
 
 @lm.user_loader
@@ -150,6 +151,7 @@ def save_session() -> flask.Response:
         json.dump(data, f)
     app.Generator.reset()
     lines = [line['text'].strip() for line in data['lyric']]
-    job = tweet_image.apply_async(
-        args=(lines,), queue='twitter-queue')
+    if lines and random.random() <= 0.2:
+        job = tweet_image.apply_async(
+            args=(lines,), queue='twitter-queue')
     return flask.jsonify({'status': 'OK', 'message': 'session saved'})

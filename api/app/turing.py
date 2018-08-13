@@ -22,8 +22,7 @@ class ExampleSampler:
         self.n_iter = n_iter
 
         # set up examples in bins
-        with open(fpath) as f:
-            examples = json.load(f)
+        examples = [json.load(line.strip()) for line in open(fpath)]
         self.pairs = bin_examples(examples, bins=levels)
 
     def next(self, iteration: int, level: int, seen: List[int]) -> Tuple:

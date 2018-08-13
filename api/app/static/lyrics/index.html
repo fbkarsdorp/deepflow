@@ -16,14 +16,14 @@
         </div>
       </div>
       <div id="control">
-        <div id="info">
+        <button @click="switchcensor()">censored {{censored}}</button>
+        <!-- <div id="info">
           <b>spacebar</b>: generate new options<br>
           <b>arrows</b>: select option<br>
           <b>enter</b>: fix selection &amp; generate new options<br>
           <b>escape</b>: submit lyric, start clean<br><Br>
           {{storage.lyric.length}}/20<br>
-          <button @click="switchcensor()">censored {{censored}}</button>
-        </div>
+        </div> -->
 
         <div id="loading" :class="{'show':loading}">
           Generating...

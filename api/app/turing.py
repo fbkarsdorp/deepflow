@@ -8,6 +8,7 @@ import pandas as pd
 
 
 def bin_examples(examples: List[Dict], bins=10) -> Dict[int, Dict]:
+    '''Bin examples into n bins based on their scores.'''
     scores = [example['score'] for example in examples]
     labels = pd.cut(scores, bins, labels=False)
     binned_examples = collections.defaultdict(list)
@@ -22,7 +23,7 @@ class ExampleSampler:
         self.n_iter = n_iter
 
         # set up examples in bins
-        examples = [json.load(line.strip()) for line in open(fpath)]
+        examples = [json.loads(line.strip()) for line in open(fpath)]
         self.pairs = bin_examples(examples, bins=levels)
 
     def next(self, iteration: int, level: int, seen: List[int]) -> Tuple:

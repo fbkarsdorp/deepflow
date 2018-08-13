@@ -1,5 +1,6 @@
 
 import json
+import random
 import uuid
 
 from typing import Dict
@@ -111,6 +112,7 @@ def generate_task(seed_id, resample) -> Dict[str, str]:
                 payload = app.Generator.resample()
             else:
                 payload = app.Generator.sample(seed_id=seed_id)
+                random.shuffle(payload)
             return {'status': 'OK', 'payload': payload}
         except Exception as e:
             if app.debug is True:

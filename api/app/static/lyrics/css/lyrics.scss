@@ -15,6 +15,7 @@ $padding: 0rem;
     --optionbgs: #f0e6d3;
     --optionfgs: #252529;
     --maxwidth: 1200px;
+    --offwhite: #f0e6d3;
 }
 
 @mixin sgr($color1, $color2) {
@@ -53,7 +54,7 @@ body {
         bottom:0;
         height: 100%;
         width: 10rem;
-        background: #fff;
+        background: var(--offwhite);
         @include sgr(rgba(#ffffff,0),var(--controlbg));
         // @include mix(5);
         @include animation(loading, infinite, 1s, linear){
@@ -74,7 +75,7 @@ element {
     margin: 0 auto;
     padding: $padding;
     width: 100%;
-    background-color: var(--controlbg);
+    // background-color: var(--controlbg);
     color: var(--controlfg);
     @include padding();
     @include bflex(row);
@@ -85,36 +86,14 @@ element {
         height: calc(100% - 2rem);
         margin: 1rem; // solid var(--controlbg);
         @include padding();
-        @include sgr(var(--gr1),var(--gr2));
+        border: 1px solid #000;
+        // @include sgr(var(--gr1),var(--gr2));
         padding: 3rem;
         font-size: 1rem;
         line-height: 1.25em;
         // @include shadow(0,0,15px,rgba(#fff,0.25));
         div {
             margin-bottom:0.5em;
-        }
-        #flowline {
-            span {
-                display:inline-block;
-                opacity: 1;
-            }
-            &.loading {
-                span {
-                    // @include animation(rotlet, infinite, 5s, linear){
-                    //     0% { @include transform(translateY(0em))}
-                    //     20% { @include transform(translateY(-0.15em))}
-                    //     40% { @include transform(translateY(0em))}
-                    //     60% { @include transform(translateY(0.15em))}
-                    //     80% { @include transform(translateY(0em))}
-                    //     100% { @include transform(translateY(0em))}
-                    // }
-                    // @for $i from 1 through 99 {
-                    //     &:nth-child(#{$i}) {
-                    //         @include delay(random(3000) * 1ms);
-                    //     }
-                    // }
-                }
-            }
         }
         .new {
             font-weight:bold;

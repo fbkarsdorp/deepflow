@@ -7,6 +7,13 @@
   </head>
   <body>
     <element>
+
+      <div id="credits" :class="{'open':credits}">
+        <div id="close" @click="credits = false">close</div>
+        <div id="frame">
+          <h1>CREDITS</h1>
+        </div>
+      </div>
       
       <!-- BACKGROUND FEEDBACK -->
       <div id="bgcolor" v-if="lastQuestion" :class="{'yes': lastQuestion.correct, 'no': lastQuestion.correct === false}"></div>
@@ -29,7 +36,7 @@
       <!-- CURRENT QUESTION -->
       <div id="question">
         <div id="score">
-          <button>credits</button>
+          <button @click="credits=!credits">credits</button>
           <div id="dot" v-for="n in totalQuestions" :class="dotclass(n)"></div>
           <div id="progress"><div id="progressbar"></div></div>
         </div>

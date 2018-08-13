@@ -23,7 +23,7 @@ class AppConfig:
     SONG_PATH = "/path/to/ohhla-new.jsonl"        # file with songs in jsons format
     PHON_DICT = "/path/to/ohhla.vocab.phon.json"  # file with phonological dictionary
 
-    TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
+    TURING_FILE = os.path.join(basedir, 'data/turing-pairs.jsonl')
 
     # database
     if os.environ.get('DEEPFLOW_DB_URL') is None:

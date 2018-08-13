@@ -287,6 +287,7 @@ if __name__ == '__main__':
     parser.add_argument('--dpath', help='/path/to/phonological dict')
     parser.add_argument('--tries', type=int, default=1)
     parser.add_argument('--device', default='cpu')
+    parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
 
     tsampler = None
@@ -316,5 +317,15 @@ if __name__ == '__main__':
         while c < args.nsamples:
             sample = generator.sample(**opts)
             if sample:
-                print(json.dumps(sample, indent=2))
+                if args.debug:
+                    print(sample['model'])
+                    print('---' * 10)
+                    for idx, line in enumerate(sample['text']):
+                        if sample['params']['template']:
+                            print(line['line'], sample['params']['template'][idx])
+                        else:
+                            print(line['line'], sample['params']['conds'])
+                    print()
+                else:
+                    print(json.dumps(sample, indent=2))
                 c += 1

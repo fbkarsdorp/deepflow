@@ -276,7 +276,7 @@ class RNNLanguageModel(nn.Module):
                 # - mix with cache
                 if cache and cache.stored > 0:
                     logprob = cache.interpolate(
-                        outs, logits, alpha, theta, penalty=0.2, npenalty=1
+                        outs, logits, alpha, theta
                     ).add(1e-8).log()
 
                 # - normal case

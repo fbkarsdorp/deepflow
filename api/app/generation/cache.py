@@ -110,9 +110,27 @@ class Cache(object):
 
         return scores.t(), memvals.t()
 
-    def interpolate(self, query, logits, alpha, theta):
+    def interpolate(self, query, logits, alpha, theta, penalty=None, npenalty=None):
         # query
         cache_logits, vals = self.query(query)
+
+        # apply closeness penalty
+        if penalty is not None:
+            if not (0 < penalty < 1):
+                raise ValueError('`penalty` must be in range (0, 1)')
+            if npenalty is None:
+                raise ValueError("`penalty` requires `npenalty`")
+
+            _, size = cache_logits.size()
+            # never penalize entries more than just once
+            npenalty = min(npenalty, size)
+            # linear interpolation from `penalty` to 1
+            m = (1 - penalty) / npenalty
+            for i in range(npenalty):
+                # idx: negative index to previous to current
+                idx = size - self.current + 1 + i
+                cache_logits[:, -(idx % size)] *= penalty + (m * i)
+
         # interpolate
         cache_prob = alpha * F.softmax(theta * cache_logits, dim=1)
         prob = (1 - alpha) * F.softmax(logits, dim=1)

@@ -15,7 +15,7 @@ from app import app, db, celery, lm
 from .models import Turn, Machine
 from .forms import LoginForm
 from .social import create_image_file
-import .twitterconfig as tw
+import twitterconfig as tw
 
 
 @lm.user_loader

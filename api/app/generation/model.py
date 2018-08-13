@@ -205,7 +205,8 @@ class RNNLanguageModel(nn.Module):
 
     def sample(self, encoder, nsyms=100, batch=1,
                conds=None, hidden=None, tau=1.0,
-               cache=None, alpha=0.0, theta=0.0):
+               cache=None, alpha=0.0, theta=0.0,
+               avoid_unk=False):
         """
         Generate stuff
         """
@@ -267,6 +268,9 @@ class RNNLanguageModel(nn.Module):
 
                 # get logits
                 logits = self.proj(outs)
+                # set unk to least value (might still return unk in high-entropy cases)
+                if avoid_unk:
+                    logits[:, encoder.word.unk] = logits.min(dim=1)[0]
                 if cache and cache.stored > 0:
                     logprob = cache.interpolate(
                         outs, logits, alpha, theta).add(1e-8).log()
@@ -282,7 +286,7 @@ class RNNLanguageModel(nn.Module):
 
                 # update cache if needed
                 if cache:
-                    cache.add(outs.unsqueeze(0), word.unsqueeze(0))
+                    cache = cache.add(outs.unsqueeze(0), word.unsqueeze(0))
 
                 # accumulate
                 scores += score * mask.float()
@@ -312,7 +316,7 @@ class RNNLanguageModel(nn.Module):
             probs.append(prob)
             hyps.append(' '.join(hyp[::-1] if encoder.reverse else hyp))
 
-        return (hyps, conds), probs, hidden
+        return (hyps, conds), probs, hidden, cache
 
     def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
         self.eval()
@@ -344,7 +348,7 @@ class RNNLanguageModel(nn.Module):
         print("Sampling #{} examples".format(nsamples))
         print()
         for _ in range(nsamples):
-            (hyps, conds), _, _ = self.sample(encoder)
+            (hyps, conds), _, _, _ = self.sample(encoder)
             print(hyps[0], conds)  # only print first item in batch
         print()
 

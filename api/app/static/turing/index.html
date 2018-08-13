@@ -10,53 +10,51 @@
       
       <!-- BACKGROUND FEEDBACK -->
       <div id="bgcolor" v-if="lastQuestion" :class="{'yes': lastQuestion.correct, 'no': lastQuestion.correct === false}"></div>
+
+      <!-- UPLOADING OVERLAY -->
+      <div id="uploading" :class="{'show':uploading}">
+        <div id="frame">
+          <button>uploading</button>
+        </div>
+      </div>
       
       <!-- START SCREEN -->
       <div id="start" :class="{'hide': storage.questions.length > 0}">
         <div id="language">
-          <div id="scoreboard">
-            <div id="participant" v-for="item in scoreboard">
-              <div id="name" v-html="item.name"></div>
-              <div id="thescore" v-html="item.score"></div>
-            </div>
-          </div>
-          <button class='start' @click="generate()">start</button>
+          <scoreboard :scoreboard="scoreboard" :name="name" :score="score"></scoreboard>
+          <button class='start' @click="generate()">{{name ? 'restart' : 'start'}}</button>
         </div>
-      </div>
-
-      <!-- SCOREBOARD -->
-      
-      <!-- FINISHED SCREEN -->
-      <div id="finished" :class="{'hide':!finished}">
-        <h1 v-if="score">Your score is {{score}}</h1>
-        <p v-if="name">and your given name is <b>{{name}}</b> so you can keep track of your score.</p>
-        <div id="scoreboard">
-          <div id="participant" v-for="item in scoreboard">
-            <div id="name" v-html="item.name"></div>
-            <div id="thescore" v-html="item.score"></div>
-          </div>
-        </div>
-        <button @click="restart()">restart</button>
       </div>
       
       <!-- CURRENT QUESTION -->
       <div id="question">
         <div id="score">
+          <button>credits</button>
           <div id="dot" v-for="n in totalQuestions" :class="dotclass(n)"></div>
-          <div id="name" style="float:right;">{{storage.name}}</div>
+          <div id="progress"><div id="progressbar"></div></div>
         </div>
         <div v-if="lastQuestion">
           <div v-if="lastQuestion.type === 'choose'" id="choose">
-            <label>Choose the real phrase:</label>
-            <div class="phrase p1" v-html="lastQuestion.line1.join('<br>')" :class="{'active':lastQuestion.selected === 1}" @click="select(1)"></div>
-            <div class="phrase p2" v-html="lastQuestion.line2.join('<br>')" :class="{'active':lastQuestion.selected === 2}" @click="select(2)"></div>
-            <button @click="check()">check</button>
+            <label>Pick the real hip hop quote:</label>
+            <div id="frame">
+              <div class="phrase p1" v-html="lastQuestion.line1.join('<br>')" :class="{'active':lastQuestion.selected === 1}" @click="select(1), check()"></div>
+              <div class="phrase p2" v-html="lastQuestion.line2.join('<br>')" :class="{'active':lastQuestion.selected === 2}" @click="select(2), check()"></div>
+            </div>
+            <!-- <button @click="check()">check</button> -->
           </div>
           <div v-if="lastQuestion.type === 'forreal'" id="forreal">
-              <label>Is it real?</label>
-              <div class="phrase p1" v-html="lastQuestion.line.join('<br>')"></div>
-              <button @click="select(1), check()" :class="{'active':lastQuestion.selected === 1}">Real</button>
-              <button @click="select(2), check()" :class="{'active':lastQuestion.selected === 2}">AI</button>
+              <label>Is this an original hip hop quote?</label>
+              <div id="content">
+                <div class="phrase p1" v-html="lastQuestion.line.join('<br>')"></div>
+              </div>
+              <div id="options">
+                <div id="option">
+                  <button @click="select(1), check()" :class="{'active':lastQuestion.selected === 1}">Original</button>
+                </div>
+                <div id="option">
+                  <button @click="select(2), check()" :class="{'active':lastQuestion.selected === 2}">Generated</button>
+                </div>
+              </div>
           </div>
         </div>
       </div>

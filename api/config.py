@@ -5,10 +5,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class AppConfig:
     # generation
-    TRIES = 20  # parallel tries per sentence
+    TRIES = 1  # parallel tries per sentence
     DEFAULTS = {
         "tau": 0.8,
-        "cache_size": 100
+        "avoid_unk": True
     }
     MODEL_DIR = os.path.join(basedir, 'data/models/')
     MODELS = {

@@ -11,29 +11,37 @@ from . import torch_utils
 class Cache(object):
     """
     Continuous Cache for Neural Models following: https://arxiv.org/abs/1612.04426
+
     Parameters:
+    -----------
+    memkeys
+    memvals
+
+    Attributes:
     -----------
     dim: int, dimensionality of the keys
     size: int, size of the cache
-    vocab: int, size of the output vocabulary
+    stored: int, number of steps stored
+    current: int, current first empty spot
     """
-    def __init__(self, dim, size, vocab, device='cpu'):
-
-        self.dim = dim
+    def __init__(self, memkeys, memvals, stored=0, current=0):
+        self.memkeys = memkeys
+        self.memvals = memvals
+        self.device = self.memkeys.device
+        size, _, dim = memkeys.size()
         self.size = size
-        self.vocab = vocab
-        self.device = device
+        self.dim = dim
+        self.stored = stored    # number of items stored in the cache
+        self.current = current  # index along size that should get written
 
-        self.stored = 0         # number of items stored in the cache
-        self.current = 0        # index along size that should get written
-        self.memkeys = torch.zeros(self.size, 1, self.dim).to(device)
-        self.memvals = torch.zeros(self.size, 1, dtype=torch.int64).to(device)
+    @classmethod
+    def new(cls, dim, size, device='cpu'):
+        memkeys = torch.zeros(size, 1, dim).to(device)
+        memvals = torch.zeros(size, 1, dtype=torch.int64).to(device)
+        return cls(memkeys, memvals)
 
     def reset(self):
-        self.stored = 0
-        self.current = 0
-        self.memkeys.zero_()
-        self.memvals.zero_()
+        return Cache.new(self.dim, self.size, device=self.device)
 
     def add(self, keys, vals):
         """
@@ -47,35 +55,41 @@ class Cache(object):
                 str(keys.size()), str(vals.size())))
 
         batch = keys.size(1)
+        memkeys, memvals = self.memkeys, self.memvals
 
-        if self.memkeys.size(1) == 1 and batch > 1:
+        if memkeys.size(1) == 1 and batch > 1:
             # expand along batch dimension
-            self.memkeys = self.memkeys.repeat(1, batch, 1)
-            self.memvals = self.memvals.repeat(1, batch)
+            memkeys = memkeys.repeat(1, batch, 1)
+            memvals = memvals.repeat(1, batch)
 
-        if self.memkeys.size(1) != batch:
+        if memkeys.size(1) != batch:
             raise ValueError(
                 "Wrong batch dimension. Expected {} but got {} elements".format(
-                    self.memkeys.size(1), batch))
+                    memkeys.size(1), batch))
 
         if keys.size(0) > self.size:
             keys, vals = keys[-self.size:], vals[-self.size:]
 
         limit = min(self.size, self.current + keys.size(0))
         index = torch.arange(self.current, limit, dtype=torch.int64, device=self.device)
-        self.memkeys.index_copy_(0, index, keys[:len(index)])
-        self.memvals.index_copy_(0, index, vals[:len(index)])
-        self.current = limit % self.size
+        memkeys = memkeys.index_copy(0, index, keys[:len(index)])
+        memvals = memvals.index_copy(0, index, vals[:len(index)])
+
+        # update current
+        current = limit % self.size
 
         if len(index) < len(keys):
             indexed = len(index)
-            index = torch.arange(self.current, len(keys) - indexed,
+            index = torch.arange(current, len(keys) - indexed,
                                  dtype=torch.int64, device=self.device)
-            self.memkeys.index_copy_(0, index, keys[indexed:])
-            self.memvals.index_copy_(0, index, vals[indexed:])
-            self.current = len(keys) - indexed
+            memkeys = memkeys.index_copy(0, index, keys[indexed:])
+            memvals = memvals.index_copy(0, index, vals[indexed:])
+            current = len(keys) - indexed
 
-        self.stored = min(self.size, self.stored + len(keys))
+        # update stored
+        stored = min(self.size, self.stored + len(keys))
+
+        return Cache(memkeys, memvals, current=current, stored=stored)
 
     def query(self, query):
         """
@@ -111,7 +125,7 @@ def evaluate(model, encoder, dev, cache_size=200, alpha=0.1, theta=0.1, batch=1)
     """
     Evaluate model using a cache
     """
-    cache = Cache(model.hidden_dim, cache_size, len(encoder.word.w2i), model.device)
+    cache = Cache.new(model.hidden_dim, cache_size, model.device)
     hidden = None
     tloss, tinsts = 0, 0
 
@@ -120,7 +134,7 @@ def evaluate(model, encoder, dev, cache_size=200, alpha=0.1, theta=0.1, batch=1)
         for stuff in tqdm.tqdm(dev.get_batches(batch, yield_stops=True)):
 
             if stuff is None:  # avoid cache reaching over different sentences
-                cache.reset()
+                cache = cache.reset()
                 continue
 
             sents, conds = stuff
@@ -147,7 +161,7 @@ def evaluate(model, encoder, dev, cache_size=200, alpha=0.1, theta=0.1, batch=1)
                     weight=model.nll_weight, size_average=False
                 ).item()
 
-                cache.add(source.unsqueeze(0), target.unsqueeze(0))
+                cache = cache.add(source.unsqueeze(0), target.unsqueeze(0))
 
             tinsts += (sum(nwords) - batch)  # remove 1 per instance
 

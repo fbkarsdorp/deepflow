@@ -1,3 +1,33 @@
+Vue.component('scoreboard', {
+  props: ['scoreboard','name','score'],
+  data () {
+    return {
+      data: [],
+      interval: null
+    }
+  },
+  computed: {
+  },
+  methods: {
+    load () {
+      let self = this
+      axios.get('/scoreboard').then(function(res){
+        if(res.data.status === 'OK') {
+          self.data = res.data.ranking
+        }
+      }).catch(function(err){
+        console.log('error receiving scoreboard', err)
+      })
+    }
+  },
+  template: '<div id="scoreboard"><span v-if="name">Your score is {{score}}<br><br></span><div id="participant" v-for="item in data" :class="{\'active\':item.name === name}"><div id="name" v-html="item.name" ></div><div id="thescore" v-html="item.score"></div></div></div>',
+  mounted () {
+    let self = this
+    this.load()
+    this.interval = setInterval(self.load, 3000)
+  }
+})
+
 var app = new Vue({ 
   el: 'element',
   data: {
@@ -8,6 +38,8 @@ var app = new Vue({
     finished: false,
     score: null,
     name: null,
+    uploading: false,
+    interval: null,
     storage: {
       log: [],
       questions: [],
@@ -44,7 +76,6 @@ var app = new Vue({
       this.storeInBrowser();
     },
     clear () {
-      this.score = 0
       this.finished = false
       this.storage = {log: [], questions: []}
       this.storeInBrowser()
@@ -90,6 +121,7 @@ var app = new Vue({
             self.storage.questions.push(newq)
             self.log('new question received')
             self.storeInBrowser()
+            self.starttimer(10000)
           }).catch(function (res) {
             self.loading = false
             self.log('error', {message: 'generate request failed', error: res })
@@ -110,6 +142,41 @@ var app = new Vue({
         this.$forceUpdate()
       }
     },
+    starttimer (length) {
+      var self = this;
+      var progressbar = document.getElementById("progressbar");
+      var progress = 0;
+      var intervaltime = 10;
+      progressbar.classList.remove('fifty')
+      progressbar.classList.remove('seventyfive')
+      progressbar.classList.remove('ninety')
+      progressbar.classList.remove('done')
+      if (self.interval) clearInterval(self.interval);
+      self.interval = setInterval(function(){
+        progress = progress + intervaltime
+        if (progress >= length) clearInterval(self.interval);
+        var perc = (progress/length) * 100
+        if (perc > 50) progressbar.classList.add('fifty')
+        if (perc > 75) progressbar.classList.add('seventyfive')
+        if (perc > 90) progressbar.classList.add('ninety')
+        if (perc == 100) {
+          progressbar.classList.add('done')
+          self.lastQuestion.correct = false
+          self.lastQuestion.answered = true
+          self.lastQuestion.answer = 'timeup'
+          self.storeInBrowser()
+          self.$forceUpdate()
+          setTimeout(function () {
+            if (!self.checkFinished()) {
+              self.generate()
+            } else {
+              self.submit()
+            }
+          }, 1000)
+        }
+        progressbar.style.width = perc + '%'
+      },10)
+    },
     submit () {
       let self = this
       self.log('submit') // for timestamp of submit
@@ -118,28 +185,18 @@ var app = new Vue({
       upload.log = {log: self.storage.log, questions: self.storage.questions}
       upload.score = self.storage.questions.filter(function(x) { return x.correct }).length /// calculate
       self.score = upload.score
+      console.log('uploading:',upload)
+      self.uploading = true
       axios.post(self.submitUrl, upload).then(function(res) {
-        /* 
-        
-        todo: set name here 
-        
-        */
-        let name = ''
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < 5; i++) {
-          name += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        self.name = name
-        console.log('uploaded')
+        self.name = res.data.name
+        setTimeout(function(){
+          self.clear()
+          self.uploading = false
+        }, 2000);
+        console.log('uploaded', {name: name}, res.data)
       }).catch(function (err) {
         self.log('error submitting', err)
-        let name = ''
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < 5; i++) {
-          name += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        self.name = name
-        // setTimeout(submit, 1000)
+        self.uploading = false
       })
     },
     check () {
@@ -178,11 +235,12 @@ var app = new Vue({
       localStorage.setItem('battle', JSON.stringify(this.storage));
     },
     log (type, message) {
+      if (typeof message === "object") message = JSON.parse(JSON.stringify(message))
       let obj = {}
       obj.type = type
       obj.message = message || ''
       obj.timestamp = new Date().getTime();
-      console.log(obj.timestamp, obj.type, obj.message)
+      console.log(obj.timestamp, type, obj.message)
       this.storage.log.push(obj)
     },
     dotclass (n) {

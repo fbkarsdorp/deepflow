@@ -162,7 +162,8 @@ class HybridLanguageModel(RNNLanguageModel):
         """
         return math.log2(math.e) * loss
 
-    def sample(self, encoder, nsyms=50, max_sym_len=10, batch=1, conds=None, hidden=None):
+    def sample(self, encoder, nsyms=50, max_sym_len=10, batch=1,
+               conds=None, hidden=None, tau=1.0, cache=None, **kwargs):
         """
         Generate stuff
         """
@@ -218,7 +219,7 @@ class HybridLanguageModel(RNNLanguageModel):
                     # sample
                     preds = F.log_softmax(logits, dim=-1)
                     # (1 x batch) -> (batch)
-                    cinp = (preds / 1).exp().multinomial(1)
+                    cinp = (preds / tau).exp().multinomial(1)
                     score = preds.gather(1, cinp)
                     cinp, score = cinp.squeeze(1), score.squeeze(1)
                     scores += score
@@ -270,7 +271,7 @@ class HybridLanguageModel(RNNLanguageModel):
             probs.append(prob)
             hyps.append(' '.join(hyp[::-1] if encoder.reverse else hyp))
 
-        return (hyps, conds), probs, hidden
+        return (hyps, conds), probs, hidden, cache
 
 
 if __name__ == '__main__':

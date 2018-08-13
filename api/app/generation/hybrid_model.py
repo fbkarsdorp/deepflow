@@ -64,6 +64,11 @@ class HybridLanguageModel(RNNLanguageModel):
     def init(self):
         pass
 
+    def get_args_and_kwargs(self):
+        args = self.layers, self.wemb_dim, self.cemb_dim, self.hidden_dim, self.cond_dim
+        kwargs = {'dropout': self.dropout}
+        return args, kwargs
+
     def forward(self, word, nwords, char, nchars, conds, hidden=None):
         # - embeddings
         # (seq x batch x wemb_dim)

@@ -40,6 +40,7 @@ var app = new Vue({
     name: null,
     uploading: false,
     interval: null,
+    credits: false,
     storage: {
       log: [],
       questions: [],
@@ -121,7 +122,7 @@ var app = new Vue({
             self.storage.questions.push(newq)
             self.log('new question received')
             self.storeInBrowser()
-            self.starttimer(10000)
+            self.starttimer(15000)
           }).catch(function (res) {
             self.loading = false
             self.log('error', {message: 'generate request failed', error: res })
@@ -211,6 +212,7 @@ var app = new Vue({
           this.storage.questions[this.storage.questions.length - 1] = last
           this.storeInBrowser()
           this.$forceUpdate()
+          if (self.interval) clearInterval(self.interval)
           setTimeout(function () {
             if (!self.checkFinished()) {
               self.generate()

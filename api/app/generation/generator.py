@@ -263,7 +263,7 @@ class Generator:
                     # sampled parameters
                     "tau": tau,
                     "nlines": nlines,
-                    "template": template,
+                    "template": template[:nlines] if template else None,
                     "template_metadata": tmeta,
                     "conds": None if template is not None else conds,
                     # passed parameters (for reference)

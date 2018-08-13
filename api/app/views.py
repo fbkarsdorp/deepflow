@@ -15,6 +15,7 @@ from app import app, db, celery, lm
 from .models import Turn, Machine
 from .forms import LoginForm
 from .social import create_image_file
+import .twitterconfig as tw
 
 
 @lm.user_loader
@@ -129,7 +130,10 @@ def tweet_image(lines):
         try:
             image_file = create_image_file(lines, app.config['LYRICS_SVG'])
             status = '#LL18 #LLScience #deepflow'
-            app.twitter_api.update_with_media(image_file, status=status)
+            auth = tweepy.OAuthHandler(tw.consumer_key, tw.consumer_secret)
+            auth.set_access_token(tw.access_token, tw.access_secret)
+            twitter_api = tweepy.API(auth)
+            twitter_api.update_with_media(image_file, status=status)
             time.sleep(5)
             os.unlink(image_file)
             return {'status': 'OK', 'message': 'image tweeted'}

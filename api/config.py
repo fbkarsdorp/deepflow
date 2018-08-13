@@ -19,7 +19,9 @@ class AppConfig:
         #    "cache": {"alpha": 0.01, "theta": 0.17}
         #    "tau": 0.95 }
     }
-    SYLLABIFIER = "syllable-model.tar.gz"
+    SYLLABIFIER = "syllable-model.tar.gz"         # fpath of syllabifier in MODEL_DIR
+    SONG_PATH = "/path/to/ohhla-new.jsonl"        # file with songs in jsons format
+    PHON_DICT = "/path/to/ohhla.vocab.phon.json"  # file with phonological dictionary
 
     TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
 

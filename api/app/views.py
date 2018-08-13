@@ -9,13 +9,14 @@ from typing import Dict
 
 import flask
 import flask_login
+import tweepy
 
 from celery import states
 from app import app, db, celery, lm
 from .models import Turn, Machine
 from .forms import LoginForm
 from .social import create_image_file
-import twitterconfig as tw
+from . import twitterconfig as tw
 
 
 @lm.user_loader

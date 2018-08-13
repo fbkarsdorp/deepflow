@@ -268,15 +268,22 @@ class RNNLanguageModel(nn.Module):
 
                 # get logits
                 logits = self.proj(outs)
-                # set unk to least value (might still return unk in high-entropy cases)
+
+                # - set unk to least value (might still return unk in high-entropy cases)
                 if avoid_unk:
                     logits[:, encoder.word.unk] = logits.min(dim=1)[0]
+
+                # - mix with cache
                 if cache and cache.stored > 0:
                     logprob = cache.interpolate(
-                        outs, logits, alpha, theta).add(1e-8).log()
+                        outs, logits, alpha, theta
+                    ).add(1e-8).log()
+
+                # - normal case
                 else:
                     logprob = F.log_softmax(logits, dim=-1)
 
+                # sample
                 word = (logprob / tau).exp().multinomial(1)
                 score = logprob.gather(1, word)
                 word, score = word.squeeze(1), score.squeeze(1)

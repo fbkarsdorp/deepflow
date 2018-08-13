@@ -6,7 +6,7 @@ import random
 import uuid
 import warnings
 
-from generation import model_loader, utils, Cache
+from . import utils, model_loader, Cache
 
 
 def load_models(dirpath):
@@ -52,8 +52,12 @@ class TemplateSampler:
         with open(dpath) as f:
             self.d = json.loads(f.read())
 
-    def sample(self, nlines, verbose=False):
+    def sample(self, nlines=None, verbose=False):
         """
+        Arguments:
+        ----------
+        nlines : int or None, minimum number of lines in template
+
         Returns: template, metadata
         --------
 
@@ -89,11 +93,11 @@ class TemplateSampler:
         while len(verses) > 0:
             verse = verses.pop()
 
-            if len(song['text'][verse]) >= nlines:
+            if nlines is None or len(song['text'][verse]) >= nlines:
                 metadata["verse"] = verse
 
                 template = []
-                for line in song['text'][verse][:nlines]:
+                for line in song['text'][verse]:
                     _, conds = utils.prepare_line(line, d=self.d)
                     template.append(conds)
 
@@ -102,12 +106,16 @@ class TemplateSampler:
         raise RuntimeError("Couldn't find template of #{} lines".format(nlines))
 
 
-def sample_conditions(encoder):
-    weights = {
+def get_weights(encoder):
+    return {
         # sample more from single syllable rhymes
         'rhyme': [{1: 10}.get(len(c.split('-')), 1) for c in encoder.conds['rhyme'].w2i],
         # uniform for now (maybe change it later)
         'length': [1 for _ in encoder.conds['length'].w2i]}
+
+
+def sample_conditions(encoder, get_weights=get_weights):
+    weights = get_weights(encoder)
 
     conds = {}
     for cond, vocab in encoder.conds.items():
@@ -255,7 +263,7 @@ class Generator:
                     # sampled parameters
                     "tau": tau,
                     "nlines": nlines,
-                    "template": template,
+                    "template": template[:nlines] if template else None,
                     "template_metadata": tmeta,
                     "conds": None if template is not None else conds,
                     # passed parameters (for reference)
@@ -279,6 +287,7 @@ if __name__ == '__main__':
     parser.add_argument('--dpath', help='/path/to/phonological dict')
     parser.add_argument('--tries', type=int, default=1)
     parser.add_argument('--device', default='cpu')
+    parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
 
     tsampler = None
@@ -308,5 +317,15 @@ if __name__ == '__main__':
         while c < args.nsamples:
             sample = generator.sample(**opts)
             if sample:
-                print(json.dumps(sample, indent=2))
+                if args.debug:
+                    print(sample['model'])
+                    print('---' * 10)
+                    for idx, line in enumerate(sample['text']):
+                        if sample['params']['template']:
+                            print(line['line'], sample['params']['template'][idx])
+                        else:
+                            print(line['line'], sample['params']['conds'])
+                    print()
+                else:
+                    print(json.dumps(sample, indent=2))
                 c += 1

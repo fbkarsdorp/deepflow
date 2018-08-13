@@ -1,5 +1,8 @@
 
 import json
+import os
+import random
+import time
 import uuid
 
 from typing import Dict
@@ -11,6 +14,8 @@ from celery import states
 from app import app, db, celery, lm
 from .models import Turn, Machine
 from .forms import LoginForm
+from .social import create_image_file
+import .twitterconfig as tw
 
 
 @lm.user_loader
@@ -111,7 +116,27 @@ def generate_task(seed_id, resample) -> Dict[str, str]:
                 payload = app.Generator.resample()
             else:
                 payload = app.Generator.sample(seed_id=seed_id)
+                random.shuffle(payload)
             return {'status': 'OK', 'payload': payload}
+        except Exception as e:
+            if app.debug is True:
+                raise e
+            return {'status': 'fail', 'message': str(e), 'code': 500}
+
+
+@celery.task
+def tweet_image(lines):
+    with app.app_context():
+        try:
+            image_file = create_image_file(lines, app.config['LYRICS_SVG'])
+            status = '#LL18 #LLScience #deepflow'
+            auth = tweepy.OAuthHandler(tw.consumer_key, tw.consumer_secret)
+            auth.set_access_token(tw.access_token, tw.access_secret)
+            twitter_api = tweepy.API(auth)
+            twitter_api.update_with_media(image_file, status=status)
+            time.sleep(5)
+            os.unlink(image_file)
+            return {'status': 'OK', 'message': 'image tweeted'}
         except Exception as e:
             if app.debug is True:
                 raise e
@@ -124,4 +149,7 @@ def save_session() -> flask.Response:
     with open(f'{app.config["LOG_DIR"]}/{uuid.uuid1()}.txt', 'w') as f:
         json.dump(data, f)
     app.Generator.reset()
+    lines = [line['text'].strip() for line in data['lyric']]
+    job = tweet_image.apply_async(
+        args=(lines,), queue='twitter-queue')
     return flask.jsonify({'status': 'OK', 'message': 'session saved'})

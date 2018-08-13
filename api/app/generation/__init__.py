@@ -1,8 +1,6 @@
 
 from .model import RNNLanguageModel
 from .char_model import CharLanguageModel
-from .cache import Cache
-from . import utils
 
 
 def model_loader(modelpath):
@@ -28,3 +26,8 @@ def model_loader(modelpath):
     model.eval()
 
     return model, encoder
+
+
+from .cache import Cache
+from . import utils
+from .generator import TemplateSampler, sample_conditions

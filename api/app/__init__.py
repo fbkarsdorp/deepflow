@@ -4,6 +4,7 @@ import flask
 import flask_login
 import flask_sqlalchemy
 import celery
+import tweepy
 
 from .turing import ExampleSampler
 from .lyrics import Generator

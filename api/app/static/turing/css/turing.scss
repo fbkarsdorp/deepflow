@@ -98,6 +98,20 @@ body {
     }
 }
 
+#credits {
+    @include abs();
+    position:fixed;
+    z-index: 999;
+    background: var(--controlbg);
+    opacity: 0;
+    pointer-events: none;
+    @include transition(0.3s);
+    &.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
 #uploading {
     @include abs();
     position: fixed;

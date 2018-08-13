@@ -21,7 +21,7 @@ class AppConfig:
     }
     SYLLABIFIER = "syllable-model.tar.gz"
 
-    TURING_FILE = os.path.join(basedir, 'data/turing-pairs.json')
+    TURING_FILE = os.path.join(basedir, 'data/turing-pairs.jsonl')
 
     # database
     if os.environ.get('DEEPFLOW_DB_URL') is None:

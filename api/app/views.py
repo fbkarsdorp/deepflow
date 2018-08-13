@@ -151,6 +151,7 @@ def save_session() -> flask.Response:
         json.dump(data, f)
     app.Generator.reset()
     lines = [line['text'].strip() for line in data['lyric']]
-    job = tweet_image.apply_async(
-        args=(lines,), queue='twitter-queue')
+    if lines and random.random() <= 0.2:
+        job = tweet_image.apply_async(
+            args=(lines,), queue='twitter-queue')
     return flask.jsonify({'status': 'OK', 'message': 'session saved'})

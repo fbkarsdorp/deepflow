@@ -127,10 +127,11 @@ class Generator:
     - template_sampler : TemplateSampler
     - nlines : tuple of ints, range of lines to sample
     """
-    def __init__(self, modelpath, template_sampler=None, nlines=(2, 3, 4)):
+    def __init__(self, modelpath, template_sampler=None, nlines=(2, 3, 4), device='cpu'):
         self.models = load_models(modelpath)
         self.template_sampler = template_sampler
         self.nlines = nlines
+        self.device = device
 
     def sample(self, tries=1, sample_template=True, avoid_unk=True,
                cache_size=0, alpha=0.15, theta=0.75):
@@ -166,6 +167,7 @@ class Generator:
 
         mconfig = random.choice(list(self.models.values()))
         model, encoder = mconfig['model'], mconfig['encoder']
+        model.to(self.device)
 
         # best guess for nlines
         nlines = random.choice(self.nlines)
@@ -180,7 +182,7 @@ class Generator:
 
         cache = None
         if cache_size:
-            cache = Cache.new(model.hidden_dim, cache_size)
+            cache = Cache.new(model.hidden_dim, cache_size, device=self.device)
 
         text = []
         hidden, prev = None, None
@@ -276,6 +278,7 @@ if __name__ == '__main__':
     parser.add_argument('--datapath', help='/path/to/data to sample templates')
     parser.add_argument('--dpath', help='/path/to/phonological dict')
     parser.add_argument('--tries', type=int, default=1)
+    parser.add_argument('--device', default='cpu')
     args = parser.parse_args()
 
     tsampler = None
@@ -285,7 +288,7 @@ if __name__ == '__main__':
             sys.exit(1)
         tsampler = TemplateSampler(fpath=args.datapath, dpath=args.dpath)
 
-    generator = Generator(args.modelpath, template_sampler=tsampler)
+    generator = Generator(args.modelpath, template_sampler=tsampler, device=args.device)
 
     opts = {'tries': args.tries,
             'avoid_unk': True,

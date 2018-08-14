@@ -128,6 +128,7 @@ var app = new Vue({
             }
             // newquestion.received = new Date().getTime()
             if (!self.storage.questions) self.storage.questions = []
+            newq.questiontime = 15000
             self.storage.questions.push(newq)
             self.log('new question received')
             self.storeInBrowser()
@@ -228,7 +229,7 @@ var app = new Vue({
             } else {
               self.submit()
             }
-          }, 1000)
+          }, 3000)
         }
       } else {
         console.log('no anwer given yet')
@@ -282,6 +283,17 @@ var app = new Vue({
       if (ev.keyCode === 32) self.start()
       if (ev.keyCode === 27) self.restart()
       if (ev.keyCode === 13) {
+        if (self.storage.questions.length === 0) self.generate()
+        else self.check()
+      }
+      /* magic keys */
+      if (ev.keyCode === 219) { // [
+        self.select(1)
+        if (self.storage.questions.length === 0) self.generate()
+        else self.check()
+      }
+      if (ev.keyCode === 221) { // ]
+        self.select(2)
         if (self.storage.questions.length === 0) self.generate()
         else self.check()
       }

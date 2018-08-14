@@ -19,6 +19,7 @@ $padding: 0rem;
     --red: #df0000;
     --darkred: #740000;
     --maxwidth: 1200px;
+    --offwhite: #f0e6d3;
 
 }
 
@@ -258,6 +259,7 @@ button {
     max-width: var(--maxwidth);
     #choose, #forreal {
         button {
+            color: var(--offwhite);
             background: rgba(#000,0.3);
             @include rounded(0.15em);
             padding: 0.25em 1em;
@@ -275,11 +277,15 @@ button {
     margin-bottom: 1em;
     cursor: pointer;
     padding-right: 2em;
+    color: var(--offwhite);
     &.active {
         color: var(--optionbgs);
     }
     > div {
         margin-bottom: .5em;
+    }
+    .artist {
+        margin-top: 2em;
     }
 }
 
@@ -309,7 +315,7 @@ button {
             background: rgba(#000,0.3);
             @include rounded(0.25em);
             @include padding();
-            &:hover {
+            &:hover, &.active {
                 color: var(--optionbgs);
                 background: rgba(#000,0.8);
             }
@@ -337,6 +343,10 @@ button {
             }
             @media (max-width: 600px){
                 width: 100%;
+                button {
+                    width: 100%;
+                    margin-bottom: 0;
+                }
             }
         }
     }

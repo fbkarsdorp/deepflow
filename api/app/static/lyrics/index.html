@@ -4,6 +4,7 @@
     <script src="js/axios.min.js"></script>
     <script src="js/vue.min.js"></script>
     <link href="css/_main.css" rel="stylesheet"/>
+    <link rel="icon" type="image/png" href="/static/images/mc_turing.png" />
   </head>
   <body>
     <element>
@@ -16,14 +17,14 @@
         </div>
       </div>
       <div id="control">
-        <button @click="switchcensor()">censored {{censored}}</button>
-        <div id="info">
+        <button class='censor' @click="switchcensor()" :class="{'active':censored}">{{censored ? 'censored' : 'censor'}}</button>
+        <!-- <div id="info">
           <b>spacebar</b>: generate new options<br>
           <b>arrows</b>: select option<br>
           <b>enter</b>: fix selection &amp; generate new options<br>
           <b>escape</b>: submit lyric, start clean<br><Br>
           {{storage.lyric.length}}/10<br>
-        </div>
+        </div> -->
 
         <div id="loading" :class="{'show':loading}">
           Generating...

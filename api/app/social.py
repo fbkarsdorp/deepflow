@@ -6,7 +6,7 @@ import cairosvg
 import lxml.etree
 
 
-def create_image_file(lines: List[str], image_template: str, y=74, y_step=20) -> str:
+def create_image_file(lines: List[str], image_template: str, y=84, y_step=30) -> str:
     namespace = {'svg': 'http://www.w3.org/2000/svg'}
     svg = lxml.etree.parse(image_template).getroot()
     text_element = svg.find(".//svg:text[@id='Type-something']", namespaces=namespace)
@@ -30,9 +30,15 @@ def create_image_file(lines: List[str], image_template: str, y=74, y_step=20) ->
     
 
 if __name__ == '__main__':
-    text = ["when sneezing baby it nothing do your thang i ain't gon' stop you girl",
-            'all in your mini skirt really squirt, show me something baby',
-            "once i give you what really hurts, you won't owe me nothing (come on!)"]
+    text = ["yeah! (hey!), i love to smoke weed (yes!)",
+    "when we throw it up a payday",
+    "never be another guy, i just wanna know why",
+    "i'm a put somethin down!",
+    "i feel like a trip, it's time for me to take a trip",
+    "everybody knows what the new hustle sits",
+    "when they come, i'm a try another",
+    "you see your big brother in the jail brother",
+    "and of course, we're gonna get none of y'all"]
     image_file = create_image_file(text)
     with open(image_file, 'rb') as f:
         print(f.read())

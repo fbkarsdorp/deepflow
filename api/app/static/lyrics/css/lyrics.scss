@@ -12,8 +12,8 @@ $padding: 0rem;
     --controlfg: #000;
     --optionbg: #202020;
     --optionfg: #a0a0a0;
-    --optionbgs: #f0e6d3;
-    --optionfgs: #252529;
+    --optionbgs: #0000ff;
+    --optionfgs: #fff;
     --maxwidth: 1200px;
     --offwhite: #f0e6d3;
 }
@@ -34,10 +34,10 @@ body {
 #loading {
     display:block;
     position:absolute;
-    bottom:1rem;
     width: 100%;
     font-size: 2rem; 
     text-align: left;
+    top:0;
     // font-family: 'gofflight';
     opacity: 0;
     line-height: 2em;
@@ -65,21 +65,19 @@ body {
 }
 
 element {
+    border:2px solid transparent;
     position: relative;
     z-index:2;
-    // border: 10px double $text;
     display:block;
     width: calc(100vw - #{$margin * 2});
     max-width: var(--maxwidth);
+    max-width: 90vh;
     height: 100vh;
     margin: 0 auto;
-    padding: $padding;
+    padding: 0;
     width: 100%;
-    // background-color: var(--controlbg);
     color: var(--controlfg);
     @include padding();
-    @include bflex(row);
-    @include align-items(stretch);
     #canvas {
         background: #fff;
         background-image: url('/static/images/logo-blue.png');
@@ -88,17 +86,15 @@ element {
         background-repeat: no-repeat;
         color: var(--lyrics);
         min-width: 60%;
-        height: calc(100% - 2rem);
-        margin: 1rem; // solid var(--controlbg);
+        min-height: 70vh;
+        margin: 0; 
+        margin-top: 2rem;
         @include padding();
         color: #000;
-        // border: 1px solid #000;
-        // @include sgr(var(--gr1),var(--gr2));
         padding: 3rem;
         padding-top: 6rem;
         font-size: 1rem;
         line-height: 1.25em;
-        // @include shadow(0,0,15px,rgba(#fff,0.25));
         div {
             margin-bottom:0.5em;
         }
@@ -111,10 +107,19 @@ element {
         }
     }
     #control {
-        width: 40%;
-        padding: 1rem;
+        width: 100%;
         position: relative;
         @include padding();
+        .censor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            margin: 2rem;
+            @include rounded(0.25em);
+            padding: 0.25em 1em;
+            background: #00f;
+            color: #fff;
+        }
         > div {
             // background: #9e9d98;
             // background: #111;
@@ -127,11 +132,12 @@ element {
         }
         #options {
             display: inline-block;
-            position:absolute;
+            // position:absolute;
             left:1rem;
             bottom:1rem;
-            width: calc(100% - 2rem);
+            width: 100%;
             .option {
+                width: 100%;
                 margin-bottom:2px;
                 color: var(--optionfg);
                 background: var(--optionbg);
@@ -143,7 +149,7 @@ element {
                 min-height: 2.5rem;
                 @include padding();
                 &:before {
-                    content:"";
+                    // content:"";
                     // width: .7rem;
                     // height: .7rem;
                     // @include rounded(100%);

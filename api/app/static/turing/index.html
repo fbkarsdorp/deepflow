@@ -7,6 +7,16 @@
     <link href="css/_main.css" rel="stylesheet"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" rel="stylesheet" type="text/css" />
     <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" href="/static/images/mc_turing.png" />
+    
+    <meta name="description" content="Break the rap code" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@mc_turing" />
+    <meta name="twitter:creator" content="@mc_turing" />
+    <meta name="twitter:url" content="https://www.deep-flow.nl" />
+    <meta name="og:title" content="Deepflow" />
+    <meta name="og:description" content="Break the rap code" />
+    <meta name="twitter:image" content="https://www.deep-flow.nl/static/images/screen.jpg" />
   </head>
   <body>
     <element>
@@ -38,11 +48,15 @@
           <div v-if="lastQuestion.type === 'choose'" id="choose">
             <label>Pick the original hip hop quote:</label>
             <div id="frame">
-              <div class="phrase p1"  :class="{'active':lastQuestion.selected === 1}" @click="select(1), check()">
+              <div class="phrase p1" :class="{'active':lastQuestion.selected === 1}" @click="select(1), check()">
                 <censored :censored="censor" :text="line" v-for="line in lastQuestion.line1"></censored>
+                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===1">Artist: {{lastQuestion.artist}}</div>
+                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===1">Album: {{lastQuestion.album}}</div>
               </div>
-              <div class="phrase p1"  :class="{'active':lastQuestion.selected === 2}" @click="select(2), check()">
+              <div class="phrase p1" :class="{'active':lastQuestion.selected === 2}" @click="select(2), check()">
                 <censored :censored="censor" :text="line" v-for="line in lastQuestion.line2"></censored>
+                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===2">Artist: {{lastQuestion.artist}}</div>
+                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===2">Album: {{lastQuestion.album}}</div>
               </div>
             </div>
             <!-- <button @click="check()">check</button> -->
@@ -52,6 +66,8 @@
               <div id="content">
                 <div class="phrase p1" >
                   <censored v-for="line in lastQuestion.line" :censored="censor" :text="line"></censored>
+                  <div class="artist" v-if="lastQuestion.answered && lastQuestion.correct">Artist: {{lastQuestion.artist}}</div>
+                  <div class="album" v-if="lastQuestion.answered && lastQuestion.correct">Album: {{lastQuestion.album}}</div>
                 </div>
               </div>
               <div id="options">

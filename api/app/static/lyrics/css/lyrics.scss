@@ -81,14 +81,21 @@ element {
     @include bflex(row);
     @include align-items(stretch);
     #canvas {
+        background: #fff;
+        background-image: url('/static/images/logo-blue.png');
+        background-position: top 1rem right 1rem;
+        background-size: 20%;
+        background-repeat: no-repeat;
         color: var(--lyrics);
         min-width: 60%;
         height: calc(100% - 2rem);
         margin: 1rem; // solid var(--controlbg);
         @include padding();
-        border: 1px solid #000;
+        color: #000;
+        // border: 1px solid #000;
         // @include sgr(var(--gr1),var(--gr2));
         padding: 3rem;
+        padding-top: 6rem;
         font-size: 1rem;
         line-height: 1.25em;
         // @include shadow(0,0,15px,rgba(#fff,0.25));

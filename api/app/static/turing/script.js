@@ -1,3 +1,22 @@
+var censored = [];
+axios.get('/static/censuur.json').then(function(res){
+  censored = res.data.words;
+})
+
+Vue.component('censored', {
+  props: ['text','loading','censored'],
+  computed: {
+    newtext: function (val) {
+      var words = this.text.split(' ');
+      words.forEach(function(v,k){
+        if (censored.indexOf(v.toLowerCase()) > -1) words[k] = '**********************************'.substr(0, v.length)
+      })
+      return words.join(' ')
+    }
+  },
+  template: '<div>{{censored ? newtext : text}}</div>'
+})
+
 Vue.component('scoreboard', {
   props: ['scoreboard','name','score'],
   data () {
@@ -20,7 +39,7 @@ Vue.component('scoreboard', {
       })
     }
   },
-  template: '<div id="scoreboard"><span v-if="name">Your score is {{score}}<br><br></span><div id="participant" v-for="item in data" :class="{\'active\':item.name === name}"><div id="name" v-html="item.name" ></div><div id="thescore" v-html="item.score"></div></div></div>',
+  template: '<div id="scoreboard"><span v-if="name">Your score is {{score}}<br><br></span><label>high score</label><div id="participant" v-for="item in data" :class="{\'active\':item.name === name}"><div id="name" v-html="item.name" ></div><div id="thescore" v-html="item.score"></div></div></div>',
   mounted () {
     let self = this
     this.load()
@@ -41,22 +60,12 @@ var app = new Vue({
     uploading: false,
     interval: null,
     credits: false,
+    censor: false,
     storage: {
       log: [],
       questions: [],
     },
-    scoreboard: [
-      {name: 'Lil Turing', score: 17 },
-      {name: 'MC FOGG', score: 15 },
-      {name: 'Lil Hop', score: 13 },
-      {name: 'MC Hip', score: 17 },
-      {name: 'Lil ENrique', score: 17 },
-      {name: 'MC Turing', score: 17 },
-      {name: 'Lil MIC', score: 17 },
-      {name: 'MC Mini', score: 17 },
-      {name: 'Lil Miny', score: 17 },
-      {name: 'MC Moe', score: 17 },
-    ],
+    scoreboard: [],
     done: false
   },
   computed: {
@@ -176,7 +185,7 @@ var app = new Vue({
           }, 1000)
         }
         progressbar.style.width = perc + '%'
-      },10)
+      }, intervaltime)
     },
     submit () {
       let self = this

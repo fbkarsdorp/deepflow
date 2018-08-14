@@ -17,23 +17,23 @@
       </div>
       <div id="control">
         <button @click="switchcensor()">censored {{censored}}</button>
-        <!-- <div id="info">
+        <div id="info">
           <b>spacebar</b>: generate new options<br>
           <b>arrows</b>: select option<br>
           <b>enter</b>: fix selection &amp; generate new options<br>
           <b>escape</b>: submit lyric, start clean<br><Br>
-          {{storage.lyric.length}}/20<br>
-        </div> -->
+          {{storage.lyric.length}}/10<br>
+        </div>
 
         <div id="loading" :class="{'show':loading}">
           Generating...
         </div>
         
         <div id="options" v-if="!loading">
-          <div class='maximum' v-if="storage.lyric.length === 20">
-            You've reached the maximum number of lines, please press submit and check twitter @deepflow #lwlnds2018 for your lyrics.
+          <div class='maximum' v-if="storage.lyric.length === 10">
+            You've reached the maximum number of lines, please press submit and check twitter @MC_Turing #LL18 #LLScience for your lyrics!
           </div>
-          <div class="option" v-for="item,k in storage.generated[storage.generated.length - 1]" :key="k" :class="{'selected':selected === k}" v-if="storage.lyric.length < 20">
+          <div class="option" v-for="item,k in storage.generated[storage.generated.length - 1]" :key="k" :class="{'selected':selected === k}" v-if="storage.lyric.length < 10">
             <div class='text'>
               <censored :text="item.text" :loading="loading" :censored="censored">{{item.text}}</censored>
             </div>

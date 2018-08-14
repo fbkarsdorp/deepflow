@@ -9,7 +9,7 @@ for machine in MACHINES:
 db.session.commit()
 
 with open('data/user_names.json') as f:
-    names = json.load(f)
+    names = set(json.load(f))
 for name in names:
     if len(name) <= 15:
         artist = models.Artist(name=name)

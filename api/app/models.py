@@ -47,6 +47,12 @@ class Machine(db.Model):
         return self.id
 
 
+class Artist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(40), unique=True)
+    taken = db.Column(db.SmallInteger, default=0)
+
+
 class Turn(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), unique=True)

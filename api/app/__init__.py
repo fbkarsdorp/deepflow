@@ -1,5 +1,4 @@
 import os
-import json
 
 import flask
 import flask_login
@@ -30,7 +29,5 @@ lm.init_app(app)
 print(app.config)
 app.ExampleSampler = ExampleSampler(app.config['TURING_FILE'])
 app.Generator = Generator(app.config)
-with open(app.config['ARTIST_NAMES_FILE']) as f:
-    app.ArtistNames = json.load(f)
 
 from app import views, models

@@ -6,7 +6,8 @@ import random
 
 from allennlp.predictors import Predictor
 
-from .generation import RNNLanguageModel, CharLanguageModel, model_loader
+from .generation import RNNLanguageModel, HybridLanguageModel, CharLanguageModel
+from .generation import model_loader
 from .generation import TemplateSampler, sample_conditions
 # from .generation import Cache
 from .generation import utils
@@ -271,7 +272,7 @@ class Generator:
             state["hyps"][modelname] = {id: {"hyp": hyp}}
 
             # payload
-            if isinstance(mconfig['model'], RNNLanguageModel):
+            if isinstance(mconfig['model'], (RNNLanguageModel, HybridLanguageModel)):
                 hyp = utils.join_syllables(hyp.split())
             hyp = utils.detokenize(hyp)
 
@@ -329,7 +330,7 @@ class Generator:
             state["hyps"][modelname] = {id: {"hyp": hyp}}
 
             # payload
-            if isinstance(mconfig['model'], RNNLanguageModel):
+            if isinstance(mconfig['model'], (RNNLanguageModel, HybridLanguageModel)):
                 hyp = utils.join_syllables(hyp.split())
             hyp = utils.detokenize(hyp)
 

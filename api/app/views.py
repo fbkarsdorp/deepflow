@@ -34,7 +34,7 @@ def before_request():
 ###############################################################################
 
 @app.route('/landing', methods=['GET', 'POST'])
-def turing():
+def landing():
     return flask.render_template('landing/index.html')
 
 ###############################################################################
@@ -94,8 +94,8 @@ def get_pair() -> flask.Response:
 ###############################################################################
 
 
-@app.route('/turing', methods=['GET', 'POST'])
-def turing():
+@app.route('/lyrics', methods=['GET', 'POST'])
+def lyrics():
     return flask.render_template('lyrics/index.html')
 
 

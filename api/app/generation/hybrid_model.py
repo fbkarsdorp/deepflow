@@ -1,6 +1,7 @@
 
 import math
 import random
+import collections
 import time
 import itertools
 
@@ -63,6 +64,11 @@ class HybridLanguageModel(RNNLanguageModel):
 
     def init(self):
         pass
+
+    def get_args_and_kwargs(self):
+        args = self.layers, self.wemb_dim, self.cemb_dim, self.hidden_dim, self.cond_dim
+        kwargs = {'dropout': self.dropout}
+        return args, kwargs
 
     def forward(self, word, nwords, char, nchars, conds, hidden=None):
         # - embeddings
@@ -167,6 +173,15 @@ class HybridLanguageModel(RNNLanguageModel):
         """
         Generate stuff
         """
+        # batch
+        if hidden is not None:
+            if isinstance(hidden[0], tuple):
+                batch = hidden[0][0].size(1)
+            else:
+                batch = hidden[0].size(1)
+        else:
+            hidden = [None] * len(self.rnn)
+
         # sample conditions if needed
         conds, bconds = conds or {}, []
         for c in sorted(self.conds):
@@ -186,11 +201,17 @@ class HybridLanguageModel(RNNLanguageModel):
         char = torch.tensor(char, dtype=torch.int64).to(self.device).t()
         nchars = [3] * batch
 
-        output = []
+        output = collections.defaultdict(list)
+        mask = torch.ones(batch, dtype=torch.int64).to(self.device)
         scores = 0
+        running = torch.ones_like(mask)
 
         with torch.no_grad():
             for _ in range(nsyms):
+                # check if done
+                if sum(running).item() == 0:
+                    break
+
                 # embeddings
                 wemb = self.wembs(word.unsqueeze(0))
                 cemb = self.embed_chars(char, nchars, nwords)
@@ -200,68 +221,67 @@ class HybridLanguageModel(RNNLanguageModel):
 
                 outs = embs
                 hidden_ = []
-                hidden = hidden or [None] * len(self.rnn)
                 for l, rnn in enumerate(self.rnn):
                     outs, h_ = rnn(outs, hidden[l])
                     hidden_.append(h_)
-                hidden = hidden_
+                hidden = torch_utils.update_hidden(hidden, hidden_, mask)
 
                 # char-level
-                cinp = torch.tensor([encoder.char.bos] * batch).to(self.device)  # (batch)
-                coutput = []
+                cinp = torch.tensor([encoder.char.bos] * batch).to(self.device)
+                chidden = None
+                coutput = collections.defaultdict(list)
+                cmask = torch.ones_like(mask)
+
                 for _ in range(max_sym_len):
+                    # check if done
+                    if sum(cmask).item() == 0:
+                        break
+
                     # (1 x batch x cemb_dim + hidden_dim)
                     cemb = torch.cat([self.cembs(cinp.unsqueeze(0)), outs], -1)
                     # (1 x batch x hidden_dim)
-                    couts, _ = self.cout_rnn(cemb)
-                    # (1 x batch x vocab) -> (batch x vocab)
+                    couts, chidden = self.cout_rnn(cemb, chidden)
                     logits = self.proj(couts).squeeze(0)
                     # sample
-                    preds = F.log_softmax(logits, dim=-1)
+                    logprob = F.log_softmax(logits, dim=-1)
                     # (1 x batch) -> (batch)
-                    cinp = (preds / tau).exp().multinomial(1)
-                    score = preds.gather(1, cinp)
+                    cinp = (logprob / tau).exp().multinomial(1)
+                    score = logprob.gather(1, cinp)
                     cinp, score = cinp.squeeze(1), score.squeeze(1)
-                    scores += score
 
-                    # break from word generation
-                    if cinp[0].item() == encoder.char.eos:
-                        coutput = coutput or [[encoder.char.unk] * batch]
-                        break
+                    # update char-level mask
+                    cmask = cmask * cinp.ne(encoder.char.eos).long()
 
-                    # break from sentence generation
-                    if cinp[0].item() == encoder.char.eol:
-                        break
+                    # update sentence-level mask
+                    running = running * cinp.ne(encoder.char.eol).long()
 
                     # accumulate
-                    coutput.append(cinp.tolist())
-
-                # break from sentence generation
-                if cinp[0].item() == encoder.char.eol:
-                    break
+                    scores += score * cmask.float()
+                    for idx, (active, w) in enumerate(zip(cmask.tolist(), cinp.tolist())):
+                        if active:
+                            coutput[idx].append(encoder.char.i2w[w])
 
                 # get word-level and character-level input
-                word, char, toutput = [], [], []
-                for w in zip(*coutput):  # iterate over words in batch
-                    w = ''.join([encoder.char.i2w[i] for i in w])  # to string
-                    # get word input
+                word, char = [], []
+                for idx, active in enumerate(running.tolist()):
+                    # if not active, we still need char and word input for next step
+                    w = '<dummy>'
+                    if active:
+                        w = ''.join(coutput.get(idx, []))  # might be empty
+                        # append to global output                    
+                        output[idx].append(w)
                     word.append(encoder.word.transform_item(w))
-                    # get character input
-                    c = encoder.char.transform(w)
-                    char.append(c)
-                    # append to global output
-                    toutput.append(w)
-                # (batch)
+                    char.append(encoder.char.transform(w))
+
+                # to batch
                 word = torch.tensor(word, dtype=torch.int64).to(self.device)
-                # (nchars x batch)
                 char, nchars = utils.get_batch(char, encoder.char.pad, self.device)
 
-                # accumulate
-                output.append(toutput)
+        # transform output to list-batch of hyps
+        output = [output[i] for i in range(len(output))]
 
-        # transpose
-        output = list(zip(*output))
-
+        # prepare output
+        conds = {c: encoder.conds[c].i2w[cond] for c, cond in conds.items()}
         hyps, probs = [], []
         for hyp, score in zip(output, scores):
             try:

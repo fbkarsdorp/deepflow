@@ -255,6 +255,7 @@ if __name__ == '__main__':
     parser.add_argument('--train')
     parser.add_argument('--dev')
     parser.add_argument('--dpath', help='path to rhyme dictionary')
+    parser.add_argument('--conds')
     parser.add_argument('--reverse', action='store_true',
                         help='whether to reverse input')
     parser.add_argument('--emb_dim', type=int, default=100)

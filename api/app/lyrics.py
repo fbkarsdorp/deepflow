@@ -7,7 +7,8 @@ import random
 from allennlp.predictors import Predictor
 
 from .generation import RNNLanguageModel, CharLanguageModel, model_loader
-from .generation import Cache
+from .generation import TemplateSampler, sample_conditions
+# from .generation import Cache
 from .generation import utils
 
 
@@ -48,7 +49,7 @@ def load_models(config):
         # if mconfig.get("options", {}).get("cache"):
         #     cache = Cache.new(
         #         model.hidden_dim,                  # hidden_dim
-        #         config['DEFAULTS']["cache_size"])  # cache_size
+        #         config['MODEL_DEFAULTS']["cache_size"])  # cache_size
 
         # add mconfig
         models[modelname] = {
@@ -60,25 +61,6 @@ def load_models(config):
             "hidden": None}
 
     return models
-
-
-def resample_conds(encoder, conds, counter):
-    """
-    Takes care of sampling conditions and planning the song over consecutive generations
-    """
-    def sample_conds(encoder):
-        conds = {}
-        for cond, vocab in encoder.conds.items():
-            # TODO: add weights to conditions based on rhyme evaluation
-            #       e.g. shorter phonological endings are more productive in general
-            conds[cond] = random.choice(list(vocab.w2i.keys()))
-        return conds
-
-    # TODO: better planning
-    if not conds or counter % 4 == 0:
-        return sample_conds(encoder)
-
-    return conds
 
 
 def process_seed(model, encoder, hidden, seed, seed_conds):
@@ -211,8 +193,9 @@ class Generator:
     - config : AppConfig
     - counter : number of accepted candidates so far
     - syllabifier : allennlp.services.Predictor
+    - tsampler : TemplateSampler or None
     - models : dictionary
-    - candidates : dictionary,
+    - state : dictionary,
 
         { "conds": dict,
           "hyps": {
@@ -230,61 +213,96 @@ class Generator:
         # counter
         self.counter = 0
         # load syllabifier
-        self.syllabifier = Predictor.from_path(
-            os.path.join(config['MODEL_DIR'], config['SYLLABIFIER']))
+        if os.path.isfile(os.path.join(config['MODEL_DIR'], config['SYLLABIFIER'])):
+            self.syllabifier = Predictor.from_path(
+                os.path.join(config['MODEL_DIR'], config['SYLLABIFIER']))
+        else:
+            print("Couldn't load Syllabifier, file not found:\n\t{}".format(
+                os.path.join(config['MODEL_DIR'], config['SYLLABIFIER'])))
+        # load template sample if given
+        self.tsampler = None
+        if os.path.isfile(config['SONG_PATH']) and os.path.isfile(config['PHON_DICT']):
+            self.tsampler = TemplateSampler(config['SONG_PATH'], config['PHON_DICT'])
+        else:
+            print("Couldn't load TemplateSampler, files not found:\n\t{}\n\t{}".format(
+                config['SONG_PATH'], config['PHON_DICT']))
         # load models
         self.models = load_models(config)
-        # first sample
-        self.candidates = {"conds": {}, "hyps": {}}
+        # reset state structures
+        self.state = {"hyps": {}, "conds": {}, "template": {}}
+        self.reset()
+
+    def get_conditions(self, encoder=None):
+        """
+        Takes care of sampling conditions and planning the song over consecutive
+        generations
+        """
+        encoder = encoder or list(self.models.values())[0]["encoder"]
+        conds = self.state["conds"]
+
+        if self.state['template']:
+            template = self.state["template"]["data"]
+            # next step
+            conds = template[self.counter % len(template)]
+
+        else:
+            if not conds or self.counter % 4 == 0:
+                # resample every 4
+                conds = sample_conditions(encoder)
+
+        return conds
 
     def resample(self):
         """
-        Update candidates for the current step without modifying any local state
-        (hidden, cache, counter, conds) except, of course, the current candidates
+        Recreate candidates for the current step without modifying any local state
+        (hidden, cache, counter, conds).
         """
-        candidates, payload = {}, []
-        conds = self.candidates['conds']
-        candidates['conds'] = conds
-        candidates['hyps'] = {}
+        state = {**self.state, "hyps": {}}  # reset hyps
+        conds = state["conds"]
+        payload = []
 
         for modelname, mconfig in self.models.items():
             hyp, score, _ = get_model_generation(
-                mconfig, conds, self.config['TRIES'], self.config['DEFAULTS'])
+                mconfig, conds,
+                self.config['MODEL_TRIES'], self.config['MODEL_DEFAULTS'])
             # seed is the same as previous time around (no need to update hidden)
-            # update new candidates (always kept as they come from model.sample)
+            # update new hyps (always kept as they come from model.sample)
             id = str(uuid.uuid1())[:8]
-            candidates["hyps"][modelname] = {id: {"hyp": hyp}}
+            state["hyps"][modelname] = {id: {"hyp": hyp}}
 
+            # payload
             if isinstance(mconfig['model'], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
             hyp = utils.detokenize(hyp)
-            payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
 
-        self.candidates = candidates
+            data = {
+                "id": "{}/{}".format(modelname, id),
+                "text": hyp,
+                "score": score,
+                "conds": conds}
+
+            payload.append(data)
+
+        self.state = state
 
         return payload
 
     def sample(self, seed_id=None):
         """
         Create new generations based on a picked seed. Update local state (hidden,
-        cache, counter, conds) and the current candidates
+        cache, counter, conds) and the current hyps
         """
-        candidates, payload = {}, []
-
-        # add new conditions
-        encoder = list(self.models.values())[0]["encoder"]
-        conds = resample_conds(encoder, self.candidates["conds"], self.counter)
-        candidates["conds"] = conds
+        payload = []
 
         # prepare seed
         seed = None
         if seed_id is not None:
-            if not self.candidates["hyps"]:
+            if not self.state["hyps"]:
                 raise ValueError("Generator was passed seed {} but ")
 
             modelname, id = seed_id.split('/')
             try:
-                seed = self.candidates["hyps"][modelname][id]["hyp"]
+                seed = self.state["hyps"][modelname][id]["hyp"]
             except KeyError:
                 raise ValueError("Couldn't find hyp {}".format(seed_id))
 
@@ -294,33 +312,41 @@ class Generator:
                 # needs syllabification
                 seed = syllabify(self.syllabifier, seed)
 
-        # add generations
-        candidates["hyps"] = {}
+        # reset hyps and conditions
+        conds = self.get_conditions()
+        state = {**self.state, "conds": conds, "hyps": {}}
 
         for modelname, mconfig in self.models.items():
-            # TODO: this should run multiprocessing
             # Warning! hidden is the state after reading the seed and NOT
             # the state after generating the new candidates
             hyp, score, hidden = get_model_generation(
-                mconfig, conds, self.config['TRIES'], self.config['DEFAULTS'],
-                seed=seed, seed_conds=self.candidates["conds"])
+                mconfig, conds,
+                self.config['MODEL_TRIES'], self.config['MODEL_DEFAULTS'],
+                seed=seed, seed_conds=self.state["conds"])
 
             # update new candidates (always kept as they come from model.sample)
             id = str(uuid.uuid1())[:8]
-            candidates["hyps"][modelname] = {id: {"hyp": hyp}}
+            state["hyps"][modelname] = {id: {"hyp": hyp}}
 
             # payload
             if isinstance(mconfig['model'], RNNLanguageModel):
                 hyp = utils.join_syllables(hyp.split())
             hyp = utils.detokenize(hyp)
-            payload.append({"id": "{}/{}".format(modelname, id), "text": hyp})
+
+            data = {
+                "id": "{}/{}".format(modelname, id),
+                "text": hyp,
+                "score": score,
+                "conds": conds}
+
+            payload.append(data)
 
             # side-effects
             self.models[modelname]["hidden"] = hidden
             # self.models[modelname]["cache"] = cache
 
-        # reset candidates
-        self.candidates = candidates
+        # reset state
+        self.state = state
 
         # increment counter
         self.counter += 1
@@ -337,4 +363,12 @@ class Generator:
             # if mconfig["cache"]:
             #     mconfig["cache"] = mconfig["cache"].reset()
 
-        self.candidates = {"conds": {}, "hyps": {}}
+        self.state["conds"] = {}
+        self.state["hyps"] = {}
+        self.state["template"] = {}
+
+        if self.tsampler is not None:
+            if random.random() <= self.config['TEMPLATE_RATIO']:
+                tdata, tmetadata = self.tsampler.sample(
+                    nlines=self.config['TEMPLATE_MIN_LEN'])
+                self.state["template"] = {"data": tdata, "metadata": tmetadata}

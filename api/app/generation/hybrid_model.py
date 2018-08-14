@@ -300,6 +300,7 @@ if __name__ == '__main__':
     parser.add_argument('--train')
     parser.add_argument('--dev')
     parser.add_argument('--dpath', help='path to rhyme dictionary')
+    parser.add_argument('--conds')
     parser.add_argument('--reverse', action='store_true',
                         help='whether to reverse input')
     parser.add_argument('--wemb_dim', type=int, default=100)
@@ -334,8 +335,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = reader(args.train, dpath=args.dpath)
-    dev = reader(args.dev, dpath=args.dpath)
+    conds = None
+    if args.conds:
+        conds = set(args.conds.split(','))
+    train = reader(args.train, dpath=args.dpath, conds=conds)
+    dev = reader(args.dev, dpath=args.dpath, conds=conds)
 
     encoder = CorpusEncoder.from_corpus(
         train, dev, most_common=args.maxsize, reverse=args.reverse)

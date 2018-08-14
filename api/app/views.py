@@ -28,9 +28,23 @@ def load_user(id):
 def before_request():
     flask.g.user = flask_login.current_user
 
+
+###############################################################################
+# Landing 
+###############################################################################
+
+@app.route('/landing', methods=['GET', 'POST'])
+def turing():
+    return flask.render_template('landing/index.html')
+
 ###############################################################################
 # MC Turing views
 ###############################################################################
+
+
+@app.route('/turing', methods=['GET', 'POST'])
+def turing():
+    return flask.render_template('turing/index.html')
 
 
 @app.route('/scoreboard', methods=['GET'])
@@ -80,17 +94,22 @@ def get_pair() -> flask.Response:
 ###############################################################################
 
 
+@app.route('/turing', methods=['GET', 'POST'])
+def turing():
+    return flask.render_template('lyrics/index.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if flask.g.user is not None and flask.g.user.is_authenticated:
-        return flask.redirect('static/lyrics/index.html')
+        return flask.redirect('/')
     form = LoginForm()
     if form.validate_on_submit() and form.validate_fields():
         machine = form.get_machine()
         print(machine)
         flask.session['remember_me'] = form.remember_me.data
         flask_login.login_user(machine, remember=form.remember_me.data)
-        return flask.redirect('static/lyrics/index.html')
+        return flask.redirect('/')
     else:
         print(form.validate_fields())
         print(form.validate_on_submit())

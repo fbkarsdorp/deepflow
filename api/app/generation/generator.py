@@ -318,13 +318,13 @@ if __name__ == '__main__':
             sample = generator.sample(**opts)
             if sample:
                 if args.debug:
-                    print(sample['model'])
-                    print('---' * 10)
                     for idx, line in enumerate(sample['text']):
                         if sample['params']['template']:
-                            print(line['line'], sample['params']['template'][idx])
+                            print(sample['model'],
+                                  line['line'], sample['params']['template'][idx])
                         else:
-                            print(line['line'], sample['params']['conds'])
+                            print(sample['model'],
+                                  line['line'], sample['params']['conds'])
                     print()
                 else:
                     print(json.dumps(sample, indent=2))

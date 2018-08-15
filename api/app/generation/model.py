@@ -421,7 +421,10 @@ class RNNLanguageModel(nn.Module):
                     start = time.time()
 
                 if dev and checkfreq and idx and idx % (checkfreq // minibatch) == 0:
-                    best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                    try:
+                        best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                    except:
+                        print("Oopsie during evaluation")
                     # update lr
                     if fails > 0:
                         for pgroup in trainer.param_groups:
@@ -429,7 +432,10 @@ class RNNLanguageModel(nn.Module):
                         print(trainer)
 
             if dev and not checkfreq:
-                best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                try:
+                    best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                except:
+                    print("Oopsie during evaluation")
                 # update lr
                 if fails > 0:
                     for pgroup in trainer.param_groups:

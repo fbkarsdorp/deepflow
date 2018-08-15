@@ -1,6 +1,8 @@
 
 from .model import RNNLanguageModel
-from .char_model import CharLanguageModel
+from .char_model import CharLanguageModel, CharLevelCorpusEncoder
+from .hybrid_model import HybridLanguageModel
+from . import utils
 
 
 def model_loader(modelpath):
@@ -16,8 +18,9 @@ def model_loader(modelpath):
 
     if modelname.startswith('RNNLanguageModel'):
         model, encoder = RNNLanguageModel.load(modelpath, utils.CorpusEncoder)
+    elif modelname.startswith('HybridLanguageModel'):
+        model, encoder = HybridLanguageModel.load(modelpath, utils.CorpusEncoder)
     elif modelname.startswith('CharLanguageModel'):
-        from .char_model import CharLevelCorpusEncoder
         model, encoder = CharLanguageModel.load(modelpath, CharLevelCorpusEncoder)
     else:
         raise ValueError("Couldn't identify {} as model".format(modelpath))
@@ -29,5 +32,4 @@ def model_loader(modelpath):
 
 
 from .cache import Cache
-from . import utils
 from .generator import TemplateSampler, sample_conditions

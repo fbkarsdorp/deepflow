@@ -57,13 +57,25 @@ class HybridLanguageModel(RNNLanguageModel):
         self.rnn = nn.ModuleList(rnn)
 
         # output
+        self.cout_embs = nn.Embedding(cvocab, cemb_dim, padding_idx=encoder.char.pad)
         self.cout_rnn = nn.LSTM(cemb_dim + hidden_dim, hidden_dim)
         self.proj = nn.Linear(hidden_dim, cvocab)
 
         self.init()
 
     def init(self):
-        pass
+        for mname, m in self.named_modules():
+            if isinstance(m, nn.RNNBase):
+                for name, p in m.named_parameters():
+                    if name.startswith('weight_ih'):
+                        nn.init.orthogonal_(p)
+                    elif name.startswith('weight_hh'):
+                        for i in range(4):
+                            nn.init.eye_(p[i*m.hidden_size: (i+1)*m.hidden_size])
+                    elif name.startswith('bias'):
+                        nn.init.constant_(p, 0.0)
+                    else:
+                        print("Unexpected parameter {} in module {}".format(name, mname))
 
     def get_args_and_kwargs(self):
         args = self.layers, self.wemb_dim, self.cemb_dim, self.hidden_dim, self.cond_dim
@@ -131,7 +143,7 @@ class HybridLanguageModel(RNNLanguageModel):
         # (nchars x nwords - batch)
         char = char[:, torch.tensor(index).to(self.device)]
         # (nchars x nwords - batch x cemb_dim + hidden_dim)
-        cemb = torch.cat([self.cembs(char), outs.expand(len(char), -1, -1)], -1)
+        cemb = torch.cat([self.cout_embs(char), outs.expand(len(char), -1, -1)], -1)
         # run rnn
         cemb, unsort = torch_utils.pack_sort(cemb, [nchars[i] for i in index])
         # (nchars x nwords - batch x hidden_dim)
@@ -238,7 +250,7 @@ class HybridLanguageModel(RNNLanguageModel):
                         break
 
                     # (1 x batch x cemb_dim + hidden_dim)
-                    cemb = torch.cat([self.cembs(cinp.unsqueeze(0)), outs], -1)
+                    cemb = torch.cat([self.cout_embs(cinp.unsqueeze(0)), outs], -1)
                     # (1 x batch x hidden_dim)
                     couts, chidden = self.cout_rnn(cemb, chidden)
                     logits = self.proj(couts).squeeze(0)
@@ -300,6 +312,7 @@ if __name__ == '__main__':
     parser.add_argument('--train')
     parser.add_argument('--dev')
     parser.add_argument('--dpath', help='path to rhyme dictionary')
+    parser.add_argument('--conds')
     parser.add_argument('--reverse', action='store_true',
                         help='whether to reverse input')
     parser.add_argument('--wemb_dim', type=int, default=100)
@@ -334,8 +347,11 @@ if __name__ == '__main__':
 
     print("Encoding corpus")
     start = time.time()
-    train = reader(args.train, dpath=args.dpath)
-    dev = reader(args.dev, dpath=args.dpath)
+    conds = None
+    if args.conds:
+        conds = set(args.conds.split(','))
+    train = reader(args.train, dpath=args.dpath, conds=conds)
+    dev = reader(args.dev, dpath=args.dpath, conds=conds)
 
     encoder = CorpusEncoder.from_corpus(
         train, dev, most_common=args.maxsize, reverse=args.reverse)

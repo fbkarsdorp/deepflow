@@ -1,4 +1,5 @@
 
+import time
 import sys
 import os
 import json
@@ -41,6 +42,10 @@ def sample_file(fpath, rate=0.01):
         except StopIteration:
             f.close()
             f = open(fpath)
+
+        except UnicodeDecodeError:
+            # corrupted file
+            continue
 
 
 class TemplateSampler:
@@ -107,11 +112,17 @@ class TemplateSampler:
 
 
 def get_weights(encoder):
-    return {
-        # sample more from single syllable rhymes
-        'rhyme': [{1: 10}.get(len(c.split('-')), 1) for c in encoder.conds['rhyme'].w2i],
-        # uniform for now (maybe change it later)
-        'length': [1 for _ in encoder.conds['length'].w2i]}
+    weights = {}
+
+    for cond, vocab in encoder.conds.items():
+        if cond == 'rhyme':
+            # sample more from single syllable rhymes
+            weights[cond] = [{1: 10}.get(len(c.split('-')), 1) for c in vocab.w2i]
+        elif cond == 'length':
+            # uniform for now (maybe change it later)
+            weights[cond] = [1 for _ in encoder.conds['length'].w2i]
+
+    return weights
 
 
 def sample_conditions(encoder, get_weights=get_weights):
@@ -185,8 +196,10 @@ class Generator:
         template, tmeta, conds = None, None, None
         if sample_template and self.template_sampler is not None:
             template, tmeta = self.template_sampler.sample(nlines)
+            template = [{c: line[c] for c in encoder.conds} for line in template]
         else:
             conds = sample_conditions(encoder)
+            conds = {cond: conds[val] for cond in encoder.conds}
 
         cache = None
         if cache_size:
@@ -206,6 +219,9 @@ class Generator:
                 conds={k: encoder.conds[k].w2i[v] for k, v in conds.items()},
                 avoid_unk=avoid_unk,
                 cache=cache, alpha=alpha, theta=theta)
+
+            if not hyps:
+                return
 
             # sort by score to ensure best is last
             scores, hyps = zip(*sorted(list(zip(scores, hyps))))
@@ -229,7 +245,7 @@ class Generator:
                 else:
                     c += 1
 
-            if not hyps:
+            if not hyps or sum(scores) == 0.0:
                 return
 
             # sample from the filtered hyps
@@ -305,26 +321,31 @@ if __name__ == '__main__':
             'alpha': 0.15,
             'theta': 0.75}
 
-    c = 0
+    c, repfreq = 0, 1000
     if args.outputpath:
         with open(args.outputpath, 'w') as f:
+            start = time.time()
             while c < args.nsamples:
                 sample = generator.sample(**opts)
                 if sample:
                     f.write('{}\n'.format(json.dumps(sample)))
                     c += 1
+                if c % repfreq == 0:
+                    print("Processed {:>8} items at speed: {:g} items/sec".format(
+                        c, repfreq / (time.time() - start)))
+                    start = time.time()
     else:
         while c < args.nsamples:
             sample = generator.sample(**opts)
             if sample:
                 if args.debug:
-                    print(sample['model'])
-                    print('---' * 10)
                     for idx, line in enumerate(sample['text']):
                         if sample['params']['template']:
-                            print(line['line'], sample['params']['template'][idx])
+                            print(sample['model'],
+                                  line['line'], sample['params']['template'][idx])
                         else:
-                            print(line['line'], sample['params']['conds'])
+                            print(sample['model'],
+                                  line['line'], sample['params']['conds'])
                     print()
                 else:
                     print(json.dumps(sample, indent=2))

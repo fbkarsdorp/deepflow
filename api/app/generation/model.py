@@ -91,7 +91,10 @@ class RNNLanguageModel(nn.Module):
 
         # serialize weights
         with open(fpath + ".pt", 'wb') as f:
+            device = self.device
+            self.to('cpu')
             torch.save(self.state_dict(), f)
+            self.to(device)
 
         # serialize parameters (only first time)
         if not os.path.isfile(fpath + '.params.json'):
@@ -325,7 +328,7 @@ class RNNLanguageModel(nn.Module):
 
         return (hyps, conds), probs, hidden, cache
 
-    def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
+    def dev(self, corpus, encoder, best_loss, fails, nsamples=10):
         self.eval()
 
         hidden = None
@@ -421,7 +424,10 @@ class RNNLanguageModel(nn.Module):
                     start = time.time()
 
                 if dev and checkfreq and idx and idx % (checkfreq // minibatch) == 0:
-                    best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                    try:
+                        best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                    except:
+                        print("Oopsie during evaluation")
                     # update lr
                     if fails > 0:
                         for pgroup in trainer.param_groups:
@@ -429,7 +435,10 @@ class RNNLanguageModel(nn.Module):
                         print(trainer)
 
             if dev and not checkfreq:
-                best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                try:
+                    best_loss, fails = self.dev(dev, encoder, best_loss, fails)
+                except:
+                    print("Oopsie during evaluation")
                 # update lr
                 if fails > 0:
                     for pgroup in trainer.param_groups:

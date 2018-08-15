@@ -141,6 +141,13 @@ element {
             bottom:1rem;
             width: 100%;
             margin-top: 2px;
+            .maximum {
+                text-align: center;
+                max-width: 32em;
+                margin: 0 auto;
+                padding: 1rem 0;
+                color: var(--offwhite);
+            }
             .option {
                 width: 100%;
                 margin-bottom:2px;

@@ -169,11 +169,24 @@ var app = new Vue({
     if (!this.storage.lyric || !this.storage.lyric.generated || this.storage.lyric.generated.length < 1) this.generate()
     setTimeout(this.show, 500)
     window.addEventListener('keydown', function(ev) {
-      if (ev.keyCode === 40) self.changeSelection(-1)
-      if (ev.keyCode === 38) self.changeSelection(1)
-      if (ev.keyCode === 13) self.add(self.last[self.selected])
-      if (ev.keyCode === 32) self.generate(true)
+      // if (ev.keyCode === 13) self.add(self.last[self.selected])
+      // if (ev.keyCode === 32) self.generate(true)
+      // if (ev.keyCode === 27) self.submit()
+      
+      if (ev.keyCode === 40 && self.storage.lyric.length < 10) self.changeSelection(-1)
+      if (ev.keyCode === 38 && self.storage.lyric.length < 10) self.changeSelection(1)
+      if (ev.keyCode === 107) self.generate(true)
+      if (ev.keyCode === 13) {
+        if (self.storage.lyric.length === 10 ) {
+          self.submit()
+        } else {
+          self.add(self.last[self.selected])
+        }
+      } 
       if (ev.keyCode === 27) self.submit()
+      if (ev.keyCode === 8) {
+        self.censored = !self.censored
+      }
     })
   }
 });

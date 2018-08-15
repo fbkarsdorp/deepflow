@@ -1,9 +1,9 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Deepflow Turing</title>
-    <script src="/static/turing/js/axios.min.js"></script>
-    <script src="/static/turing/js/vue.min.js"></script>
+    <title>Deepflow - Turing test</title>
+    <script src="/static/dependencies/axios.min.js"></script>
+    <script src="/static/dependencies/vue.min.js"></script>
     <link href="/static/turing/css/_main.css" rel="stylesheet"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" rel="stylesheet" type="text/css" />
     <meta name="mobile-web-app-capable" content="yes">
@@ -28,6 +28,21 @@
       <div id="uploading" :class="{'show':uploading}">
         <div id="frame">
           <button>uploading</button>
+        </div>
+      </div>
+
+      <!-- INTRO -->
+      <div id="intro" v-if="intro">
+        <div id="wrap">
+          <p>Aight. This be easy.</p>
+
+          <p>You get 10 questions to earn them points.</p>
+          <p>Some be like, “here’s two verses - but which one is real tho?” and then you click the verse you think is by a real rapper.</p>
+          <p>Others be like “is this verse the real thang or is it generated?” and then you click the one you think is truth knowhati’msayn?</p>
+
+          <p>Time’s limited tho, so no dilly dallyin’ aight.</p>
+
+          <button @click="intro = false">OK</button>
         </div>
       </div>
       
@@ -66,8 +81,8 @@
               <div id="content">
                 <div class="phrase p1" >
                   <censored v-for="line in lastQuestion.line" :censored="censor" :text="line"></censored>
-                  <div class="artist" v-if="lastQuestion.answered && lastQuestion.correct">Artist: {{lastQuestion.artist}}</div>
-                  <div class="album" v-if="lastQuestion.answered && lastQuestion.correct">Album: {{lastQuestion.album}}</div>
+                  <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer === 1">Artist: {{lastQuestion.artist}}</div>
+                  <div class="album" v-if="lastQuestion.answered && lastQuestion.answer === 1">Album: {{lastQuestion.album}}</div>
                 </div>
               </div>
               <div id="options">

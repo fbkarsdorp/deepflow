@@ -13,7 +13,7 @@ import tweepy
 
 from celery import states
 from app import app, db, celery, lm
-from .models import Turn, Machine
+from .models import Turn, Machine, Artist
 from .forms import LoginForm
 from .social import create_image_file
 from . import twitterconfig as tw
@@ -28,26 +28,48 @@ def load_user(id):
 def before_request():
     flask.g.user = flask_login.current_user
 
+
+###############################################################################
+# Landing 
+###############################################################################
+
+@app.route('/', methods=['GET', 'POST'])
+def landing():
+    return flask.send_from_directory('static/landing', 'index.html')
+
 ###############################################################################
 # MC Turing views
 ###############################################################################
 
 
+@app.route('/turing', methods=['GET', 'POST'])
+def turing():
+    return flask.send_from_directory('static/turing', 'index.html')
+
+
 @app.route('/scoreboard', methods=['GET'])
 def get_scoreboard() -> flask.Response:
     ranking = Turn.query.order_by(Turn.score.desc(), Turn.timestamp.desc()).limit(10).all()
-    ranking = [{'name': row.name.split('^^^')[0], 'score': row.score} for row in ranking]
+    ranking = [{'name': row.name, 'score': row.score} for row in ranking]
     return flask.jsonify(status='OK', ranking=ranking)
+
+
+def get_artist_name():
+    artist_name = None
+    while artist_name is None:
+        name = Artist.query.filter_by(taken=0).first()
+        name.taken = Artist.taken + 1
+        db.session.commit()
+        artist = Artist.query.filter_by(name=name.name).first()
+        if artist.taken == 1:
+            artist_name = name.name
+    return artist_name
 
 
 @app.route('/saveturing', methods=['POST'])
 def save_turn() -> flask.Response:
     data = flask.request.json
-    name = f'{uuid.uuid1()}'[:5]
-    exists = Turn.query.filter_by(name=name).first()
-    while exists is not None:
-        name = f'{uuid.uuid1()}'[:5]
-        exists = Turn.query.filter_by(name=name).first()
+    name = get_artist_name()
     turn = Turn(name=name, log=data['log'], score=data['score'])
     db.session.add(turn)
     db.session.commit()
@@ -72,17 +94,22 @@ def get_pair() -> flask.Response:
 ###############################################################################
 
 
+@app.route('/lyrics', methods=['GET', 'POST'])
+def lyrics():
+    return flask.send_from_directory('static/lyrics', 'index.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if flask.g.user is not None and flask.g.user.is_authenticated:
-        return flask.redirect('static/lyrics/index.html')
+        return flask.redirect('/')
     form = LoginForm()
     if form.validate_on_submit() and form.validate_fields():
         machine = form.get_machine()
         print(machine)
         flask.session['remember_me'] = form.remember_me.data
         flask_login.login_user(machine, remember=form.remember_me.data)
-        return flask.redirect('static/lyrics/index.html')
+        return flask.redirect('/')
     else:
         print(form.validate_fields())
         print(form.validate_on_submit())
@@ -126,11 +153,15 @@ def generate_task(seed_id, resample) -> Dict[str, str]:
 
 
 @celery.task
-def tweet_image(lines):
+def tweet_image(lines, username):
     with app.app_context():
         try:
             image_file = create_image_file(lines, app.config['LYRICS_SVG'])
-            status = '#LL18 #LLScience #deepflow'
+            statuses = (
+                f'Check out this new track by {username}',
+                f'MC Turing ft {username} present'
+            )
+            status = random.choice(statuses) + ' #LL18 #LLScience #deepflow'
             auth = tweepy.OAuthHandler(tw.consumer_key, tw.consumer_secret)
             auth.set_access_token(tw.access_token, tw.access_secret)
             twitter_api = tweepy.API(auth)
@@ -151,7 +182,9 @@ def save_session() -> flask.Response:
         json.dump(data, f)
     app.Generator.reset()
     lines = [line['text'].strip() for line in data['lyric']]
+    name = get_artist_name()
     if lines and random.random() <= 0.2:
         job = tweet_image.apply_async(
-            args=(lines,), queue='twitter-queue')
-    return flask.jsonify({'status': 'OK', 'message': 'session saved'})
+            args=(lines, name), queue='twitter-queue')
+    return flask.jsonify(
+        {'status': 'OK', 'message': 'session saved', 'username': name})

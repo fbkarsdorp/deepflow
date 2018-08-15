@@ -19,6 +19,7 @@ $padding: 0rem;
     --red: #df0000;
     --darkred: #740000;
     --maxwidth: 1200px;
+    --offwhite: #f0e6d3;
 
 }
 
@@ -41,7 +42,7 @@ body {
     line-height: 1em;
     opacity: 1;
     background: var(--controlbg);
-    padding: 2rem;
+    padding: 1rem;
     z-index:99;
     overflow: auto;
     @include transition(0.15s);
@@ -50,30 +51,45 @@ body {
         opacity: 0;
         pointer-events: none;
     }
-    #language {
-        button.taal {
-            font-size: inherit;
-            background:transparent;
-            &.active {
-                color: #ffe;
-            }
-        }
-        button.start {
-            font-size: inherit;
-            background: transparent;
+    button.start {
+        font-size: inherit;
+        background: rgba(#000,0.3);
+        @include rounded(0.25em);
+        padding: 0.15em 1em;
+        font-size: 2rem;
+        &:hover {
+            background: rgba(#000,0.8);
+            color: var(--optionbgs)
         }
     }
 }
 
 #scoreboard {
     font-size: 2rem;
-    width: 70%;
-    max-width: 14em;
-    padding: 2em;
+    width: 100%;
+    max-width: 18em;
+    padding: 1em;
     margin: 0 auto;
     display:block;
     line-height: 1em;
     // background: #000;
+    border:1px solid rgba(#000,0.1);
+    margin-bottom: 2rem;
+    @include rounded(0.25em);
+    @include padding();
+    @media (max-width: 600px) {
+        font-size: 1rem;
+    }
+    label {
+        font-size: 14px;
+        margin-bottom:2em;
+        padding:0;
+        margin-top: -1em;
+        @media (max-width: 600px) {
+            margin-top: 0;
+        }
+        // border-bottom: 1px solid rgba(#000,0.1);
+    }
     #participant {
         margin-bottom: 0.25em;
         display:block;
@@ -82,6 +98,8 @@ body {
         #name {
             float:left;
             color: var(--optionbgs);
+            // font-family: bastarda;
+            text-transform: uppercase;
         }
         #thescore {
             float:right;
@@ -95,20 +113,6 @@ body {
                 }
             }
         }
-    }
-}
-
-#credits {
-    @include abs();
-    position:fixed;
-    z-index: 999;
-    background: var(--controlbg);
-    opacity: 0;
-    pointer-events: none;
-    @include transition(0.3s);
-    &.open {
-        opacity: 1;
-        pointer-events: auto;
     }
 }
 
@@ -153,11 +157,9 @@ body {
 element {
     position: relative;
     z-index:2;
-    // border: 10px double $text;
     display:block;
     width: 100%;
-    // max-width: var(--maxwidth);
-    height: 100vh;
+    min-height: 100vh;
     margin: 0 auto;
     padding: $padding;
     padding: 2rem;
@@ -167,11 +169,13 @@ element {
     @include padding();
     @include bflex(row);
     @include align-items(stretch);
+    @media (max-width: 600px){ 
+        padding: 1rem;
+    }
 }
 
 #score {
     margin-bottom: 2em;
-    // border-bottom: 1px solid rgba(#000,0.1);
     overflow: auto;
     height: 2rem;
     position: relative;
@@ -198,6 +202,15 @@ element {
         font-size: 1rem;
         float:right;
         vertical-align: middle;
+        background: rgba(#000,0.1);
+        @include rounded(0.25em);
+        &:hover {
+            background: rgba(#000,0.5);
+            color: var(--optionbgs);
+        }
+        &.censored {
+            background: var(--red);
+        }
     }
     #dot {
         display:inline-block;
@@ -208,12 +221,18 @@ element {
         @include rounded(100%);
         background: var(--controlfg);
         margin-right: 0.5em;
+        margin-bottom: 0.5em;
         opacity: 0.5;
         @include transition(0.3s);
         @include transform(scale(0.75));
         &.wrong { @include transform(scale(1)); opacity: 1; background: var(--red);}
         &.correct { @include transform(scale(1)); opacity: 1; background: var(--green);}
         &.active { @include transform(scale(0.75)); opacity: 1;}
+        @media (max-width: 600px){
+            $s: 0.5rem;
+            width: $s;
+            height: $s;
+        }
     }
 }
 
@@ -240,6 +259,7 @@ button {
     max-width: var(--maxwidth);
     #choose, #forreal {
         button {
+            color: var(--offwhite);
             background: rgba(#000,0.3);
             @include rounded(0.15em);
             padding: 0.25em 1em;
@@ -252,13 +272,20 @@ button {
 
 
 .phrase {
-    font-size: 2rem;
+    font-size: 1.5rem;
     line-height: 1em;
     margin-bottom: 1em;
     cursor: pointer;
     padding-right: 2em;
+    color: var(--offwhite);
     &.active {
         color: var(--optionbgs);
+    }
+    > div {
+        margin-bottom: .5em;
+    }
+    .artist {
+        margin-top: 2em;
     }
 }
 
@@ -288,7 +315,7 @@ button {
             background: rgba(#000,0.3);
             @include rounded(0.25em);
             @include padding();
-            &:hover {
+            &:hover, &.active {
                 color: var(--optionbgs);
                 background: rgba(#000,0.8);
             }
@@ -312,6 +339,13 @@ button {
                 margin: 0.5em 0;
                 &:hover {
                     color: var(--optionbgs);
+                }
+            }
+            @media (max-width: 600px){
+                width: 100%;
+                button {
+                    width: 100%;
+                    margin-bottom: 0;
                 }
             }
         }

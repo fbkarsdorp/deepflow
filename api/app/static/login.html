@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <title>login</title>
+    <style>
+      body {
+        font-size: 20px;
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #ccc;
+      }
+      form {
+        display:inline-block;
+        width: 500px;
+        margin: 4rem auto;
+      }
+      input {
+        font-size: 1rem;
+        display:inline-block;
+        padding: 0.5em 1em;
+        border:1px solid #999;
+        outline:none;
+      }
+      input[type="submit"]{
+        cursor:pointer;
+      }
+      label {
+        display: block;
+        padding: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/login" name="login" method="POST">
+      <label>login</label>
+      <label for="name" class="sr-only">{{ form.name.label }}</label>
+      {{ form.name(class="form-control", placeholder="name") }}
+      {{ form.csrf_token }}
+      {% if form.name.errors %}
+      {% for error in form.name.errors %}
+          <span class="help-block">{{ error }}</span>
+      {% endfor %} 
+      {% endif %} 
+      <!-- <div class="form-group login-group-checkbox">
+          {{ form.remember_me() }}
+          <label for="remember_me">blijf ingelogd</label>
+      </div> -->
+      <input type="submit" value="submit" />
+    </form>
+  </body>
+</html>

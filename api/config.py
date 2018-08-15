@@ -29,7 +29,7 @@ class AppConfig:
 
     # TURING
     TURING_FILE = os.path.join(basedir, 'data/turing-pairs.jsonl')
-    LYRICS_SVG = os.path.join(basedir, 'data/lyrics.svg')
+    LYRICS_SVG = os.path.join(basedir, 'app/static/images/lyric.svg')
 
     # DATABASE
     if os.environ.get('DEEPFLOW_DB_URL') is None:

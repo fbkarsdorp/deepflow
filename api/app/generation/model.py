@@ -91,7 +91,10 @@ class RNNLanguageModel(nn.Module):
 
         # serialize weights
         with open(fpath + ".pt", 'wb') as f:
+            device = self.device
+            self.to('cpu')
             torch.save(self.state_dict(), f)
+            self.to(device)
 
         # serialize parameters (only first time)
         if not os.path.isfile(fpath + '.params.json'):
@@ -325,7 +328,7 @@ class RNNLanguageModel(nn.Module):
 
         return (hyps, conds), probs, hidden, cache
 
-    def dev(self, corpus, encoder, best_loss, fails, nsamples=20):
+    def dev(self, corpus, encoder, best_loss, fails, nsamples=10):
         self.eval()
 
         hidden = None

@@ -19,7 +19,10 @@ def gather_statistics(model, encoder, d, nsamples=100, length=15, tau=0.85):
     """
     Compute rhyming statistics for a given model by sampling and counting rhyming lines
     """
-    conds = {'length': encoder.conds['length'].w2i[length]}
+    conds = {}
+    if 'length' in encoder.conds:
+        conds['length'] = encoder.conds['length'].w2i[length]
+
     for rhyme in encoder.conds['rhyme'].w2i.keys():
         conds['rhyme'] = encoder.conds['rhyme'].w2i[rhyme]
         (samples, _), _, _, _ = model.sample(encoder, tau=tau, conds=conds, batch=nsamples)
@@ -51,7 +54,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--model')
-    parser.add_argument('--dpath', default='./data/ohhla.vocab.phon.json')
+    parser.add_argument('--dpath', default='../data/ohhla.vocab.phon.json')
     parser.add_argument('--device', default='cpu')
     parser.add_argument('--debug', action='store_true', help="Print sampled examples")
     args = parser.parse_args()

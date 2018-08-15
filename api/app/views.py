@@ -33,9 +33,9 @@ def before_request():
 # Landing 
 ###############################################################################
 
-@app.route('/landing', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def landing():
-    return flask.render_template('landing/index.html')
+    return flask.send_from_directory('static/landing', 'index.html')
 
 ###############################################################################
 # MC Turing views
@@ -44,7 +44,7 @@ def landing():
 
 @app.route('/turing', methods=['GET', 'POST'])
 def turing():
-    return flask.render_template('turing/index.html')
+    return flask.send_from_directory('static/turing', 'index.html')
 
 
 @app.route('/scoreboard', methods=['GET'])
@@ -96,7 +96,7 @@ def get_pair() -> flask.Response:
 
 @app.route('/lyrics', methods=['GET', 'POST'])
 def lyrics():
-    return flask.render_template('lyrics/index.html')
+    return flask.send_from_directory('static/lyrics', 'index.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])

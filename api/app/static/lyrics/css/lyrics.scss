@@ -36,7 +36,7 @@ body {
     position:absolute;
     width: 100%;
     font-size: 2rem; 
-    text-align: left;
+    text-align: center;
     top:0;
     // font-family: 'gofflight';
     opacity: 0;
@@ -117,8 +117,12 @@ element {
             margin: 2rem;
             @include rounded(0.25em);
             padding: 0.25em 1em;
-            background: #00f;
+            background: rgba(#000,0.3);
             color: #fff;
+            &:hover, &.active {
+                background: #00f;
+
+            }
         }
         > div {
             // background: #9e9d98;
@@ -136,11 +140,12 @@ element {
             left:1rem;
             bottom:1rem;
             width: 100%;
+            margin-top: 2px;
             .option {
                 width: 100%;
                 margin-bottom:2px;
-                color: var(--optionfg);
                 background: var(--optionbg);
+                color: #fff;
                 opacity: 1;
                 padding: 1em 1.5em;
                 // padding-left: 2.5em;

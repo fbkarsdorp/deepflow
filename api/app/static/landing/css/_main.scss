@@ -47,10 +47,20 @@ html, body {
   }
   a {
     margin-right: 1em;
-  }
-  button {
-    float:right;
-    margin-left: 0.5em;
+    &.right {
+      float:right;
+      margin-right: 0;
+      margin-left: 1em;
+    }
+    @media (max-width: 600px){
+      &:nth-child(2) {
+        float:right;
+        margin-right: 0;
+      }
+      &.right {
+        display:none;
+      }
+    }
   }
 }
 #img {
@@ -61,15 +71,17 @@ html, body {
   background-image: url('images/gold-compressed.jpg');
   background-size:cover;
   background-position:center;
+  background: #59595a;
   opacity: 1;
-  opacity: 0;
+  // opacity: 0;
+  // display: none;
   // @include mix(8);
-  @include animation(zooom, 1, 10s, ease-out){
-    0% { opacity: 0; @include transform(scale(1))}
-    100% { opacity: 1; @include transform(scale(1.1))}
-  }
+  // @include animation(zooom, 1, 10s, ease-out){
+  //   0% { opacity: 0; @include transform(scale(1))}
+  //   100% { opacity: 1; @include transform(scale(1.1))}
+  // }
   &:before {
-    content:"";
+    // content:"";
     position:absolute;
     top:0;
     left:0;
@@ -165,7 +177,7 @@ html, body {
   display: inline-block;
   text-align: left;
   z-index: 3;
-  padding: 8rem 2em;
+  padding: 8rem 5em;
   line-height: 1.25em;
   letter-spacing: 0.05em;
   // font-weight: 100;
@@ -174,9 +186,9 @@ html, body {
   color: #000;
   @include padding;
   @include rounded(0.25em);
-  @media (max-width: 800px) {
+  @media (max-width: 1000px) {
     width: 100%;
-    padding-top: 2rem;
+    padding: 2rem;
   }
   #wrap {
     display: inline-block;
@@ -192,9 +204,14 @@ html, body {
       font-size: 1.5rem;
       line-height: 1.25em;
       text-align: center;
+      color: #f0f1de;
       a {
         display: block;
         font-size: 1rem;
+        color: #111;
+        &:hover {
+          color: #f0f1de;
+        }
       }
     }
     .name {

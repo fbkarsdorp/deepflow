@@ -35,6 +35,39 @@ body {
     background: var(--controlbg);
 }
 
+#intro {
+    @include abs();
+    background: var(--controlbg);
+    z-index:100;
+    overflow: auto;
+    #wrap {
+        max-width: 32rem;
+        font-size: 1.5rem;
+        margin: 0 auto;
+        padding: 4rem;
+        line-height: 1.25em;
+        p {
+            text-indent: 0;
+            margin-bottom: 1em;
+        }
+        button {
+            background: rgba(#000,0.3);
+            @include rounded(0.25em);
+            padding: 0.15em 1em;
+            margin: 2em auto;
+            display: block;
+            &:hover {
+                background: rgba(#000,0.8);
+                color: var(--offwhite);
+            }
+        }
+        @media (max-width: 600px) {
+            font-size: 1rem;
+            padding: 1rem;
+        }
+    }
+}
+
 #start {
     @include abs();
     text-align: center;
@@ -43,6 +76,7 @@ body {
     opacity: 1;
     background: var(--controlbg);
     padding: 1rem;
+    padding-bottom:3rem;
     z-index:99;
     overflow: auto;
     @include transition(0.15s);
@@ -209,7 +243,8 @@ element {
             color: var(--optionbgs);
         }
         &.censored {
-            background: var(--red);
+            background: #00f;
+            color: #fff;
         }
     }
     #dot {
@@ -232,6 +267,7 @@ element {
             $s: 0.5rem;
             width: $s;
             height: $s;
+            margin-top:0.5rem;
         }
     }
 }
@@ -278,6 +314,9 @@ button {
     cursor: pointer;
     padding-right: 2em;
     color: var(--offwhite);
+    @media (max-width: 600px) {
+        font-size: 1rem;
+    }
     &.active {
         color: var(--optionbgs);
     }
@@ -325,7 +364,7 @@ button {
 
 #forreal {
     #content {
-        min-height: 14rem;
+        min-height: 10rem;
     }
     #options {
         // border-top:1px solid rgba(#000,0.1);
@@ -342,10 +381,14 @@ button {
                 }
             }
             @media (max-width: 600px){
-                width: 100%;
+                width: 50%;
                 button {
-                    width: 100%;
+                    width: calc(100% - 1rem);
+                    font-size: 1rem;
+                    padding: 1rem;
+                    // width: 100%;
                     margin-bottom: 0;
+                    @include padding();
                 }
             }
         }

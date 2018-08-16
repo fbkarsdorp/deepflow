@@ -61,6 +61,7 @@ var app = new Vue({
     interval: null,
     credits: false,
     censor: false,
+    intro: true,
     storage: {
       log: [],
       questions: [],
@@ -236,7 +237,7 @@ var app = new Vue({
       }
     },
     checkFinished () {
-      if (this.storage.questions.length < 10) return false
+      if (this.storage.questions.length <= 10) return false
       if (this.storage.questions.filter(x => x.correct).length === this.storage.questions.length && this.lastQuestion.answered) return false
       else {
         this.finished = true
@@ -287,15 +288,25 @@ var app = new Vue({
         else self.check()
       }
       /* magic keys */
-      if (ev.keyCode === 219) { // [
+      if (ev.keyCode === 74 && ev.shiftKey) { // [
+        self.intro = false
         self.select(1)
         if (self.storage.questions.length === 0) self.generate()
         else self.check()
       }
-      if (ev.keyCode === 221) { // ]
+      if (ev.keyCode === 75 && ev.shiftKey) { // ]
+        self.intro = false
         self.select(2)
         if (self.storage.questions.length === 0) self.generate()
         else self.check()
+      }
+      if (ev.keyCode === 76 && ev.shiftKey) { // L
+        self.intro = false
+        self.censor = false
+      }
+      if (ev.keyCode === 80 && ev.shiftKey) { // P
+        self.intro = false
+        self.censor = true
       }
     })
     if(this.checkFinished()) this.clear()

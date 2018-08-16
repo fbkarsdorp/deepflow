@@ -35,6 +35,7 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 def landing():
+    # return flask.render_template('landing/index.html')
     return flask.send_from_directory('static/landing', 'index.html')
 
 ###############################################################################
@@ -102,14 +103,14 @@ def lyrics():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if flask.g.user is not None and flask.g.user.is_authenticated:
-        return flask.redirect('/')
+        return flask.redirect('/lyrics')
     form = LoginForm()
     if form.validate_on_submit() and form.validate_fields():
         machine = form.get_machine()
         print(machine)
         flask.session['remember_me'] = form.remember_me.data
         flask_login.login_user(machine, remember=form.remember_me.data)
-        return flask.redirect('/')
+        return flask.redirect('/lyrics')
     else:
         print(form.validate_fields())
         print(form.validate_on_submit())

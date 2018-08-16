@@ -2,8 +2,8 @@
   <head>
     <meta charset="UTF-8">
     <title>Deepflow Lyrics</title>
-    <script src="/static/lyrics/js/axios.min.js"></script>
-    <script src="/static/lyrics/js/vue.min.js"></script>
+    <script src="/static/dependencies/axios.min.js"></script>
+    <script src="/static/dependencies/vue.min.js"></script>
     <link href="/static/lyrics/css/_main.css" rel="stylesheet"/>
     <link rel="icon" type="image/png" href="/static/images/mc_turing.png" />
   </head>
@@ -33,7 +33,7 @@
         
         <div id="options" v-if="!loading">
           <div class='maximum' v-if="storage.lyric.length === 10">
-            You've reached the maximum number of lines, please press submit and check twitter @MC_Turing #LL18 #LLScience for your lyrics!
+            That's it! Press enter to submit and check twitter @MC_Turing #LL18 #LLScience for your lyrics!
           </div>
           <div class="option" v-for="item,k in storage.generated[storage.generated.length - 1]" :key="k" :class="{'selected':selected === k}" v-if="storage.lyric.length < 10">
             <div class='text'>

@@ -42,8 +42,10 @@ def sample_file(fpath, rate=0.01):
         except StopIteration:
             f.close()
             f = open(fpath)
-
         except UnicodeDecodeError:
+            # corrupted file
+            continue
+        except json.decoder.JSONDecodeError:
             # corrupted file
             continue
 

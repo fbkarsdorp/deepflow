@@ -2,6 +2,7 @@ import argparse
 import collections
 import json
 import random
+import re
 import sys
 import uuid
 
@@ -12,6 +13,16 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score
+
+
+ARTIST_PREFIX_RE = re.compile(r'[Aa]rtis?t?:?\s+')
+ALBUM_PREFIX_RE = re.compile(r'[Aa]lbum?:?\s+')
+
+def clean_field(field, regex):
+    match = regex.match(field)
+    if match is None:
+        return field.strip()
+    return field[match.end():].strip()
 
 
 parser = argparse.ArgumentParser()
@@ -74,6 +85,8 @@ for samples in binned_samples.values():
             'false_id': generated['id'],
             'true': [detokenize(join_syllables(line['original'].split()))
                      for line in original['text']],
+            'artist': clean_field(original['artist'], ARTIST_PREFIX_RE),
+            'album': clean_field(original['album'], ALBUM_PREFIX_RE),
             'false': [detokenize(join_syllables(line['original'].split()))
                       for line in generated['text']]
         }

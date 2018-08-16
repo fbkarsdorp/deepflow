@@ -236,3 +236,10 @@ html, body {
     font-weight: 500;
   }
 }
+
+#media {
+  @media (max-width: 1000px) {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}

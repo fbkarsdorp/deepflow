@@ -189,7 +189,7 @@ var app = new Vue({
           self.add(self.last[self.selected])
         }
       } 
-      if (ev.keyCode === 27) self.submit()
+      if (ev.keyCode === 45) self.submit()
       if (ev.keyCode === 109) {
         self.censored = !self.censored
       }

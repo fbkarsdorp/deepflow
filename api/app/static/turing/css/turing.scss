@@ -316,6 +316,10 @@ button {
     cursor: pointer;
     padding-right: 2em;
     color: var(--offwhite);
+    label {
+        font-size: 1rem;
+        margin-bottom:0;
+    }
     @media (max-width: 600px) {
         font-size: 1rem;
     }

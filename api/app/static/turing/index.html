@@ -76,13 +76,25 @@
             <div id="frame">
               <div class="phrase p1" :class="{'active':lastQuestion.selected === 1}" @click="select(1), check()">
                 <censored :censored="censor" :text="line" v-for="line in lastQuestion.line1"></censored>
-                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===1">Artist: {{lastQuestion.artist}}</div>
-                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===1">Album: {{lastQuestion.album}}</div>
+                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===1 && lastQuestion.artist">
+                  <label>Artist</label>
+                  {{lastQuestion.artist}}
+                </div>
+                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===1 && lastQuestion.album">
+                  <label>Album</label>
+                  {{lastQuestion.album}}
+                </div>
               </div>
               <div class="phrase p1" :class="{'active':lastQuestion.selected === 2}" @click="select(2), check()">
                 <censored :censored="censor" :text="line" v-for="line in lastQuestion.line2"></censored>
-                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===2">Artist: {{lastQuestion.artist}}</div>
-                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===2">Album: {{lastQuestion.album}}</div>
+                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===2 && lastQuestion.artist">
+                  <label>Artist</label>
+                  {{lastQuestion.artist}}
+                </div>
+                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===2 && lastQuestion.album">
+                  <label>Album</label>
+                  {{lastQuestion.album}}
+                </div>
               </div>
             </div>
             <!-- <button @click="check()">check</button> -->
@@ -92,8 +104,14 @@
               <div id="content">
                 <div class="phrase p1" >
                   <censored v-for="line in lastQuestion.line" :censored="censor" :text="line"></censored>
-                  <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer === 1">Artist: {{lastQuestion.artist}}</div>
-                  <div class="album" v-if="lastQuestion.answered && lastQuestion.answer === 1">Album: {{lastQuestion.album}}</div>
+                  <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer === 1 && lastQuestion.artist">
+                    <label>Artist</label>
+                    {{lastQuestion.artist}}
+                  </div>
+                  <div class="album" v-if="lastQuestion.answered && lastQuestion.answer === 1 && lastQuestion.album">
+                    <label>Album</label>
+                    {{lastQuestion.album}}
+                  </div>
                 </div>
               </div>
               <div id="options">

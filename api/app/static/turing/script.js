@@ -118,16 +118,18 @@ var app = new Vue({
             // setup new question
             let newq = {}
             // random type
+            newq.artist = res.data.artist
+            newq.album = res.data.album
             if (Math.random() > 0.5) {
               newq.type = 'choose'
-              let shuffle = Math.floor(Math.random() * 2) + 1
+              let shuffle = Math.round(Math.random()) + 1
               newq.line1 = shuffle === 1 ? res.data.real : res.data.fake
               newq.line2 = shuffle === 2 ? res.data.real : res.data.fake
               newq.answer = shuffle
               newq.raw = res.data
             } else {
               newq.type = 'forreal'
-              newq.answer = Math.floor(Math.random() * 2) + 1 // 1 = real or 2 = fake
+              newq.answer = Math.round(Math.random()) + 1 // 1 = real or 2 = fake
               newq.line = newq.answer === 1 ? res.data.real : res.data.fake
               newq.raw = res.data
             }
@@ -242,7 +244,7 @@ var app = new Vue({
     },
     checkFinished () {
       if (this.storage.questions.length <= 10) return false
-      if (this.storage.questions.filter(x => x.correct).length === this.storage.questions.length && this.lastQuestion.answered) return false
+      if (this.lastQuestion.correct) return false
       else {
         this.finished = true
         return true

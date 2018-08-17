@@ -151,8 +151,6 @@ def get_model_generation(mconfig, conds, tries, defaults,
     # transform conditions to actual input
     conds = {c: vocab.w2i[conds[c]] for c, vocab in encoder.conds.items()}
 
-    print(mconfig["options"].get("tau", defaults["tau"]))
-
     (hyps, _), scores, _, _ = model.sample(
         encoder,
         batch=tries,

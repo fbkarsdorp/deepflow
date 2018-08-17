@@ -9,6 +9,7 @@ $padding: 0rem;
     --gr1: #333;
     --gr2: #111;
     --controlbg: #59595a;
+    --controlbg: #333;
     --controlfg: #000;
     --optionbg: #202020;
     --optionfg: #a0a0a0;
@@ -40,6 +41,7 @@ body {
     background: var(--controlbg);
     z-index:100;
     overflow: auto;
+    color: $text;
     #wrap {
         max-width: 32rem;
         font-size: 1.5rem;

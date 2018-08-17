@@ -18,7 +18,8 @@
         </div>
       </div>
       <div id="control">
-        <button class='censor' @click="switchcensor()" :class="{'active':censored}">{{censored ? 'censored' : 'censor'}}</button>
+        <button class='censor' @click="switchcensor()" :class="{'active':censored}" @keydown.enter="$event.preventDefault()">
+          {{censored ? 'censored' : 'censor'}}</button>
         <!-- <div id="info">
           <b>spacebar</b>: generate new options<br>
           <b>arrows</b>: select option<br>

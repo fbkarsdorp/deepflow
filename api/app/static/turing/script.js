@@ -9,7 +9,12 @@ Vue.component('censored', {
     newtext: function (val) {
       var words = this.text.split(' ');
       words.forEach(function(v,k){
-        if (censored.indexOf(v.toLowerCase()) > -1) words[k] = '**********************************'.substr(0, v.length)
+        if (censored) {
+          censored.forEach(function(vv,kk){
+            var regex = new RegExp('([\'":;\\.,\\-+`?!$%&]{2})?' + vv + '([\'":;\\.,\\-+`?!$%&]{2})?', 'i')
+            if (v.match(regex)) words[k] = '**********************************'.substr(0, v.length)
+          })
+        }
       })
       return words.join(' ')
     }
@@ -35,7 +40,7 @@ Vue.component('scoreboard', {
           self.data = res.data.ranking
         }
       }).catch(function(err){
-        console.log('error receiving scoreboard', err)
+        // console.log('error receiving scoreboard', err)
       })
     }
   },
@@ -109,7 +114,6 @@ var app = new Vue({
             postdata.seen = self.storage.questions.map( function (x) { return x.raw.id })
           }
           axios.post(self.generateUrl, postdata).then(function(res) {
-            console.log(res.data)
             self.loading = false
             // setup new question
             let newq = {}
@@ -197,7 +201,7 @@ var app = new Vue({
       upload.log = {log: self.storage.log, questions: self.storage.questions}
       upload.score = self.storage.questions.filter(function(x) { return x.correct }).length /// calculate
       self.score = upload.score
-      console.log('uploading:',upload)
+      // console.log('uploading:',upload)
       self.uploading = true
       axios.post(self.submitUrl, upload).then(function(res) {
         self.name = res.data.name
@@ -205,7 +209,7 @@ var app = new Vue({
           self.clear()
           self.uploading = false
         }, 2000);
-        console.log('uploaded', {name: name}, res.data)
+        // console.log('uploaded', {name: name}, res.data)
       }).catch(function (err) {
         self.log('error submitting', err)
         self.uploading = false
@@ -233,7 +237,7 @@ var app = new Vue({
           }, 3000)
         }
       } else {
-        console.log('no anwer given yet')
+        // console.log('no anwer given yet')
       }
     },
     checkFinished () {
@@ -253,7 +257,7 @@ var app = new Vue({
       obj.type = type
       obj.message = message || ''
       obj.timestamp = new Date().getTime();
-      console.log(obj.timestamp, type, obj.message)
+      // console.log(obj.timestamp, type, obj.message)
       this.storage.log.push(obj)
     },
     dotclass (n) {
@@ -262,13 +266,6 @@ var app = new Vue({
       if (this.storage.questions[n].correct) return 'correct'
       if (this.storage.questions[n].correct === false) return 'wrong'
       if (this.storage.questions[n] === this.lastQuestion) return 'active'
-    },
-    getScoreboard () {
-      axios.get('/scoreboard').then(function (res) {
-        console.log('scoreboard working', res.data)
-      }).catch(function(err) {
-        console.log('error getting scoreboard', err)
-      })
     },
     restart () {
       this.clear()
@@ -288,17 +285,23 @@ var app = new Vue({
         else self.check()
       }
       /* magic keys */
-      if (ev.keyCode === 74 && ev.shiftKey) { // [
-        self.intro = false
-        self.select(1)
-        if (self.storage.questions.length === 0) self.generate()
-        else self.check()
+      if (ev.keyCode === 74 && ev.shiftKey) { // J
+        if (self.intro) {
+          self.intro = false
+        } else {
+          self.select(1)
+          if (self.storage.questions.length === 0) self.generate()
+          else self.check()
+        }
       }
-      if (ev.keyCode === 75 && ev.shiftKey) { // ]
-        self.intro = false
-        self.select(2)
-        if (self.storage.questions.length === 0) self.generate()
-        else self.check()
+      if (ev.keyCode === 75 && ev.shiftKey) { // K
+        if (self.intro) {
+          self.intro = false
+        } else {
+          self.select(2)
+          if (self.storage.questions.length === 0) self.generate()
+          else self.check()
+        }
       }
       if (ev.keyCode === 76 && ev.shiftKey) { // L
         self.intro = false
@@ -309,6 +312,7 @@ var app = new Vue({
         self.censor = true
       }
     })
-    if(this.checkFinished()) this.clear()
+    // if(this.checkFinished()) this.clear()
+    this.clear()
   }
 });

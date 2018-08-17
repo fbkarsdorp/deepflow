@@ -62,7 +62,7 @@ button {
   outline-style:none;
   cursor: pointer;
   background: $buttonbg;
-  color: $buttonfg;
+  color: $text;
 }
 
 label {
@@ -71,6 +71,7 @@ label {
   padding: 0.5em 0em;
   display:block;
   margin-bottom: 2rem;
+  color: $text;
   // letter-spacing: 0.1em;
 }
 

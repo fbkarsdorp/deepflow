@@ -37,10 +37,11 @@ class ExampleSampler:
             level += 1
             iteration = 0
         # sample a new pair for the current level
-        id, true, false = None, None, None
+        id, true, false, artist, album = None, None, None, None, None
         while id is None:
             candidate = random.choice(self.pairs[level])
             if candidate['id'] not in seen:
                 id, true, false = candidate['id'], candidate['true'], candidate['false']
+                artist, album = candidate['artist'], candidate['album']
                 seen.add(id)
-        return id, true, false, iteration + 1, level
+        return id, true, false, artist, album, iteration + 1, level

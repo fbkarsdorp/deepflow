@@ -80,13 +80,14 @@ def save_turn() -> flask.Response:
 def get_pair() -> flask.Response:
     data = flask.request.json
     if data is None:
-        iteration, level, seen = 0, 0, []
+        iteration, level, seen, artist, album = 0, 0, [], "", ""
     else:
         iteration, level, seen = data['iteration'], data['level'], data['seen']
-    id, true, false, iteration, level = app.ExampleSampler.next(
+    id, true, false, artist, album, iteration, level = app.ExampleSampler.next(
         iteration, level, seen)
     return flask.jsonify(
-        status='OK', id=id, real=true, fake=false, iteration=iteration, level=level)
+        status='OK', id=id, real=true, fake=false, iteration=iteration, level=level,
+        artist=artist, album=album)
 
 
 ###############################################################################

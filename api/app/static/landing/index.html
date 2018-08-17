@@ -21,6 +21,18 @@
     <meta property="og:url" content="https://www.deep-flow.nl" />
     <meta property="og:description" content="Break the rap code" />
     <meta property="og:image" content="https://www.deep-flow.nl/static/images/screen.jpg" />
+
+    <meta name="google-site-verification" content="hwhKpSwYEyE8dMZUBczNu5A4NWPdVlgNREDVYZHBGMY" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124073922-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-124073922-1');
+    </script>
+
   </head>
   <body>
     <app>
@@ -28,8 +40,8 @@
         <div id="menu">
           <a target="_blank" href="https://twitter.com/mc_turing">twitter</a>
           <a target="_blank" href="https://www.instagram.com/mc_turing/">instagram</a>
-          <button>#deepflow</button>
-          <button>#LL18</button>
+          <a target="_blank" class="right" href="https://twitter.com/hashtag/deepflow">#deepflow</a>
+          <a target="_blank" class="right" href="https://twitter.com/hashtag/LL18">#LL18</a>
         </div>
         <div id="img">
           <div id="text">
@@ -41,18 +53,54 @@
       <div id="subframe">
         <p>
           Now this is a story all about how<br>
-          Creating rap got flipped-turned upside down<Br>
-          When a couple of guys who were up to no good<Br>
+          Creating rap got flipped-turned upside down<br>
+          When a couple of guys who were up to no good<br>
           Created a Neural Network spitting rap at the university of Antwerp and the Meertens Institute<br>
+          Come see my kingdom at some science stands<br>
+          Where I sit on my throne as the Prince of Lowlands<br>
         </p>
         <div id="media">
           <div id="wrap">
-            {% include 'landing/media.html' %}
+            <blockquote v-for="item in media">
+              <span v-html="item.title"></span>
+              <a :href="item.link" target="_blank" v-html="item.linktext"></a>
+            </blockquote>
           </div>
         </div>
         <div id="credits">
           <div id="wrap">
-              {% include 'landing/credits.html' %}
+            <label>Deepflow is developed by</label>
+             <div class='name'>
+               Folgert Karsdorp
+               <div class='links'>
+                 <a href="https://www.meertens.knaw.nl/" target="_blank">Meertens Instituut, Amsterdam</a>
+               </div>
+             </div>
+             <div class='name'>
+               Enrique Manjavacas
+               <div class='links'>
+                 <a href="https://www.uantwerpen.be/" target="_blank">Universiteit Antwerpen</a> 
+                 <a href="https://www.uantwerpen.be/en/rg/digitalhumanities/" target="_blank">ACDC</a>
+                 <a href="https://www.clips.uantwerpen.be/" target="_blank">CLiPS</a>
+               </div>
+             </div>
+             <div class='name'>
+               Mike Kestemont 
+               <div class='links'>
+                 <a href="https://www.uantwerpen.be/" target="_blank">Universiteit Antwerpen</a> 
+                 <a href="https://www.uantwerpen.be/en/rg/digitalhumanities/" target="_blank">ACDC</a>
+                 <a href="https://www.clips.uantwerpen.be/" target="_blank">CLiPS</a>
+               </div>
+             </div>
+             <label>Design and frontend</label>
+             <div class="name">
+               Basten Stokhuyzen
+               <div class='links'>
+                 <a href="https://bstn.nl" target="_blank">BSTN</a>
+               </div>
+             </div>
+             <label>Get in touch</label>
+             <a href="mailto:deepflow.info@gmail.com">deepflow.info@gmail.com</a>
           </div>
         </div>
       </div>

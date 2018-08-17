@@ -35,7 +35,8 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 def landing():
-    return flask.render_template('landing/index.html')
+    # return flask.render_template('landing/index.html')
+    return flask.send_from_directory('static/landing', 'index.html')
 
 ###############################################################################
 # MC Turing views

@@ -31,8 +31,6 @@ def load_models(config):
         if config['MODELS']:
             if modelname in config['MODELS']:
                 mconfig = config['MODELS'][modelname]
-            else:
-                continue
 
         # load model
         print("Loading model: {}".format(modelname))
@@ -60,6 +58,9 @@ def load_models(config):
             "rweights": rweights,
             "cache": cache,
             "hidden": None}
+
+        print("Model options: ")
+        print(json.dumps(models[modelname]['options']))
 
     return models
 
@@ -148,7 +149,7 @@ def get_model_generation(mconfig, conds, tries, defaults,
                 hidden.append(h.repeat(1, tries, 1))
 
     # transform conditions to actual input
-    conds = {key: encoder.conds[key].w2i[val] for key, val in conds.items()}
+    conds = {c: vocab.w2i[conds[c]] for c, vocab in encoder.conds.items()}
 
     (hyps, _), scores, _, _ = model.sample(
         encoder,

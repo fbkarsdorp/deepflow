@@ -9,7 +9,13 @@ Vue.component('censored', {
     newtext: function (val) {
       var words = this.text.split(' ');
       words.forEach(function(v,k){
-        if (censored.indexOf(v.toLowerCase()) > -1) words[k] = '**********************************'.substr(0, v.length)
+        // if (censored.indexOf(v.toLowerCase()) > -1) words[k] = '**********************************'.substr(0, v.length)
+        if (censored) {
+          censored.forEach(function(vv,kk){
+            var regex = new RegExp('([\'":;\\.,\\-+`?!$%&]{2})?' + vv + '([\'":;\\.,\\-+`?!$%&]{2})?', 'i')
+            if (v.match(regex)) words[k] = '**********************************'.substr(0, v.length)
+          })
+        }
       })
       return words.join(' ')
     }
@@ -82,7 +88,7 @@ var app = new Vue({
             // retry?
           });
         } else {
-          console.warn(`don't try to generate again while loading...`)
+          // console.warn(`don't try to generate again while loading...`)
         }
       }
     },
@@ -105,13 +111,13 @@ var app = new Vue({
         }
       }).catch(function (err) {
         self.log('error', 'http request failed /status/' + self.id)
-        console.warn('could not fetch status of id:' + self.id, err)
-        console.log('retry in 1 second')
+        // console.warn('could not fetch status of id:' + self.id, err)
+        // console.log('retry in 1 second')
         setTimeout(this.polling, 1000)
       });
     },
     add (item) {
-      console.log(item)
+      // console.log(item)
       let storage = this.storage
       this.log('line added', {jobid: this.id, line: this.selected})
       item.timestamp = new Date().getTime()
@@ -158,7 +164,7 @@ var app = new Vue({
       obj.type = type
       obj.message = message || ''
       obj.timestamp = new Date().getTime();
-      console.log(obj.timestamp, obj.type, obj.message)
+      // console.log(obj.timestamp, obj.type, obj.message)
       this.storage.log.push(obj)
     }
   },
@@ -184,7 +190,7 @@ var app = new Vue({
         }
       } 
       if (ev.keyCode === 27) self.submit()
-      if (ev.keyCode === 8) {
+      if (ev.keyCode === 109) {
         self.censored = !self.censored
       }
     })

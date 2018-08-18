@@ -202,7 +202,6 @@ class Generator:
             template = [{c: line[c] for c in encoder.conds} for line in template]
         else:
             conds = sample_conditions(encoder)
-            conds = {cond: conds[val] for cond in encoder.conds}
 
         cache = None
         if cache_size:

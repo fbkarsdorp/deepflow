@@ -26,6 +26,8 @@ class AppConfig:
     TEMPLATE_MIN_LEN = 3   # minimum #lines for a template
     # prop of songs created with template (only if template data is available)
     TEMPLATE_RATIO = 1.0
+    # whether to use the template system (if not, just use simple rhyme heuristic)
+    USE_TEMPLATE = False
 
     # TURING
     TURING_FILE = os.path.join(basedir, 'data/turing-pairs.jsonl')

@@ -239,7 +239,11 @@ class Generator:
         Takes care of sampling conditions and planning the song over consecutive
         generations
         """
-        encoder = encoder or list(self.models.values())[0]["encoder"]
+        encoder, maxconds = None, 0  # pick encoder with most conditions
+        for modelname, mconfig in self.models.items():
+            if len(mconfig['encoder'].conds) > maxconds:
+                encoder, maxconds = mconfig['encoder'], len(mconfig['encoder'].conds)
+
         conds = self.state["conds"]
 
         if self.state['template']:
@@ -369,7 +373,7 @@ class Generator:
         self.state["hyps"] = {}
         self.state["template"] = {}
 
-        if self.tsampler is not None:
+        if self.tsampler is not None and self.config['USE_TEMPLATE']:
             if random.random() <= self.config['TEMPLATE_RATIO']:
                 tdata, tmetadata = self.tsampler.sample(
                     nlines=self.config['TEMPLATE_MIN_LEN'])

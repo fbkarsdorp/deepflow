@@ -124,3 +124,7 @@ raptext.txt
 # data
 data/
 *LanguageModel*
+
+# css crap
+_*.css
+_*.css.map

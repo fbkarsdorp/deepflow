@@ -9,6 +9,7 @@ $padding: 0rem;
     --gr1: #333;
     --gr2: #111;
     --controlbg: #59595a;
+    --controlbg: #333;
     --controlfg: #000;
     --optionbg: #202020;
     --optionfg: #a0a0a0;
@@ -40,6 +41,7 @@ body {
     background: var(--controlbg);
     z-index:100;
     overflow: auto;
+    color: $text;
     #wrap {
         max-width: 32rem;
         font-size: 1.5rem;
@@ -62,7 +64,8 @@ body {
             }
         }
         @media (max-width: 600px) {
-            padding: 2rem;
+            font-size: 1rem;
+            padding: 1rem;
         }
     }
 }
@@ -313,6 +316,13 @@ button {
     cursor: pointer;
     padding-right: 2em;
     color: var(--offwhite);
+    label {
+        font-size: 1rem;
+        margin-bottom:0;
+    }
+    @media (max-width: 600px) {
+        font-size: 1rem;
+    }
     &.active {
         color: var(--optionbgs);
     }
@@ -360,7 +370,7 @@ button {
 
 #forreal {
     #content {
-        min-height: 14rem;
+        min-height: 10rem;
     }
     #options {
         // border-top:1px solid rgba(#000,0.1);
@@ -377,10 +387,14 @@ button {
                 }
             }
             @media (max-width: 600px){
-                width: 100%;
+                width: 50%;
                 button {
-                    width: 100%;
+                    width: calc(100% - 1rem);
+                    font-size: 1rem;
+                    padding: 1rem;
+                    // width: 100%;
                     margin-bottom: 0;
+                    @include padding();
                 }
             }
         }

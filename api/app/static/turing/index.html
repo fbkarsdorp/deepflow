@@ -17,6 +17,17 @@
     <meta name="og:title" content="Deepflow" />
     <meta name="og:description" content="Break the rap code" />
     <meta name="twitter:image" content="https://www.deep-flow.nl/static/images/screen.jpg" />
+
+    <meta name="google-site-verification" content="hwhKpSwYEyE8dMZUBczNu5A4NWPdVlgNREDVYZHBGMY" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124073922-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-124073922-1');
+    </script>
   </head>
   <body>
     <element>
@@ -42,7 +53,7 @@
 
           <p>Time’s limited tho, so no dilly dallyin’ aight.</p>
 
-          <button @click="intro = false">OK</button>
+          <button @click="intro = false">ok</button>
         </div>
       </div>
       
@@ -65,13 +76,25 @@
             <div id="frame">
               <div class="phrase p1" :class="{'active':lastQuestion.selected === 1}" @click="select(1), check()">
                 <censored :censored="censor" :text="line" v-for="line in lastQuestion.line1"></censored>
-                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===1">Artist: {{lastQuestion.artist}}</div>
-                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===1">Album: {{lastQuestion.album}}</div>
+                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===1 && lastQuestion.artist">
+                  <label>Artist</label>
+                  {{lastQuestion.artist}}
+                </div>
+                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===1 && lastQuestion.album">
+                  <label>Album</label>
+                  {{lastQuestion.album}}
+                </div>
               </div>
               <div class="phrase p1" :class="{'active':lastQuestion.selected === 2}" @click="select(2), check()">
                 <censored :censored="censor" :text="line" v-for="line in lastQuestion.line2"></censored>
-                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===2">Artist: {{lastQuestion.artist}}</div>
-                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===2">Album: {{lastQuestion.album}}</div>
+                <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer===2 && lastQuestion.artist">
+                  <label>Artist</label>
+                  {{lastQuestion.artist}}
+                </div>
+                <div class="album" v-if="lastQuestion.answered && lastQuestion.answer===2 && lastQuestion.album">
+                  <label>Album</label>
+                  {{lastQuestion.album}}
+                </div>
               </div>
             </div>
             <!-- <button @click="check()">check</button> -->
@@ -81,8 +104,14 @@
               <div id="content">
                 <div class="phrase p1" >
                   <censored v-for="line in lastQuestion.line" :censored="censor" :text="line"></censored>
-                  <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer === 1">Artist: {{lastQuestion.artist}}</div>
-                  <div class="album" v-if="lastQuestion.answered && lastQuestion.answer === 1">Album: {{lastQuestion.album}}</div>
+                  <div class="artist" v-if="lastQuestion.answered && lastQuestion.answer === 1 && lastQuestion.artist">
+                    <label>Artist</label>
+                    {{lastQuestion.artist}}
+                  </div>
+                  <div class="album" v-if="lastQuestion.answered && lastQuestion.answer === 1 && lastQuestion.album">
+                    <label>Album</label>
+                    {{lastQuestion.album}}
+                  </div>
                 </div>
               </div>
               <div id="options">

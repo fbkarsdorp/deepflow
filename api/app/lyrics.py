@@ -31,8 +31,6 @@ def load_models(config):
         if config['MODELS']:
             if modelname in config['MODELS']:
                 mconfig = config['MODELS'][modelname]
-            else:
-                continue
 
         # load model
         print("Loading model: {}".format(modelname))
@@ -60,6 +58,9 @@ def load_models(config):
             "rweights": rweights,
             "cache": cache,
             "hidden": None}
+
+        print("Model options: ")
+        print(json.dumps(models[modelname]['options']))
 
     return models
 
@@ -148,7 +149,7 @@ def get_model_generation(mconfig, conds, tries, defaults,
                 hidden.append(h.repeat(1, tries, 1))
 
     # transform conditions to actual input
-    conds = {key: encoder.conds[key].w2i[val] for key, val in conds.items()}
+    conds = {c: vocab.w2i[conds[c]] for c, vocab in encoder.conds.items()}
 
     (hyps, _), scores, _, _ = model.sample(
         encoder,
@@ -238,7 +239,11 @@ class Generator:
         Takes care of sampling conditions and planning the song over consecutive
         generations
         """
-        encoder = encoder or list(self.models.values())[0]["encoder"]
+        encoder, maxconds = None, 0  # pick encoder with most conditions
+        for modelname, mconfig in self.models.items():
+            if len(mconfig['encoder'].conds) > maxconds:
+                encoder, maxconds = mconfig['encoder'], len(mconfig['encoder'].conds)
+
         conds = self.state["conds"]
 
         if self.state['template']:
@@ -368,7 +373,7 @@ class Generator:
         self.state["hyps"] = {}
         self.state["template"] = {}
 
-        if self.tsampler is not None:
+        if self.tsampler is not None and self.config['USE_TEMPLATE']:
             if random.random() <= self.config['TEMPLATE_RATIO']:
                 tdata, tmetadata = self.tsampler.sample(
                     nlines=self.config['TEMPLATE_MIN_LEN'])

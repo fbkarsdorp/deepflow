@@ -42,8 +42,10 @@ def sample_file(fpath, rate=0.01):
         except StopIteration:
             f.close()
             f = open(fpath)
-
         except UnicodeDecodeError:
+            # corrupted file
+            continue
+        except json.decoder.JSONDecodeError:
             # corrupted file
             continue
 
@@ -153,6 +155,7 @@ class Generator:
         self.device = device
 
     def sample(self, tries=1, sample_template=True, avoid_unk=True,
+               tau_mean=0.8, tau_std=0.075,
                cache_size=0, alpha=0.15, theta=0.75):
         """
         Generate a stanza sampling:
@@ -191,7 +194,7 @@ class Generator:
         # best guess for nlines
         nlines = random.choice(self.nlines)
         # best guess for temperature
-        tau = random.gauss(0.8, 0.075)
+        tau = random.gauss(tau_mean, tau_std)
 
         template, tmeta, conds = None, None, None
         if sample_template and self.template_sampler is not None:
@@ -199,7 +202,6 @@ class Generator:
             template = [{c: line[c] for c in encoder.conds} for line in template]
         else:
             conds = sample_conditions(encoder)
-            conds = {cond: conds[val] for cond in encoder.conds}
 
         cache = None
         if cache_size:
@@ -298,6 +300,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--modelpath', required=True)
     parser.add_argument('--nsamples', type=int, default=100)
+    parser.add_argument('--tau_mean', type=float, default=0.8)
     parser.add_argument('--outputpath', help='/path/to/output file (jsonl)')
     parser.add_argument('--datapath', help='/path/to/data to sample templates')
     parser.add_argument('--dpath', help='/path/to/phonological dict')
@@ -318,6 +321,7 @@ if __name__ == '__main__':
     opts = {'tries': args.tries,
             'avoid_unk': True,
             'cache_size': 0,
+            'tau_mean': args.tau_mean,
             'alpha': 0.15,
             'theta': 0.75}
 

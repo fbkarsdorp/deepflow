@@ -119,6 +119,7 @@ rap.py
 raptext.txt
 # MAC OS
 .DS_Store
+.push.settings.json
 
 # data
 data/

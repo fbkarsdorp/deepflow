@@ -12,7 +12,7 @@ Vue.component('censored', {
       words.forEach(function(v,k){
         if (censored) {
           censored.forEach(function(vv,kk){
-            var regex = new RegExp(`[${punctuation}]*${vv}[${punctuation}]*$`, 'i')
+            var regex = new RegExp(`^[${punctuation}]*${vv}[${punctuation}]*$`, 'i')
             if (v.match(regex)) words[k] = '*'.repeat(v.length)
             //if (vv === v) words[k] = '**********************************'.substr(0, v.length)
           })

@@ -8,12 +8,13 @@ Vue.component('censored', {
   computed: {
     newtext: function (val) {
       var words = this.text.split(' ');
+      var punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
       words.forEach(function(v,k){
         if (censored) {
           censored.forEach(function(vv,kk){
-            //var regex = new RegExp('([\'":;\\.,\\-+`?!$%&]{2})?' + vv + '([\'":;\\.,\\-+`?!$%&]{2})?', 'i')
-            //if (v.match(regex)) words[k] = '**********************************'.substr(0, v.length)
-            if (vv === v) words[k] = '**********************************'.substr(0, v.length)
+            var regex = new RegExp(`[${punctuation}]*${vv}[${punctuation}]*$`, 'i')
+            if (v.match(regex)) words[k] = '*'.repeat(v.length)
+            //if (vv === v) words[k] = '**********************************'.substr(0, v.length)
           })
         }
       })

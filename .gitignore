@@ -119,7 +119,12 @@ rap.py
 raptext.txt
 # MAC OS
 .DS_Store
+.push.settings.json
 
 # data
 data/
 *LanguageModel*
+
+# css crap
+_*.css
+_*.css.map

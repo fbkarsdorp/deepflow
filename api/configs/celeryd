@@ -1,5 +1,5 @@
 # Names of nodes to start
-CELERYD_NODES="tupac big kendrick"
+CELERYD_NODES="tupac big kendrick twitter"
 
 # Absolute or relative path to the 'celery' command:
 CELERY_BIN="/home/ubuntu/anaconda/bin/celery"
@@ -11,8 +11,8 @@ CELERY_APP="app.celery"
 CELERYD_CHDIR="/home/ubuntu/deepflow/app/"
 
 # Extra command-line arguments to the worker
-# pool of 14 processes each of which should have 15 threads set by OMP_NUM_THREADS=15 in celery.service
-CELERYD_OPTS="--time-limit=300 --concurrency=1 -Q:tupac tupac-queue -Q:big big-queue -Q:kendrick kendrick-queue"
+# pool of 4 processes each of which should have 4 threads set by OMP_NUM_THREADS=4 in celery.service
+CELERYD_OPTS="--time-limit=300 --concurrency=1 -Q:tupac tupac-queue -Q:big big-queue -Q:kendrick kendrick-queue -Q:twitter twitter-queue"
 
 # Set logging level to DEBUG
 CELERYD_LOG_LEVEL="INFO"
